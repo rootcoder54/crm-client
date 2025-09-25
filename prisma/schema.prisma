@@ -1,0 +1,249 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(uuid())
+  name     String?
+  username String  @unique
+  password String?
+  image    String?
+
+  roles     UserRole[]
+  logs      Log[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model UserRole {
+  id          String @id @default(uuid())
+  name        String @unique
+  accessLevel Int
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Log {
+  id        String   @id @default(uuid())
+  action    String
+  timestamp DateTime @default(now())
+  details   String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id        String  @id @default(uuid())
+  nomClient String
+  sigle     String?
+  adresse   String?
+  telephone String?
+  activite  String?
+
+  numero          String?
+  dateInscription DateTime?
+
+  dateLastVisite DateTime?
+  dateNewVisite  DateTime?
+
+  contacts      Contact[]
+  contrats      Contrat[]
+  interventions Intervention[]
+  bases         Base[]
+  logiciels     Logiciel[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  Requete       Requete[]
+  Facture       Facture[]
+}
+
+model Contact {
+  id        String  @id @default(uuid())
+  nom       String
+  telephone String?
+  email     String?
+  poste     String?
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model Contrat {
+  id           String   @id @default(uuid())
+  dateDebut    DateTime
+  dateFin      DateTime
+  type         String?
+  reconduction String?
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Intervention {
+  id           String   @id @default(uuid())
+  numero       String
+  service      String
+  intervenant  String
+  nature       String?
+  observations String?
+  creePar      String?
+  afacturee    Boolean  @default(false)
+  dateCloture  DateTime
+
+  document Document[]
+
+  requeteId String?
+  requete   Requete? @relation(fields: [requeteId], references: [id], onDelete: Cascade)
+
+  items ItemIntervention[]
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ItemIntervention {
+  id          String   @id @default(uuid())
+  date        DateTime
+  debut       String
+  fin         String
+  description String?
+
+  Intervention   Intervention? @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  interventionId String?
+}
+
+model Document {
+  id      String @id @default(uuid())
+  nom     String
+  fichier Bytes
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Intervention Intervention[]
+}
+
+model Base {
+  id          String   @id @default(uuid())
+  societe     String
+  chemin      String
+  convention  String
+  poste       Int
+  employe     Int
+  date        DateTime
+  commentaire String?
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Logiciel {
+  id             String   @id @default(uuid())
+  nom            String
+  version        String
+  versionInterne String
+  societe        Boolean
+  poste          Int
+  employe        Int
+  clientServeur  Boolean
+  type           String
+  dateAchat      DateTime
+  dossier        String
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Requete {
+  id String @id @default(uuid())
+
+  sujet       String
+  description String?
+  type        String?
+  observation String?
+  logiciel    String?
+
+  demandeur     String?
+  technicien    String?
+  dateDebut     DateTime
+  dateCloture   DateTime?
+  etat          String?
+  isTacheClient Boolean   @default(true)
+
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  Intervention Intervention[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Facture {
+  id            String        @id @default(uuid())
+  numero        String
+  date          DateTime
+  type          String?
+  acquittee     Boolean?      @default(false)
+  numeroOrdre   Int?
+  modeReglement String?
+  devise        String?
+  observation   String?
+  totalHT       Float?
+  remise        Float?
+  totalTTC      Float?
+  totalTVA      Float?
+  itemFactures  ItemFacture[]
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ItemFacture {
+  id        String @id @default(uuid())
+  reference String
+  libelle   String
+  quantity  Int
+  unitPrice Float
+  remise    Float?
+  tva       Float?
+  total     Float
+
+  factureId String
+  facture   Facture @relation(fields: [factureId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
