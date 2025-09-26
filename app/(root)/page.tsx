@@ -1,9 +1,14 @@
+"use client";
 import Image from "next/image";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Home() {
+  const ismobile = useIsMobile();
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+    <div className="flex flex-col items-start justify-items-center min-h-screen pb-20 gap-16">
+      <main className="flex flex-col gap-[32px] row-start-2 items-start sm:items-start p-5">
+        {ismobile && <SidebarTrigger className="-ml-1" />}
         <Image
           className="dark:invert"
           src="/next.svg"
