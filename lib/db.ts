@@ -11,4 +11,4 @@ if (process.env.NODE_ENV !== "production") globalThis.prisma = db;
 
 import { PrismaClient } from "@prisma/client";
 
-export const db = new PrismaClient();
+export const prisma = new PrismaClient();

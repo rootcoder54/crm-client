@@ -1,8 +1,8 @@
-import { db } from "@/lib/db";
+import { prisma } from "@/lib/db";
 
 export const getUserByUserName = async (username: string) => {
   try {
-    const user = await db.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         username,
       },
@@ -16,7 +16,7 @@ export const getUserByUserName = async (username: string) => {
 
 export const getUserById = async (id: string|undefined) => {
   try {
-    const user = await db.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         id,
       },
@@ -33,7 +33,7 @@ export const createUser = async (
   hashpassword: string
 ) => {
   try {
-    const user = await db.user.create({
+    const user = await prisma.user.create({
       data: {
         username,
         name,
