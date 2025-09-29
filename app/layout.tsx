@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { QueryProvider } from "@/components/provider/query-provider";
+import { ThemeProvider } from "@/components/provider/theme-provider";
 
 import "./globals.css";
 
@@ -25,8 +26,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
-      <body className={`${font.className} antialiased`}><QueryProvider>{children}</QueryProvider></body>
+    <html lang="fr" suppressHydrationWarning>
+      <body className={`${font.className} antialiased`}>
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </QueryProvider>
+      </body>
     </html>
   );
 }

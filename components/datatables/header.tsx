@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Table } from "@tanstack/react-table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { X } from "lucide-react";
+import { Mode } from "../features/theme";
 
 interface headerprops<TData> {
   table: Table<TData>;
@@ -122,6 +123,7 @@ function Header<TData>({
               ))}
             </div>
           )}
+          <Mode />
         </div>
       </div>
     </header>
