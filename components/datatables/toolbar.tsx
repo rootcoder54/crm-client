@@ -1,13 +1,18 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
 
 import Link from "next/link";
 
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
+import { VariantProps } from "class-variance-authority";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -17,14 +22,7 @@ interface DataTableToolbarProps<TData> {
     name: string;
     icon: React.ReactNode;
     lien: string;
-    className?:
-      | "link"
-      | "default"
-      | "destructive"
-      | "outline"
-      | "secondary"
-      | "ghost"
-      | null;
+    variantbtn?: VariantProps<typeof buttonVariants>["variant"];
   }[];
   selectlinks?: {
     btn: React.ReactNode;
@@ -73,7 +71,7 @@ function DataToolBar<TData>({
           {links &&
             links.map((link) => (
               <Link key={link.lien} href={`${link.lien}`}>
-                <Button variant={link.className}>
+                <Button variant={link.variantbtn}>
                   {link.icon} {link.name}
                 </Button>
               </Link>

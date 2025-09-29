@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
+import { QueryProvider } from "@/components/provider/query-provider";
+
 import "./globals.css";
 
 const font = Outfit({
@@ -24,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body className={`${font.className} antialiased`}>{children}</body>
+      <body className={`${font.className} antialiased`}><QueryProvider>{children}</QueryProvider></body>
     </html>
   );
 }

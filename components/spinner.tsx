@@ -1,27 +1,34 @@
-import { cva, type VariantProps } from "class-variance-authority";
-
-import { cn } from "@/lib/utils";
-
-import { Loader } from "lucide-react";
-
-const spinnerVariants = cva("text-muted-foreground animate-spin", {
-  variants: {
-    size: {
-      default: "h-4 w-4",
-      sm: "h-2 w-2",
-      lg: "h-6 w-6",
-      icon: "h-10 w-10"
-    }
-  },
-  defaultVariants: {
-    size: "default"
-  }
-});
-
-interface SpinnerProps extends VariantProps<typeof spinnerVariants> {
+interface SpinnerProps {
+  size?: number;
   className?: string;
 }
 
-export const Spinner = ({ size, className }: SpinnerProps) => {
-  return <Loader className={cn(spinnerVariants({ size }), { className })} />;
+export const Spinner = ({ size = 48, className }: SpinnerProps) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 50 50"
+      fill="currentColor"
+      aria-label="Loading"
+      role="img"
+      className={className}
+    >
+      <g>
+        <circle cx="25" cy="5" r="3" />
+        <circle cx="40" cy="25" r="3" />
+        <circle cx="25" cy="45" r="3" />
+        <circle cx="10" cy="25" r="3" />
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from="0 25 25"
+          to="360 25 25"
+          dur="1s"
+          repeatCount="indefinite"
+        />
+      </g>
+    </svg>
+  );
 };

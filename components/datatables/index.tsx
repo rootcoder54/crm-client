@@ -25,6 +25,9 @@ import React, { useEffect } from "react";
 import DataToolBar from "./toolbar";
 import { DataTablePagination } from "./PaginationTable";
 import { buildColumns } from "./columns";
+import { VariantProps } from "class-variance-authority";
+import { buttonVariants } from "../ui/button";
+import Header from "./header";
 
 interface DataTableProps<TData extends Record<string, unknown>> {
   data: TData[];
@@ -36,19 +39,25 @@ interface DataTableProps<TData extends Record<string, unknown>> {
     name: string;
     icon: React.ReactNode;
     lien: string;
-    className?:
-      | "link"
-      | "default"
-      | "destructive"
-      | "outline"
-      | "secondary"
-      | "ghost"
-      | null;
+    variantbtn?: VariantProps<typeof buttonVariants>["variant"];
   }[];
   selectlinks?: {
     btn: React.ReactNode;
   }[];
   hideList?: string[];
+  chemins?: { title: string; url: string }[];
+  action?: {
+    label: string;
+    icon?: React.ReactNode;
+    url: string;
+    variantbtn: VariantProps<typeof buttonVariants>["variant"];
+  }[];
+  selectAction?: {
+    label: string;
+    icon?: React.ReactNode;
+    url: string;
+    variantbtn: VariantProps<typeof buttonVariants>["variant"];
+  }[];
 }
 
 export function DataTable<TData extends Record<string, unknown>>({
@@ -59,7 +68,10 @@ export function DataTable<TData extends Record<string, unknown>>({
   searchPlaceholder,
   links,
   selectlinks,
-  hideList = []
+  hideList,
+  chemins,
+  action,
+  selectAction
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
@@ -68,10 +80,9 @@ export function DataTable<TData extends Record<string, unknown>>({
   );
   const columns = buildColumns(data);
 
-  const initialVisibility: VisibilityState = hideList.reduce(
-    (acc, key) => ({ ...acc, [key]: false }),
-    {}
-  );
+  const initialVisibility: VisibilityState = hideList
+    ? hideList.reduce((acc, key) => ({ ...acc, [key]: false }), {})
+    : {};
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       id: false,
@@ -112,65 +123,79 @@ export function DataTable<TData extends Record<string, unknown>>({
   }, [rowSelection, table, onRowSelect]);
 
   return (
-    <div className="overflow-hidden">
-      <div>
-        <DataToolBar
-          table={table}
-          searchId={searchId}
-          searchPlaceholder={searchPlaceholder}
-          selectlinks={selectlinks}
-          links={links}
-        />
-      </div>
-      <Table className="border-y w-full">
-        <TableHeader className="bg-zinc-600/10">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="w-full">
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                className="cursor-pointer w-full h-8"
-                data-state={row.getIsSelected() && "selected"}
-                onClick={() => {
-                  table.setRowSelection({ [row.id]: true });
-                  const selectedId = row.getValue("id") as string;
-                  if (onRowSelect) onRowSelect(selectedId);
-                }}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+    <div className="px-7">
+      <Header
+        table={table}
+        chemins={chemins}
+        action={action}
+        selectAction={selectAction}
+      />
+      <div className="overflow-hidden">
+        <div>
+          <DataToolBar
+            table={table}
+            searchId={searchId}
+            searchPlaceholder={searchPlaceholder}
+            selectlinks={selectlinks}
+            links={links}
+          />
+        </div>
+        <Table className="border-y w-full">
+          <TableHeader className="bg-zinc-600/10">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="w-full">
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                {notData ? notData : "Pas de resultat"}
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <DataTablePagination table={table} />
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  className="cursor-pointer w-full h-8"
+                  data-state={row.getIsSelected() && "selected"}
+                  onClick={() => {
+                    table.setRowSelection({ [row.id]: true });
+                    const selectedId = row.getValue("id") as string;
+                    if (onRowSelect) onRowSelect(selectedId);
+                  }}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  {notData ? notData : "Pas de resultat"}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+        <DataTablePagination table={table} />
+      </div>
     </div>
   );
 }
