@@ -1,15 +1,11 @@
 "use client";
 
-import { useIsMobile } from "@/hooks/use-mobile";
-import { SidebarTrigger } from "../ui/sidebar";
-import { Separator } from "../ui/separator";
 import Link from "next/link";
 import {
   Ban,
   CalendarIcon,
   Check,
   ChevronsUpDown,
-  Home,
   Plus
 } from "lucide-react";
 
@@ -57,14 +53,11 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Client } from "@prisma/client";
 import { createRequete } from "@/services/requete.service";
+import HeaderPage from "../features/header-page";
 
 const AddRequete = ({ clients }: { clients: Client[] }) => {
   const router = useRouter();
   const [isPending, transition] = useTransition();
-  const chemins = [
-    { title: "Requête", url: "/requete" },
-    { title: "Nouvelle Requête", url: "#" }
-  ];
 
   const schema = z.object({
     sujet: z.string(),
@@ -77,7 +70,6 @@ const AddRequete = ({ clients }: { clients: Client[] }) => {
     dateDebut: z.date(),
     clientId: z.string().optional()
   });
-  const ismobile = useIsMobile();
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -114,72 +106,26 @@ const AddRequete = ({ clients }: { clients: Client[] }) => {
     <div className="w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
-            <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
-              <div className="flex items-center gap-2">
-                {ismobile ? (
-                  <>
-                    <SidebarTrigger className="-ml-1" />
-                    <Separator
-                      orientation="vertical"
-                      className="mx-2 data-[orientation=vertical]:h-4"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Link href={`http://localhost:3000`}>
-                      <Home className="-ml-1" />
-                    </Link>
-                    <Separator
-                      orientation="vertical"
-                      className="mx-2 data-[orientation=vertical]:h-4"
-                    />
-                  </>
-                )}
-              </div>
-              {chemins ? (
-                chemins.map((chemin, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    {chemin.url === "#" ? (
-                      <h1>{chemin.title}</h1>
-                    ) : (
-                      <Link href={chemin.url}>
-                        <h1 className="text-base font-medium">
-                          {chemin.title}
-                        </h1>
-                      </Link>
-                    )}
-                    {index < chemins.length - 1 && (
-                      <Separator
-                        orientation="vertical"
-                        className="mx-2 data-[orientation=vertical]:h-4"
-                      />
-                    )}
-                  </div>
-                ))
-              ) : (
-                <>
-                  <h1 className="text-base font-medium">Test</h1>
-                </>
-              )}
-
-              <div className="ml-auto flex items-center gap-2">
-                <div className="flex items-center gap-2">
-                  <Button variant={"secondary"} type="submit">
-                    <Plus />
-                    Nouvelle Requête
-                  </Button>
-                  <Link href={"/requete"}>
-                    <Button variant={"destructive"}>
-                      <Ban />
-                      Annuler
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+          <HeaderPage
+            chemins={[
+              { title: "Requête", url: "/requete" },
+              { title: "Nouvelle Requête", url: "#" }
+            ]}
+          >
+            <div className="flex items-center gap-2">
+              <Button variant={"secondary"} type="submit">
+                <Plus />
+                Nouvelle Requête
+              </Button>
+              <Link href={"/requete"}>
+                <Button variant={"destructive"}>
+                  <Ban />
+                  Annuler
+                </Button>
+              </Link>
             </div>
-          </header>
-          <div className="space-y-8 px-12 pt-5">
+          </HeaderPage>
+          <div className="space-y-8 px-12 py-5">
             <FormField
               control={form.control}
               name="sujet"
