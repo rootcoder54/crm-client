@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { QueryProvider } from "@/components/provider/query-provider";
 import { ThemeProvider } from "@/components/provider/theme-provider";
-
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const font = Outfit({
@@ -35,6 +35,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <Toaster richColors position="top-center" />
             {children}
           </ThemeProvider>
         </QueryProvider>
