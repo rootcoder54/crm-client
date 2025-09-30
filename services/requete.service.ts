@@ -48,6 +48,16 @@ export async function updateRequete(
   return prisma.requete.update({ where: { id }, data });
 }
 
+export async function clotureRequete(id: string, date: Date, etat: string) {
+  return prisma.requete.update({
+    where: { id },
+    data: {
+      dateCloture: date,
+      etat
+    }
+  });
+}
+
 export async function deleteRequete(id: string) {
   return prisma.requete.delete({ where: { id } });
 }

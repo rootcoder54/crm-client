@@ -1,6 +1,12 @@
 "use client";
 import { Requete } from "@prisma/client";
-import { FileArchive, Plus, SquarePen, Trash } from "lucide-react";
+import {
+  CalendarCheck2,
+  FileArchive,
+  Plus,
+  SquarePen,
+  Trash
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { Spinner } from "@/components/spinner";
@@ -42,6 +48,12 @@ const PageRequete = () => {
           variantbtn: "blue"
         },
         {
+          label: "Clôture",
+          icon: <CalendarCheck2 />,
+          url: `/requete/cloture/${selectedId}`,
+          variantbtn: "gray"
+        },
+        {
           label: "Editer",
           icon: <SquarePen />,
           url: `/requete/edite/${selectedId}`,
@@ -59,7 +71,6 @@ const PageRequete = () => {
         "createdAt",
         "updatedAt",
         "client",
-        "etat",
         "dateCloture",
         "Intervention",
         "dateDebut",
