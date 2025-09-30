@@ -9,6 +9,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Home, X } from "lucide-react";
 import { Mode } from "../features/theme";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 interface headerprops<TData> {
   table: Table<TData>;
@@ -24,6 +25,7 @@ interface headerprops<TData> {
     icon?: React.ReactNode;
     url: string;
     variantbtn: VariantProps<typeof buttonVariants>["variant"];
+    hide?: boolean;
   }[];
 }
 
@@ -112,6 +114,7 @@ function Header<TData>({
                       variant={act.variantbtn}
                       asChild
                       size="sm"
+                      className={cn(act.hide && "hidden")}
                     >
                       <Link href={act.url} className="dark:text-foreground">
                         {act.icon}

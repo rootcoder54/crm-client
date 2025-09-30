@@ -11,14 +11,26 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { Spinner } from "@/components/spinner";
 import { DataTable } from "@/components/datatables";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getRequeteById } from "@/services/requete.service";
 
 const PageRequete = () => {
   const [selectedId, setSelectedId] = useState<string>("");
+  const [isCloture, setIscloture] = useState<boolean>(false);
   const { data: requetes } = useQuery<Requete[]>({
     queryKey: ["requeteid"],
     queryFn: () => fetcher(`/api/requete`)
   });
+  useEffect(() => {
+    getRequeteById(selectedId).then((data) => {
+      if (data?.dateCloture) {
+        setIscloture(true);
+      } else {
+        setIscloture(false);
+      }
+    });
+  }, [selectedId]);
+
   if (!requetes) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
@@ -51,7 +63,8 @@ const PageRequete = () => {
           label: "Clôture",
           icon: <CalendarCheck2 />,
           url: `/requete/cloture/${selectedId}`,
-          variantbtn: "gray"
+          variantbtn: "gray",
+          hide: isCloture
         },
         {
           label: "Editer",
