@@ -74,7 +74,7 @@ export function LoginForm({
         {isPending && (
           <CardHeader className="text-center flex flex-col items-center justify-center p-9">
             <CardTitle className="text-xl">Connexion</CardTitle>
-            <Spinner size={"lg"} />
+            <Spinner />
           </CardHeader>
         )}
         {!isPending && (
