@@ -4,7 +4,6 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle
@@ -59,39 +58,37 @@ const ClotureRequete = ({ requete }: { requete: Requete }) => {
               <AlertDialogTitle>
                 Clôturer le traitement de la Requête !!!
               </AlertDialogTitle>
-              <AlertDialogDescription>
-                <div className="flex flex-col gap-3 w-full">
-                  <Label htmlFor="date" className="px-1">
-                    Clôturé à la date du
-                  </Label>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        id="date"
-                        className="justify-between font-normal"
-                      >
-                        {date ? date.toLocaleDateString() : "Select date"}
-                        <ChevronDownIcon />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto overflow-hidden p-0"
-                      align="start"
+              <div className="flex flex-col gap-3 w-full">
+                <Label htmlFor="date" className="px-1">
+                  Clôturé à la date du
+                </Label>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      id="date"
+                      className="justify-between font-normal"
                     >
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        captionLayout="dropdown"
-                        onSelect={(date) => {
-                          setDate(date || new Date());
-                          setOpen(false);
-                        }}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </AlertDialogDescription>
+                      {date ? date.toLocaleDateString() : "Select date"}
+                      <ChevronDownIcon />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-auto overflow-hidden p-0"
+                    align="start"
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      captionLayout="dropdown"
+                      onSelect={(date) => {
+                        setDate(date || new Date());
+                        setOpen(false);
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel onClick={handleCancel}>
