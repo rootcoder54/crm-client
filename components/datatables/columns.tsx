@@ -6,7 +6,11 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp, ChevronsUpDown, FileImage } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 import Image from "next/image";
 
@@ -124,6 +128,7 @@ export function buildColumns<T extends Record<string, unknown>>(
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
+          className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
         />
       ),
       enableSorting: false,

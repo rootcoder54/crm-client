@@ -123,7 +123,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   }, [rowSelection, table, onRowSelect]);
 
   return (
-    <div className="px-7">
+    <div className="w-full">
       <Header
         table={table}
         chemins={chemins}

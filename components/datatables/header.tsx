@@ -1,3 +1,4 @@
+"use client";
 import { VariantProps } from "class-variance-authority";
 import { Button, buttonVariants } from "../ui/button";
 import { SidebarTrigger } from "../ui/sidebar";
@@ -5,8 +6,9 @@ import { Separator } from "../ui/separator";
 import Link from "next/link";
 import { Table } from "@tanstack/react-table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { X } from "lucide-react";
+import { Home, X } from "lucide-react";
 import { Mode } from "../features/theme";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface headerprops<TData> {
   table: Table<TData>;
@@ -35,14 +37,31 @@ function Header<TData>({
     table.getState().rowSelection = {};
     table.setRowSelection({});
   };
+  const ismobile = useIsMobile();
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
-        <SidebarTrigger className="-ml-1" />
-        <Separator
-          orientation="vertical"
-          className="mx-2 data-[orientation=vertical]:h-4"
-        />
+        <div className="flex items-center gap-2">
+          {ismobile ? (
+            <>
+              <SidebarTrigger className="-ml-1" />
+              <Separator
+                orientation="vertical"
+                className="mx-2 data-[orientation=vertical]:h-4"
+              />
+            </>
+          ) : (
+            <>
+              <Link href={`http://localhost:3000`}>
+                <Home className="-ml-1" />
+              </Link>
+              <Separator
+                orientation="vertical"
+                className="mx-2 data-[orientation=vertical]:h-4"
+              />
+            </>
+          )}
+        </div>
         {chemins ? (
           chemins.map((chemin, index) => (
             <div key={index} className="flex items-center gap-2">
@@ -69,7 +88,7 @@ function Header<TData>({
 
         <div className="ml-auto flex items-center gap-2">
           {table.getFilteredSelectedRowModel().rows.length !== 0 && (
-            <div className="ml-auto flex items-center gap-2">
+            <div className="flex items-center gap-2">
               {selectAction && (
                 <div className="flex items-center gap-2">
                   <Tooltip>
@@ -93,11 +112,10 @@ function Header<TData>({
                       variant={act.variantbtn}
                       asChild
                       size="sm"
-                      className="hidden sm:flex"
                     >
                       <Link href={act.url} className="dark:text-foreground">
                         {act.icon}
-                        {act.label}
+                        <span className="hidden sm:flex">{act.label}</span>
                       </Link>
                     </Button>
                   ))}
@@ -105,19 +123,13 @@ function Header<TData>({
               )}
             </div>
           )}
-          {action && (
+          {table.getFilteredSelectedRowModel().rows.length === 0 && action && (
             <div className="flex items-center gap-2">
               {action.map((act, index) => (
-                <Button
-                  key={index}
-                  variant={act.variantbtn}
-                  asChild
-                  size="sm"
-                  className="hidden sm:flex"
-                >
+                <Button key={index} variant={act.variantbtn} asChild size="sm">
                   <Link href={act.url} className="dark:text-foreground">
                     {act.icon}
-                    {act.label}
+                    <span className="hidden sm:flex">{act.label}</span>
                   </Link>
                 </Button>
               ))}

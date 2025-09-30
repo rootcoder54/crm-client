@@ -1,6 +1,6 @@
 "use client";
 import { Requete } from "@prisma/client";
-import { Plus, Trash } from "lucide-react";
+import { FileArchive, Plus, SquarePen, Trash } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { Spinner } from "@/components/spinner";
@@ -36,8 +36,14 @@ const PageRequete = () => {
       ]}
       selectAction={[
         {
+          label: "Interventions",
+          icon: <FileArchive />,
+          url: `/requete/intervention/${selectedId}`,
+          variantbtn: "blue"
+        },
+        {
           label: "Editer",
-          icon: <Plus />,
+          icon: <SquarePen />,
           url: `/requete/edite/${selectedId}`,
           variantbtn: "outline"
         },
@@ -45,7 +51,7 @@ const PageRequete = () => {
           label: "Supprimer",
           icon: <Trash />,
           url: `/requete/delete/${selectedId}`,
-          variantbtn: "destructive"
+          variantbtn: "danger"
         }
       ]}
       data={requetes}
@@ -59,7 +65,8 @@ const PageRequete = () => {
         "dateDebut",
         "logiciel",
         "observation",
-        "clientId"
+        "clientId",
+        "isTacheClient"
       ]}
       searchId="sujet"
       searchPlaceholder="Rechercher une requête"

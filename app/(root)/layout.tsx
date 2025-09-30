@@ -17,7 +17,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
       >
         <AppSidebar variant="floating" />
         <SidebarInset>
-          <div className="min-h-screen dark:bg-zinc-800/10">{children}</div>
+          <div className="min-h-screen">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </SessionProvider>
