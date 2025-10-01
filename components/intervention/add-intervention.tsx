@@ -138,7 +138,6 @@ export const AddIntervention = ({ requete }: { requete: Requete }) => {
                   <Button
                     type="button"
                     variant={"danger"}
-                    onClick={handlerSubmit}
                   >
                     Annuler
                   </Button>
