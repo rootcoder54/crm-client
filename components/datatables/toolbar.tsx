@@ -28,6 +28,14 @@ interface DataTableToolbarProps<TData> {
     btn: React.ReactNode;
   }[];
 }
+function safeGetColumn<TData>(table: Table<TData>, id: string) {
+  const exists = table.getAllColumns().some((c) => c.id === id);
+  if (!exists) {
+    console.warn(`[Table] La colonne '${id}' n'existe pas.`);
+    return null;
+  }
+  return table.getColumn(id);
+}
 
 function DataToolBar<TData>({
   table,
@@ -41,21 +49,23 @@ function DataToolBar<TData>({
     table.getState().rowSelection = {};
     table.setRowSelection({});
   };
+  const exists = table.getAllColumns().some((c) => c.id === searchId);
+  const filtreValeur = safeGetColumn(table, searchId ?? "");
 
   return (
     <div className="flex items-center py-4 w-full h-20">
       <div className="flex flex-col items-center w-full">
         <div className="flex flex-row items-center justify-start w-full gap-3 py-2">
-          <Input
-            placeholder={`${searchPlaceholder ? searchPlaceholder : "Filter"}`}
-            value={
-              (table.getColumn(`${searchId}`)?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn(`${searchId}`)?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
+          {filtreValeur && (
+            <Input
+              placeholder={`${searchPlaceholder ?? "Filter"}`}
+              value={(filtreValeur?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                filtreValeur?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm"
+            />
+          )}
           {isFiltered && (
             <Button
               variant="destructive"

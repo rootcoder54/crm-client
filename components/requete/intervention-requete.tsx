@@ -11,6 +11,7 @@ const InterventionRequete = ({
 }) => {
   const [selectedId, setSelectedId] = useState<string>("");
   console.log(selectedId);
+  console.log(requete.Intervention)
   return (
     <DataTable
       chemins={[
