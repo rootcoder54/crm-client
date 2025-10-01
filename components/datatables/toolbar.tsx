@@ -52,7 +52,7 @@ function DataToolBar<TData>({
   const filtreValeur = safeGetColumn(table, searchId ?? "");
 
   return (
-    <div className="flex items-center py-4 w-full h-20">
+    <div className="flex items-center py-4 w-full">
       <div className="flex flex-col items-center w-full">
         <div className="flex flex-row items-center justify-start w-full gap-3 py-2">
           {filtreValeur && (

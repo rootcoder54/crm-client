@@ -19,6 +19,7 @@ interface headerprops<TData> {
     icon?: React.ReactNode;
     url: string;
     variantbtn: VariantProps<typeof buttonVariants>["variant"];
+    hide?: boolean;
   }[];
   selectAction?: {
     label: string;
@@ -129,7 +130,13 @@ function Header<TData>({
           {table.getFilteredSelectedRowModel().rows.length === 0 && action && (
             <div className="flex items-center gap-2">
               {action.map((act, index) => (
-                <Button key={index} variant={act.variantbtn} asChild size="sm">
+                <Button
+                  key={index}
+                  variant={act.variantbtn}
+                  asChild
+                  size="sm"
+                  className={cn(act.hide && "hidden")}
+                >
                   <Link href={act.url} className="dark:text-foreground">
                     {act.icon}
                     <span className="hidden sm:flex">{act.label}</span>

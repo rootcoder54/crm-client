@@ -25,7 +25,8 @@ const InterventionRequete = ({
           label: "Nouvelle Intervention",
           icon: <Plus />,
           url: `/requete/intervention/${requete.id}/add`,
-          variantbtn: "blue"
+          variantbtn: "blue",
+          hide: requete.etat === "CLOTURER"
         }
       ]}
       selectAction={[
@@ -33,19 +34,19 @@ const InterventionRequete = ({
           label: "Editer",
           icon: <SquarePen />,
           url: `/requete/intervention/${requete.id}/edite/${selectedId}`,
-          variantbtn: "outline"
+          variantbtn: "outline",
+          hide: requete.etat === "CLOTURER"
         },
         {
           label: "Supprimer",
           icon: <Trash />,
           url: `/requete/intervention/${requete.id}/delete/${selectedId}`,
-          variantbtn: "danger"
+          variantbtn: "danger",
+          hide: requete.etat === "CLOTURER"
         }
       ]}
       data={items}
       hideList={["interventionId"]}
-      searchId="sujet"
-      searchPlaceholder="Rechercher une intervention"
       onRowSelect={(id) => setSelectedId(id)}
     />
   );

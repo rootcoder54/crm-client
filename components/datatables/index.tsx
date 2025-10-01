@@ -51,6 +51,7 @@ interface DataTableProps<TData extends Record<string, unknown>> {
     icon?: React.ReactNode;
     url: string;
     variantbtn: VariantProps<typeof buttonVariants>["variant"];
+    hide?: boolean;
   }[];
   selectAction?: {
     label: string;
