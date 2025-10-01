@@ -11,7 +11,7 @@ const InterventionRequete = ({
 }) => {
   const [selectedId, setSelectedId] = useState<string>("");
   console.log(selectedId);
-  console.log(requete.Intervention)
+  console.log(requete.Intervention);
   return (
     <DataTable
       chemins={[
@@ -26,18 +26,17 @@ const InterventionRequete = ({
           variantbtn: "blue"
         }
       ]}
+      selectAction={[]}
       data={requete.Intervention}
       hideList={[
         "createdAt",
         "updatedAt",
         "client",
-        "dateCloture",
-        "Intervention",
-        "dateDebut",
-        "logiciel",
-        "observation",
+        "observations",
+        "creePar",
+        "requeteId",
         "clientId",
-        "isTacheClient"
+        "dateCloture"
       ]}
       searchId="sujet"
       searchPlaceholder="Rechercher une intervention"

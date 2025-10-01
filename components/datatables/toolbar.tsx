@@ -49,7 +49,6 @@ function DataToolBar<TData>({
     table.getState().rowSelection = {};
     table.setRowSelection({});
   };
-  const exists = table.getAllColumns().some((c) => c.id === searchId);
   const filtreValeur = safeGetColumn(table, searchId ?? "");
 
   return (

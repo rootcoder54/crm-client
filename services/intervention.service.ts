@@ -1,3 +1,5 @@
+"use server";
+
 import { prisma } from "@/lib/db";
 
 export async function createIntervention(data: {
@@ -9,7 +11,7 @@ export async function createIntervention(data: {
   creePar?: string;
   afacturee?: boolean;
   dateCloture: Date;
-  clientId: string;
+  clientId?: string;
   requeteId?: string;
 }) {
   return prisma.intervention.create({ data });
