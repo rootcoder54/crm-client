@@ -1,13 +1,15 @@
 "use client";
-import { Intervention, Requete } from "@prisma/client";
+import { Intervention, ItemIntervention, Requete } from "@prisma/client";
 import { DataTable } from "../datatables";
 import { Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 
 const InterventionRequete = ({
-  requete
+  requete,
+  items
 }: {
   requete: Requete & { Intervention: Intervention[] };
+  items: ItemIntervention[];
 }) => {
   const [selectedId, setSelectedId] = useState<string>("");
   console.log(selectedId);
@@ -40,17 +42,8 @@ const InterventionRequete = ({
           variantbtn: "danger"
         }
       ]}
-      data={requete.Intervention}
-      hideList={[
-        "createdAt",
-        "updatedAt",
-        "client",
-        "observations",
-        "creePar",
-        "requeteId",
-        "clientId",
-        "dateCloture"
-      ]}
+      data={items}
+      hideList={["interventionId"]}
       searchId="sujet"
       searchPlaceholder="Rechercher une intervention"
       onRowSelect={(id) => setSelectedId(id)}

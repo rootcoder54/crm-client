@@ -14,7 +14,7 @@ import { Textarea } from "../ui/textarea";
 import { useState, useTransition } from "react";
 import { format } from "date-fns";
 import { OctagonX, Plus } from "lucide-react";
-import { Requete } from "@prisma/client";
+import { Intervention, Requete } from "@prisma/client";
 import Link from "next/link";
 import { createIntervention } from "@/services/intervention.service";
 import { createItemIntervention } from "@/services/itemIntervention.service";
@@ -29,7 +29,13 @@ type Item = {
   texte: string;
 };
 
-export const AddIntervention = ({ requete }: { requete: Requete }) => {
+export const AddIntervention = ({
+  requete
+}: {
+  requete: Requete & {
+    Intervention: Intervention[];
+  };
+}) => {
   const [isPending, transition] = useTransition();
   const router = useRouter();
   const instance = format(new Date(), "yyyy-MM-dd");
@@ -57,38 +63,61 @@ export const AddIntervention = ({ requete }: { requete: Requete }) => {
 
   const handlerSubmit = () => {
     transition(() => {
-      const data = {
-        numero:
-          format(requete.dateDebut, "yyyyMMdd") + "_" + requete.logiciel + "_#",
-        service: "Genie logiciel",
-        intervenant: requete.technicien ?? "",
-        nature: requete.type ?? "",
-        observations: "",
-        creePar: "",
-        afacturee: true,
-        dateCloture: new Date(),
-        clientId: requete.clientId ?? undefined,
-        requeteId: requete.id
-      };
-      createIntervention(data)
-        .then((result) => {
+      if (requete.Intervention.length === 0) {
+        const data = {
+          numero:
+            format(requete.dateDebut, "yyyyMMdd") +
+            "_" +
+            requete.logiciel +
+            "_#",
+          service: "Genie logiciel",
+          intervenant: requete.technicien ?? "",
+          nature: requete.type ?? "",
+          observations: "",
+          creePar: "",
+          afacturee: true,
+          dateCloture: new Date(),
+          clientId: requete.clientId ?? undefined,
+          requeteId: requete.id
+        };
+        createIntervention(data)
+          .then((result) => {
+            interventions.map((intervention) => {
+              const donnee = {
+                date: new Date(intervention.date),
+                debut: intervention.debut,
+                fin: intervention.fin,
+                description: intervention.texte,
+                interventionId: result.id
+              };
+              createItemIntervention(donnee).then((it) => {
+                console.log(it);
+              });
+            });
+          })
+          .then(() => {
+            toast.success(`Intervention enregistrer avec succès`);
+            router.push(`/requete/intervention/${requete.id}`);
+          });
+      } else {
+        Promise.all(
           interventions.map((intervention) => {
             const donnee = {
               date: new Date(intervention.date),
               debut: intervention.debut,
               fin: intervention.fin,
               description: intervention.texte,
-              interventionId: result.id
+              interventionId: requete.Intervention[0].id
             };
             createItemIntervention(donnee).then((it) => {
               console.log(it);
             });
-          });
-        })
-        .then(() => {
+          })
+        ).then(() => {
           toast.success(`Intervention enregistrer avec succès`);
           router.push(`/requete/intervention/${requete.id}`);
         });
+      }
     });
   };
 
@@ -135,10 +164,7 @@ export const AddIntervention = ({ requete }: { requete: Requete }) => {
                   </Button>
                 )}
                 <Link href={`/requete/intervention/${requete.id}`}>
-                  <Button
-                    type="button"
-                    variant={"danger"}
-                  >
+                  <Button type="button" variant={"danger"}>
                     Annuler
                   </Button>
                 </Link>

@@ -1,16 +1,23 @@
 import DeleteIntervention from "@/components/intervention/delete-intervention";
 import { getInterventionById } from "@/services/intervention.service";
-import { Intervention } from "@prisma/client";
+import { getItemInterventionById } from "@/services/itemIntervention.service";
+import { Intervention, ItemIntervention } from "@prisma/client";
 
 interface DeleteRequeteProps {
   params: Promise<{ interventionId: string }>;
 }
 const DeleteInterventionPage = async ({ params }: DeleteRequeteProps) => {
   const { interventionId } = await params;
-  const intervention = (await getInterventionById(
+
+  const item = (await getItemInterventionById(
     interventionId
+  )) as ItemIntervention;
+  
+  const intervention = (await getInterventionById(
+    item.interventionId ?? ""
   )) as Intervention;
-  return <DeleteIntervention intervention={intervention} />;
+
+  return <DeleteIntervention intervention={intervention} item={item} />;
 };
 
 export default DeleteInterventionPage;

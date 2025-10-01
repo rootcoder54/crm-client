@@ -10,30 +10,33 @@ import {
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 
-import { Intervention } from "@prisma/client";
+import { Intervention, ItemIntervention } from "@prisma/client";
 import { Ban, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { Spinner } from "../spinner";
-import { deleteIntervention } from "@/services/intervention.service";
+import { deleteItemIntervention } from "@/services/itemIntervention.service";
 
 const DeleteIntervention = ({
-  intervention
+  intervention,
+  item
 }: {
   intervention: Intervention;
+  item: ItemIntervention;
 }) => {
   const router = useRouter();
   const [isPending, transition] = useTransition();
   const handleCancel = () => {
-    router.push(`/requete/intervention/${intervention.requeteId}`);
+    router.back();
   };
 
   const handlerDelete = () => {
     transition(() => {
-      deleteIntervention(intervention.id).then((data) => {
-        toast.info(`Intervention a été supprimé`);
-        router.push(`/requete/intervention/${data.requeteId}`);
+      deleteItemIntervention(item.id).then((data) => {
+        console.log(data);
+        toast.info(`Item a été supprimé`);
+        router.push(`/requete/intervention/${intervention.requeteId}`);
       });
     });
   };
