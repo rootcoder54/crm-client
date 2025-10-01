@@ -1,7 +1,7 @@
 "use client";
 import { Intervention, Requete } from "@prisma/client";
 import { DataTable } from "../datatables";
-import { Plus } from "lucide-react";
+import { Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 
 const InterventionRequete = ({
@@ -26,7 +26,20 @@ const InterventionRequete = ({
           variantbtn: "blue"
         }
       ]}
-      selectAction={[]}
+      selectAction={[
+        {
+          label: "Editer",
+          icon: <SquarePen />,
+          url: `/requete/intervention/${requete.id}/edite/${selectedId}`,
+          variantbtn: "outline"
+        },
+        {
+          label: "Supprimer",
+          icon: <Trash />,
+          url: `/requete/intervention/${requete.id}/delete/${selectedId}`,
+          variantbtn: "danger"
+        }
+      ]}
       data={requete.Intervention}
       hideList={[
         "createdAt",
