@@ -33,13 +33,13 @@ const ClotureRequete = ({ requete }: { requete: Requete }) => {
 
   const [isPending, transition] = useTransition();
   const handleCancel = () => {
-    router.push("/requete");
+    router.back();
   };
 
   const handlerCloture = () => {
     transition(() => {
       clotureRequete(requete.id, date, "CLOTURER").then((data) => {
-        toast.info(`Requête ${data.sujet} a été supprimé`);
+        toast.info(`Requête ${data.sujet} a été Cloturée avec succès`);
         router.push("/requete");
       });
     });

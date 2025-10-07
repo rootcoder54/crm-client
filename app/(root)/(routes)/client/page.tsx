@@ -1,37 +1,21 @@
 "use client";
-import { Requete } from "@prisma/client";
-import {
-  CalendarCheck2,
-  FileArchive,
-  Plus,
-  SquarePen,
-  Trash
-} from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { fetcher } from "@/lib/fetcher";
-import { Spinner } from "@/components/ui/spinner";
+
 import { DataTable } from "@/components/datatables";
-import { useEffect, useState } from "react";
-import { getRequeteById } from "@/services/requete.service";
+import { Spinner } from "@/components/ui/spinner";
+import { fetcher } from "@/lib/fetcher";
+import { Client } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { FileArchive, Plus, SquarePen, Trash } from "lucide-react";
+import { useState } from "react";
 
-const PageRequete = () => {
+const ClientPage = () => {
   const [selectedId, setSelectedId] = useState<string>("");
-  const [isCloture, setIscloture] = useState<boolean>(false);
-  const { data: requetes } = useQuery<Requete[]>({
-    queryKey: ["requete"],
-    queryFn: () => fetcher(`/api/requete`)
+  const { data: clients } = useQuery<Client[]>({
+    queryKey: ["clients"],
+    queryFn: () => fetcher(`/api/client`)
   });
-  useEffect(() => {
-    getRequeteById(selectedId).then((data) => {
-      if (data?.dateCloture) {
-        setIscloture(true);
-      } else {
-        setIscloture(false);
-      }
-    });
-  }, [selectedId]);
 
-  if (!requetes) {
+  if (!clients) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
         <Spinner className="size-8" />
@@ -41,14 +25,14 @@ const PageRequete = () => {
   return (
     <DataTable
       chemins={[
-        { title: "Requête", url: "/requete" },
+        { title: "Clients", url: "/client" },
         { title: "Listes", url: "#" }
       ]}
       action={[
         {
-          label: "Nouvelle Requête",
+          label: "Nouvelle Client",
           icon: <Plus />,
-          url: "/requete/add",
+          url: "/client/add",
           variantbtn: "secondary"
         }
       ]}
@@ -58,13 +42,6 @@ const PageRequete = () => {
           icon: <FileArchive />,
           url: `/requete/intervention/${selectedId}`,
           variantbtn: "blue"
-        },
-        {
-          label: "Clôture",
-          icon: <CalendarCheck2 />,
-          url: `/requete/cloture/${selectedId}`,
-          variantbtn: "gray",
-          hide: isCloture
         },
         {
           label: "Editer",
@@ -79,7 +56,7 @@ const PageRequete = () => {
           variantbtn: "danger"
         }
       ]}
-      data={requetes}
+      data={clients}
       hideList={[
         "createdAt",
         "updatedAt",
@@ -92,11 +69,12 @@ const PageRequete = () => {
         "clientId",
         "isTacheClient"
       ]}
-      searchId="sujet"
-      searchPlaceholder="Rechercher une requête"
+      searchId="nomClient"
+      searchPlaceholder="Rechercher une nom de client"
+      notData="Aucun client trouvé"
       onRowSelect={(id) => setSelectedId(id)}
     />
   );
 };
 
-export default PageRequete;
+export default ClientPage;

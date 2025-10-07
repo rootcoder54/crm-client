@@ -196,7 +196,9 @@ export function DataTable<TData extends Record<string, unknown>>({
             )}
           </TableBody>
         </Table>
-        <DataTablePagination table={table} />
+        {table.getRowModel().rows?.length !== 0 && (
+          <DataTablePagination table={table} />
+        )}
       </div>
     </div>
   );

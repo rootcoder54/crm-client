@@ -22,7 +22,7 @@ const DeleteRequete = ({ requete }: { requete: Requete }) => {
   const router = useRouter();
   const [isPending, transition] = useTransition();
   const handleCancel = () => {
-    router.push("/requete");
+    router.back();
   };
 
   const handlerDelete = () => {
