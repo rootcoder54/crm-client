@@ -44,6 +44,12 @@ const ClientPage = () => {
           variantbtn: "blue"
         },
         {
+          label: "Contacts",
+          icon: <FileArchive />,
+          url: `/client/contact/${selectedId}`,
+          variantbtn: "blue"
+        },
+        {
           label: "Editer",
           icon: <SquarePen />,
           url: `/requete/edite/${selectedId}`,
