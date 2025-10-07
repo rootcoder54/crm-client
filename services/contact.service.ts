@@ -1,6 +1,13 @@
+"use server";
 import { prisma } from "@/lib/db";
 
-export async function createContact(data: { nom: string; telephone?: string; email?: string; poste?: string; clientId: string }) {
+export async function createContact(data: {
+  nom: string;
+  telephone?: string;
+  email?: string;
+  poste?: string;
+  clientId: string;
+}) {
   return prisma.contact.create({ data });
 }
 
@@ -12,7 +19,15 @@ export async function getContactsByClient(clientId: string) {
   return prisma.contact.findMany({ where: { clientId } });
 }
 
-export async function updateContact(id: string, data: Partial<{ nom: string; telephone: string; email: string; poste: string }>) {
+export async function updateContact(
+  id: string,
+  data: Partial<{
+    nom: string;
+    telephone: string;
+    email: string;
+    poste: string;
+  }>
+) {
   return prisma.contact.update({ where: { id }, data });
 }
 

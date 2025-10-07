@@ -5,7 +5,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { fetcher } from "@/lib/fetcher";
 import { Client } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import { FileArchive, Plus, SquarePen, Trash } from "lucide-react";
+import { FileArchive, Phone, Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 
 const ClientPage = () => {
@@ -45,9 +45,9 @@ const ClientPage = () => {
         },
         {
           label: "Contacts",
-          icon: <FileArchive />,
+          icon: <Phone />,
           url: `/client/contact/${selectedId}`,
-          variantbtn: "blue"
+          variantbtn: "secondary"
         },
         {
           label: "Editer",

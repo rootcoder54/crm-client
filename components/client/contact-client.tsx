@@ -23,10 +23,11 @@ const ContactClient = ({
         { title: "Clients", url: "/client" },
         { title: "Contacts", url: "#" }
       ]}
+      selectAction={[]}
       data={contacts}
       hideList={["clientId"]}
       searchId="nom"
-      searchPlaceholder="Rechercher une nom de client"
+      searchPlaceholder="Rechercher nom"
       notData="Aucun contact trouvé"
     />
   );
