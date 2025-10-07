@@ -40,7 +40,7 @@ const ClientPage = () => {
         {
           label: "Interventions",
           icon: <FileArchive />,
-          url: `/requete/intervention/${selectedId}`,
+          url: `/client/intervention/${selectedId}`,
           variantbtn: "blue"
         },
         {
@@ -60,14 +60,10 @@ const ClientPage = () => {
       hideList={[
         "createdAt",
         "updatedAt",
-        "client",
-        "dateCloture",
-        "Intervention",
-        "dateDebut",
-        "logiciel",
-        "observation",
-        "clientId",
-        "isTacheClient"
+        "adresse",
+        "sigle",
+        "dateInscription",
+        "dateNewVisite"
       ]}
       searchId="nomClient"
       searchPlaceholder="Rechercher une nom de client"
