@@ -5,8 +5,8 @@ import { Button } from "../ui/button";
 import { LogOut } from "lucide-react";
 import { logout } from "@/action/auth/logout";
 import { useTransition } from "react";
-import { Spinner } from "../spinner";
 import { useRouter } from "next/navigation";
+import { Spinner } from "../ui/spinner";
 
 const LogoutForm = () => {
   const [isPending, startTransition] = useTransition();

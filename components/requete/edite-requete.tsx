@@ -30,8 +30,8 @@ import { Requete } from "@prisma/client";
 import { updateRequete } from "@/services/requete.service";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { Spinner } from "../spinner";
 import HeaderPage from "../features/header-page";
+import { Spinner } from "../ui/spinner";
 
 const EditeRequete = ({ requete }: { requete: Requete }) => {
   const router = useRouter();

@@ -20,7 +20,7 @@ import { createIntervention } from "@/services/intervention.service";
 import { createItemIntervention } from "@/services/itemIntervention.service";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Spinner } from "../spinner";
+import { Spinner } from "../ui/spinner";
 
 type Item = {
   date: string;

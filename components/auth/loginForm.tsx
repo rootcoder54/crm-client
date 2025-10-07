@@ -26,8 +26,8 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
-import { Spinner } from "../spinner";
 import FormError from "./form-error";
+import { Spinner } from "@/components/ui/spinner";
 
 export function LoginForm({
   className,

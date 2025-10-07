@@ -28,9 +28,9 @@ import {
   SidebarMenuItem
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Spinner } from "../spinner";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { Spinner } from "@/components/ui/spinner";
 
 export const UserButton = () => {
   const { data: session, status } = useSession();

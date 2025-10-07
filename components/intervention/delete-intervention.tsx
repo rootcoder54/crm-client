@@ -15,8 +15,8 @@ import { Ban, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { Spinner } from "../spinner";
 import { deleteItemIntervention } from "@/services/itemIntervention.service";
+import { Spinner } from "../ui/spinner";
 
 const DeleteIntervention = ({
   intervention,
@@ -46,7 +46,7 @@ const DeleteIntervention = ({
       <AlertDialogContent>
         {isPending ? (
           <div className="w-full flex flex-col items-center">
-            <Spinner />
+            <Spinner className="size-4" />
           </div>
         ) : (
           <>

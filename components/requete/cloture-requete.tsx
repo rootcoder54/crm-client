@@ -24,7 +24,7 @@ import { Ban, CalendarCheck2, ChevronDownIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Spinner } from "../spinner";
+import { Spinner } from "../ui/spinner";
 
 const ClotureRequete = ({ requete }: { requete: Requete }) => {
   const router = useRouter();

@@ -16,7 +16,7 @@ import { Ban, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { Spinner } from "../spinner";
+import { Spinner } from "../ui/spinner";
 
 const DeleteRequete = ({ requete }: { requete: Requete }) => {
   const router = useRouter();

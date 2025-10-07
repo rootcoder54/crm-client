@@ -47,13 +47,13 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { Spinner } from "../spinner";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Client } from "@prisma/client";
 import { createRequete } from "@/services/requete.service";
 import HeaderPage from "../features/header-page";
+import { Spinner } from "../ui/spinner";
 
 const AddRequete = ({ clients }: { clients: Client[] }) => {
   const router = useRouter();
