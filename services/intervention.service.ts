@@ -18,14 +18,29 @@ export async function createIntervention(data: {
 }
 
 export async function getInterventionById(id: string) {
-  return prisma.intervention.findUnique({ where: { id }, include: { items: true, document: true } });
+  return prisma.intervention.findUnique({
+    where: { id },
+    include: { items: true, document: true }
+  });
 }
 
 export async function getInterventionsByClient(clientId: string) {
   return prisma.intervention.findMany({ where: { clientId } });
 }
 
-export async function updateIntervention(id: string, data: Partial<Omit<Parameters<typeof createIntervention>[0], "numero" | "service" | "intervenant" | "dateCloture" | "clientId">>) {
+export async function getInterventions() {
+  return prisma.intervention.findMany({});
+}
+
+export async function updateIntervention(
+  id: string,
+  data: Partial<
+    Omit<
+      Parameters<typeof createIntervention>[0],
+      "numero" | "service" | "intervenant" | "dateCloture" | "clientId"
+    >
+  >
+) {
   return prisma.intervention.update({ where: { id }, data });
 }
 
