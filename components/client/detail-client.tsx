@@ -22,11 +22,11 @@ const DetailClient = ({ client }: { client: Client | null }) => {
       >
         <Button variant={"gray"} asChild size="sm">
           <Link
-            href={"/client/intervention/" + client.id}
+            href={"/client/requete/" + client.id}
             className="dark:text-foreground"
           >
             <FileArchive />
-            <span className="hidden sm:flex">Interventions</span>
+            <span className="hidden sm:flex">Requêtes</span>
           </Link>
         </Button>
         <Button variant={"outline"} asChild size="sm">
