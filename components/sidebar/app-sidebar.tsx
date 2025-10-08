@@ -3,12 +3,12 @@
 import * as React from "react";
 import {
   AlignLeft,
-  Calendar,
   FileArchive,
   FileChartColumn,
   FileChartPie,
   Home,
   MessageCircleQuestion,
+  Settings,
   Users,
   UserSquareIcon
 } from "lucide-react";
@@ -66,18 +66,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         isActive: pathname.startsWith("/facture")
       },
       {
-        title: "Calendrier",
-        url: "/calendrier",
-        icon: Calendar,
-        isActive: pathname === "/calendrier"
-      },
-      {
-        title: "Tache",
-        url: "/tache",
-        icon: Calendar,
-        isActive: pathname.startsWith("/tache")
-      },
-      {
         title: "Formation User",
         url: "/formationuser",
         icon: FileArchive,
@@ -88,13 +76,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/ask",
         icon: MessageCircleQuestion,
         isActive: pathname.startsWith("/ask")
-      }
-      /*{
+      },
+      {
         title: "Settings",
-        url: "#",
-        icon: Settings2,
+        url: "/settings",
+        icon: Settings,
         isActive: pathname === "/settings"
-      }*/
+      }
     ]
   };
   return (
