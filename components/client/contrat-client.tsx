@@ -26,7 +26,7 @@ const ContratClient = ({
       ]}
       selectAction={[]}
       data={contrats}
-      hideList={["clientId"]}
+      hideList={["clientId", "createdAt", "updatedAt"]}
       notData="Aucun contrat trouvé"
     />
   );
