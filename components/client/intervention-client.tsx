@@ -2,14 +2,17 @@ import { ItemIntervention } from "@prisma/client";
 import { DataTable } from "../datatables";
 
 const InterventionClient = ({
-  items
+  items,
+  clientId
 }: {
   items: ItemIntervention[];
+  clientId?: string;
 }) => {
   return (
     <DataTable
       chemins={[
         { title: "Clients", url: "/client" },
+        { title: "Details", url: `/client/detail/${clientId}` },
         { title: "Interventions", url: "#" }
       ]}
       data={items}

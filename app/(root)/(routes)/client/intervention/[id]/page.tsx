@@ -16,9 +16,9 @@ const PageClientIntervention = async ({ params }: pageProps) => {
   const intervention = await getInterventionById(client.interventions[0].id);
 
   if (!intervention || intervention.items.length === 0) {
-    return <InterventionClient items={[]} />;
+    return <InterventionClient items={[]} clientId={id} />;
   }
-  return <InterventionClient items={intervention?.items} />;
+  return <InterventionClient items={intervention?.items} clientId={id} />;
 };
 
 export default PageClientIntervention;

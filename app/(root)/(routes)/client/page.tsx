@@ -5,7 +5,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { fetcher } from "@/lib/fetcher";
 import { Client } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import { FileArchive, Phone, Plus, SquarePen, Trash } from "lucide-react";
+import { Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 
 const ClientPage = () => {
@@ -38,27 +38,15 @@ const ClientPage = () => {
       ]}
       selectAction={[
         {
-          label: "Interventions",
-          icon: <FileArchive />,
-          url: `/client/intervention/${selectedId}`,
-          variantbtn: "blue"
-        },
-        {
-          label: "Contacts",
-          icon: <Phone />,
-          url: `/client/contact/${selectedId}`,
-          variantbtn: "secondary"
-        },
-        {
-          label: "Editer",
+          label: "Details",
           icon: <SquarePen />,
-          url: `/requete/edite/${selectedId}`,
+          url: `/client/detail/${selectedId}`,
           variantbtn: "outline"
         },
         {
           label: "Supprimer",
           icon: <Trash />,
-          url: `/requete/delete/${selectedId}`,
+          url: `/client/delete/${selectedId}`,
           variantbtn: "danger"
         }
       ]}

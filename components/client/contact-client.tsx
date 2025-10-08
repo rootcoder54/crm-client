@@ -21,6 +21,7 @@ const ContactClient = ({
       ]}
       chemins={[
         { title: "Clients", url: "/client" },
+        { title: "Details", url: `/client/detail/${clientId}` },
         { title: "Contacts", url: "#" }
       ]}
       selectAction={[]}
