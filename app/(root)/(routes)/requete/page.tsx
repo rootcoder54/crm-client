@@ -14,6 +14,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { DataTable } from "@/components/datatables";
 import { useEffect, useState } from "react";
 import { getRequeteById } from "@/services/requete.service";
+import { format } from "date-fns";
 
 const PageRequete = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -39,6 +40,11 @@ const PageRequete = () => {
       </div>
     );
   }
+  const nrequetes = requetes.map((requete) => ({
+    ...requete,
+    numero:
+      format(requete.dateDebut, "yyyyMMdd_HHss") + "_" + requete.logiciel + "_#"
+  }));
   return (
     <DataTable
       chemins={[
@@ -86,7 +92,7 @@ const PageRequete = () => {
           variantbtn: "danger"
         }
       ]}
-      data={requetes}
+      data={nrequetes}
       hideList={[
         "createdAt",
         "updatedAt",
@@ -96,6 +102,9 @@ const PageRequete = () => {
         "logiciel",
         "observation",
         "clientId",
+        "dateDebut",
+        "etat",
+        "description",
         "isTacheClient"
       ]}
       searchId="sujet"
