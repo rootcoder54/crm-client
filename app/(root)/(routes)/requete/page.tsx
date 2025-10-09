@@ -3,6 +3,7 @@ import { Requete } from "@prisma/client";
 import {
   CalendarCheck2,
   FileArchive,
+  FileBox,
   Plus,
   SquarePen,
   Trash
@@ -67,6 +68,12 @@ const PageRequete = () => {
           hide: isCloture
         },
         {
+          label: "Details",
+          icon: <FileBox />,
+          url: `/requete/detail/${selectedId}`,
+          variantbtn: "blue"
+        },
+        {
           label: "Editer",
           icon: <SquarePen />,
           url: `/requete/edite/${selectedId}`,
@@ -86,7 +93,6 @@ const PageRequete = () => {
         "client",
         "dateCloture",
         "Intervention",
-        "dateDebut",
         "logiciel",
         "observation",
         "clientId",

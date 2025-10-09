@@ -14,6 +14,7 @@ import { fetcher } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
 import { Requete } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 
 export default function Home() {
   const { data: requetes } = useQuery<Requete[]>({
@@ -35,6 +36,7 @@ export default function Home() {
           <Table className="border-y w-full">
             <TableHeader className="bg-zinc-600/10">
               <TableRow className="w-full">
+                <TableHead>Numero</TableHead>
                 <TableHead>Sujet</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Type</TableHead>
@@ -52,6 +54,12 @@ export default function Home() {
                       requete.dateCloture && "hidden"
                     )}
                   >
+                    <TableCell>
+                      {format(requete.dateDebut, "yyyyMMdd_HHmm") +
+                        "_" +
+                        requete.logiciel +
+                        "_#"}
+                    </TableCell>
                     <TableCell>{requete.sujet}</TableCell>
                     <TableCell>{requete.description}</TableCell>
                     <TableCell>{requete.type}</TableCell>
