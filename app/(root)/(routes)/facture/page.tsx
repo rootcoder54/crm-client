@@ -39,23 +39,35 @@ const PageFacture = () => {
         {
           label: "Details",
           icon: <FileBox />,
-          url: `/requete/detail/${selectedId}`,
+          url: `#`,
           variantbtn: "blue"
         },
         {
           label: "Editer",
           icon: <SquarePen />,
-          url: `/requete/edite/${selectedId}`,
+          url: `#`,
           variantbtn: "outline"
         },
         {
           label: "Supprimer",
           icon: <Trash />,
-          url: `/requete/delete/${selectedId}`,
+          url: `/facture/delete/${selectedId}`,
           variantbtn: "danger"
         }
       ]}
       data={factures}
+      hideList={[
+        "createdAt",
+        "updatedAt",
+        "clientId",
+        "date",
+        "remise",
+        "observation",
+        "totalTTC",
+        "totalHT",
+        "totalTVA",
+        "itemFactures"
+      ]}
       onRowSelect={(id) => setSelectedId(id)}
     />
   );

@@ -37,6 +37,16 @@ export async function getAllFactures() {
   return prisma.facture.findMany({ include: { itemFactures: true } });
 }
 
+export const maxorder = async () => {
+  const maxOrder = await prisma.facture.aggregate({
+    _max: {
+      numeroOrdre: true
+    }
+  });
+
+  return maxOrder._max.numeroOrdre || 1;
+};
+
 export async function updateFacture(
   id: string,
   data: Partial<
