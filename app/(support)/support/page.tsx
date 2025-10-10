@@ -1,6 +1,5 @@
 "use client";
-import { useTheme } from "next-themes";
-import { useEffect } from "react";
+
 import {
   Item,
   ItemContent,
@@ -52,10 +51,7 @@ const listes = [
 ];
 
 const Page = () => {
-  const { setTheme } = useTheme();
-  useEffect(() => {
-    setTheme("light");
-  }, [setTheme]);
+
   return (
     <div>
       <div className="flex flex-col py-6 px-8 gap-y-9 container">
