@@ -1,3 +1,4 @@
+"use server";
 import { prisma } from "@/lib/db";
 
 export async function createFacture(data: {
@@ -19,14 +20,29 @@ export async function createFacture(data: {
 }
 
 export async function getFactureById(id: string) {
-  return prisma.facture.findUnique({ where: { id }, include: { itemFactures: true } });
+  return prisma.facture.findUnique({
+    where: { id },
+    include: { itemFactures: true }
+  });
 }
 
 export async function getFacturesByClient(clientId: string) {
-  return prisma.facture.findMany({ where: { clientId }, include: { itemFactures: true } });
+  return prisma.facture.findMany({
+    where: { clientId },
+    include: { itemFactures: true }
+  });
 }
 
-export async function updateFacture(id: string, data: Partial<Omit<Parameters<typeof createFacture>[0], "numero" | "date" | "clientId">>) {
+export async function getAllFactures() {
+  return prisma.facture.findMany({ include: { itemFactures: true } });
+}
+
+export async function updateFacture(
+  id: string,
+  data: Partial<
+    Omit<Parameters<typeof createFacture>[0], "numero" | "date" | "clientId">
+  >
+) {
   return prisma.facture.update({ where: { id }, data });
 }
 
