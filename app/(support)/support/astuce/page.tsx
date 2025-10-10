@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import { AlignVerticalJustifyEnd } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -8,6 +7,11 @@ import { BiSearchAlt2 } from "react-icons/bi";
 import { IoVideocamOff } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import { Button } from "@/components/ui/button";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput
+} from "@/components/ui/input-group";
 import { videos } from "@/constante/videoAstuce";
 
 const AstucePage = () => {
@@ -24,24 +28,28 @@ const AstucePage = () => {
   return (
     <div className="w-full flex flex-col gap-6 py-10">
       <h1 className="text-3xl font-bold text-neutral-600">Vidéos pratiques</h1>
-      <div className="w-full border rounded-md shadow px-3 py-1 flex items-center group">
-        <BiSearchAlt2 className="h-7 w-7 text-blue-700" />
-        <Input
+      <InputGroup>
+        <InputGroupInput
           placeholder="Recherche..."
           className="border-0 text-blue-700 placeholder:text-zinc-400"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+        <InputGroupAddon>
+          <BiSearchAlt2 className="h-7 w-7 text-blue-700" />
+        </InputGroupAddon>
         {search && (
-          <Button
-            variant="ghost"
-            className="h-8 w-8 p-0 rounded-full hover:bg-zinc-200"
-            onClick={() => setSearch("")}
-          >
-            <IoMdClose className="h-5 w-5 text-zinc-500" />
-          </Button>
+          <InputGroupAddon align="inline-end">
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0 rounded-full hover:bg-zinc-200"
+              onClick={() => setSearch("")}
+            >
+              <IoMdClose className="h-5 w-5 text-zinc-500" />
+            </Button>
+          </InputGroupAddon>
         )}
-      </div>
+      </InputGroup>
       {filteredVideos.length > 0 ? (
         filteredVideos.map((video, index) => (
           <CardVideo
