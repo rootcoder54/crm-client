@@ -26,10 +26,15 @@ const BaseClient = ({
       ]}
       selectAction={[]}
       data={bases}
-      hideList={["clientId"]}
-      searchId="nom"
-      searchPlaceholder="Rechercher nom"
-      notData="Aucun contact trouvé"
+      hideList={[
+        "clientId",
+        "createdAt",
+        "updatedAt",
+        "commentaire",
+        "chemin",
+        "date"
+      ]}
+      notData="Aucun Base trouvé"
     />
   );
 };
