@@ -1,6 +1,11 @@
+"use server";
 import { prisma } from "@/lib/db";
 
-export async function createLog(data: { action: string; details?: string; userId: string }) {
+export async function createLog(data: {
+  action: string;
+  details?: string;
+  userId: string;
+}) {
   return prisma.log.create({ data });
 }
 

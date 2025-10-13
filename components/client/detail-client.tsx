@@ -4,7 +4,7 @@ import { Client } from "@prisma/client";
 import HeaderPage from "../features/header-page";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { File, FileArchive, Phone, Trash2 } from "lucide-react";
+import { File, FileArchive, FileArchiveIcon, Phone, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { Mode } from "../features/theme";
 
@@ -36,6 +36,15 @@ const DetailClient = ({ client }: { client: Client | null }) => {
           >
             <Phone />
             <span className="hidden sm:flex">Contact</span>
+          </Link>
+        </Button>
+        <Button variant={"outline"} asChild size="sm">
+          <Link
+            href={"/client/base/" + client.id}
+            className="dark:text-foreground"
+          >
+            <FileArchiveIcon />
+            <span className="hidden sm:flex">Base</span>
           </Link>
         </Button>
         <Button variant={"destructive"} asChild size="sm">

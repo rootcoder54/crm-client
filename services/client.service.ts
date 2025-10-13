@@ -17,7 +17,14 @@ export async function createClient(data: {
 export async function getClientById(id: string) {
   return prisma.client.findUnique({
     where: { id },
-    include: { contacts: true, contrats: true, interventions: true, logiciels: true, Facture: true }
+    include: {
+      contacts: true,
+      contrats: true,
+      interventions: true,
+      logiciels: true,
+      Facture: true,
+      bases: true
+    }
   });
 }
 
@@ -25,7 +32,10 @@ export async function getAllClients() {
   return prisma.client.findMany();
 }
 
-export async function updateClient(id: string, data: Partial<Omit<Parameters<typeof createClient>[0], "nomClient">>) {
+export async function updateClient(
+  id: string,
+  data: Partial<Omit<Parameters<typeof createClient>[0], "nomClient">>
+) {
   return prisma.client.update({ where: { id }, data });
 }
 
