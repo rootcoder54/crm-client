@@ -41,11 +41,8 @@ const AddBase = ({ clientId }: { clientId: string }) => {
     societe: z.string(),
     chemin: z.string(),
     convention: z.string(),
-    poste: z
-      .number({
-        required_error: "Le poste est obligatoire",
-        invalid_type_error: "Le poste doit être un nombre"
-      })
+    postet: z
+      .number()
       .positive("Le nombre doit être positif")
       .or(
         z
@@ -53,11 +50,8 @@ const AddBase = ({ clientId }: { clientId: string }) => {
           .regex(/^\d+$/, "Veuillez entrer un nombre valide")
           .transform(Number)
       ),
-    employe: z
-      .number({
-        required_error: "L'employé est obligatoire",
-        invalid_type_error: "L'employé doit être un nombre"
-      })
+    employet: z
+      .number()
       .positive("Le nombre doit être positif")
       .or(
         z
@@ -70,24 +64,34 @@ const AddBase = ({ clientId }: { clientId: string }) => {
     clientId: z.string()
   });
 
-  const form = useForm<z.infer<typeof schema>>({
+  const form = useForm<z.input<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
       societe: "",
       chemin: "",
       convention: "",
-      poste: 0,
-      employe: 0,
+      postet: 0,
+      employet: 0,
       date: new Date(),
       commentaire: "",
       clientId: clientId
     }
   });
 
-  function onSubmit(values: z.infer<typeof schema>) {
+  function onSubmit(values: z.input<typeof schema>) {
     console.log(values);
+    const data = {
+      societe: values.societe,
+      chemin: values.chemin,
+      convention: values.convention,
+      date: values.date,
+      poste: Number(values.postet),
+      employe: Number(values.employet),
+      commentaire: values.commentaire,
+      clientId: values.clientId
+    };
     transition(() => {
-      createBase(values)
+      createBase(data)
         .then(() => {
           toast.success("Base ajouté avec succès");
           router.push("/client/base/" + clientId);
@@ -170,7 +174,7 @@ const AddBase = ({ clientId }: { clientId: string }) => {
             />
             <FormField
               control={form.control}
-              name="poste"
+              name="postet"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Poste</FormLabel>
@@ -183,7 +187,7 @@ const AddBase = ({ clientId }: { clientId: string }) => {
             />
             <FormField
               control={form.control}
-              name="employe"
+              name="employet"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Employé</FormLabel>

@@ -1,6 +1,8 @@
+"use client";
 import { Base } from "@prisma/client";
 import { DataTable } from "../datatables";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 const BaseClient = ({
   bases,
@@ -9,6 +11,8 @@ const BaseClient = ({
   bases: Base[];
   clientId: string;
 }) => {
+  const [selectedId, setSelectedId] = useState<string>("");
+
   return (
     <DataTable
       action={[
@@ -24,7 +28,14 @@ const BaseClient = ({
         { title: "Details", url: `/client/detail/${clientId}` },
         { title: "Bases", url: "#" }
       ]}
-      selectAction={[]}
+      selectAction={[
+        {
+          label: "Supprimer",
+          icon: <Trash2 />,
+          url: `/client/base/${clientId}/delete/${selectedId}`,
+          variantbtn: "danger"
+        }
+      ]}
       data={bases}
       hideList={[
         "clientId",
@@ -35,6 +46,7 @@ const BaseClient = ({
         "date"
       ]}
       notData="Aucun Base trouvé"
+      onRowSelect={(id) => setSelectedId(id)}
     />
   );
 };
