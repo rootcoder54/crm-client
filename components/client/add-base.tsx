@@ -116,7 +116,8 @@ const AddBase = ({ clientId }: { clientId: string }) => {
           <HeaderPage
             chemins={[
               { title: "Clients", url: "/client" },
-              { title: "Nouveau Contact", url: "#" }
+              { title: "Bases", url: "/client/base/" + clientId },
+              { title: "Nouveau Base", url: "#" }
             ]}
           >
             <div className="flex items-center gap-2">
