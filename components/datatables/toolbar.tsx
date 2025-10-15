@@ -10,7 +10,6 @@ import {
   TooltipContent,
   TooltipTrigger
 } from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
 import DataTableFilter from "./data-filter";
 
 interface DataTableToolbarProps<TData> {
@@ -92,16 +91,6 @@ function DataToolBar<TData>({
                 <p>Effacer les filtres</p>
               </TooltipContent>
             </Tooltip>
-          )}
-          {table.getFilteredSelectedRowModel().rows.length !== 0 && (
-            <div className="shadow-2xl rounded-lg bg-zinc-300/30 backdrop-blur-md border z-[50]">
-              <div className="flex flex-row items-center justify-start w-full gap-x-1 px-4 py-1">
-                <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums bg-blue-600">
-                  {table.getFilteredSelectedRowModel().rows.length}
-                </Badge>{" "}
-                <span>sélectionné</span>
-              </div>
-            </div>
           )}
         </div>
       </div>

@@ -33,10 +33,6 @@ const PageRequete = () => {
     queryKey: ["requete"],
     queryFn: () => fetcher(`/api/requete`)
   });
-  const { data: clients } = useQuery<Client[]>({
-    queryKey: ["clients"],
-    queryFn: () => fetcher(`/api/client`)
-  });
 
   useEffect(() => {
     getRequeteById(selectedId).then((data) => {
@@ -80,13 +76,17 @@ const PageRequete = () => {
       client: requete.client?.nomClient || "N/A"
     })) || [];
 
-  const filterClients = [
-    ...(clients?.map((client) => ({
-      label: client.nomClient,
-      value: client.nomClient
-    })) || []),
-    { label: "Pas de client", value: "N/A" }
-  ];
+  const dataFiltered = Array.from(
+    new Map(
+      (requetes ?? []).map((requete) => [
+        requete.client?.nomClient || "N/A",
+        {
+          label: requete.client?.nomClient || "N/A",
+          value: requete.client?.nomClient || "N/A"
+        }
+      ])
+    ).values()
+  );
 
   return (
     <DataTable
@@ -160,7 +160,7 @@ const PageRequete = () => {
         },
         {
           dataFilter: "client",
-          options: filterClients
+          options: dataFiltered
         }
       ]}
       onRowSelect={(id) => setSelectedId(id)}
