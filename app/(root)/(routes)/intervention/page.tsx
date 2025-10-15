@@ -38,6 +38,9 @@ const PageIntervention = () => {
         "createdAt",
         "updatedAt"
       ]}
+      searchId="intervenant"
+      searchPlaceholder="Recherche par intervenant..."
+      notData="Aucune intervention trouvée"
     />
   );
 };

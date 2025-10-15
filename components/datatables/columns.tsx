@@ -104,7 +104,7 @@ export function generateColumns<T extends Record<string, unknown>>(
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          {key}
+          {key.charAt(0).toUpperCase() + key.slice(1)}
           {column.getIsSorted() === "desc" ? (
             <ArrowDown />
           ) : column.getIsSorted() === "asc" ? (

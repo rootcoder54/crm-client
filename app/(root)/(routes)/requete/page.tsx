@@ -1,5 +1,5 @@
 "use client";
-import { Requete } from "@prisma/client";
+import { Client, Requete } from "@prisma/client";
 import {
   AlertCircleIcon,
   CalendarCheck2,
@@ -19,6 +19,10 @@ import { getRequeteById } from "@/services/requete.service";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 
+interface RequeteWithClient extends Requete {
+  client?: Client | null;
+}
+
 const PageRequete = () => {
   const [selectedId, setSelectedId] = useState<string>("");
   const [isCloture, setIscloture] = useState<boolean>(false);
@@ -26,7 +30,7 @@ const PageRequete = () => {
     isError,
     isPending,
     data: requetes
-  } = useQuery<Requete[]>({
+  } = useQuery<RequeteWithClient[]>({
     queryKey: ["requete"],
     queryFn: () => fetcher(`/api/requete`)
   });
@@ -60,7 +64,8 @@ const PageRequete = () => {
       </div>
     );
   }
-  const nrequetes =
+  console.log(requetes);
+  const listes =
     requetes?.map((requete) => ({
       ...requete,
       numero:
@@ -72,7 +77,8 @@ const PageRequete = () => {
         <Badge>Cloturée</Badge>
       ) : (
         <Badge className="bg-yellow-500 text-black">En cours</Badge>
-      )
+      ),
+      client: requete.client?.nomClient || "N/A"
     })) || [];
   return (
     <DataTable
@@ -121,11 +127,10 @@ const PageRequete = () => {
           variantbtn: "danger"
         }
       ]}
-      data={nrequetes}
+      data={listes}
       hideList={[
         "createdAt",
         "updatedAt",
-        "client",
         "dateCloture",
         "Intervention",
         "logiciel",
@@ -136,7 +141,7 @@ const PageRequete = () => {
         "isTacheClient"
       ]}
       searchId="sujet"
-      searchPlaceholder="Rechercher une requête"
+      searchPlaceholder="Rechercher un sujet..."
       onRowSelect={(id) => setSelectedId(id)}
     />
   );
