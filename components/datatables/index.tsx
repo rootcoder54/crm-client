@@ -35,15 +35,6 @@ interface DataTableProps<TData extends Record<string, unknown>> {
   notData?: string;
   searchId?: string;
   searchPlaceholder?: string;
-  links?: {
-    name: string;
-    icon: React.ReactNode;
-    lien: string;
-    variantbtn?: VariantProps<typeof buttonVariants>["variant"];
-  }[];
-  selectlinks?: {
-    btn: React.ReactNode;
-  }[];
   hideList?: string[];
   chemins?: { title: string; url: string }[];
   action?: {
@@ -60,6 +51,14 @@ interface DataTableProps<TData extends Record<string, unknown>> {
     variantbtn: VariantProps<typeof buttonVariants>["variant"];
     hide?: boolean;
   }[];
+  popFilter?: {
+    dataFilter: string;
+    options: {
+      label: string;
+      value: string;
+      icon?: React.ComponentType<{ className?: string }>;
+    }[];
+  }[];
 }
 
 export function DataTable<TData extends Record<string, unknown>>({
@@ -68,12 +67,11 @@ export function DataTable<TData extends Record<string, unknown>>({
   notData,
   searchId,
   searchPlaceholder,
-  links,
-  selectlinks,
   hideList,
   chemins,
   action,
-  selectAction
+  selectAction,
+  popFilter
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
@@ -138,8 +136,7 @@ export function DataTable<TData extends Record<string, unknown>>({
             table={table}
             searchId={searchId}
             searchPlaceholder={searchPlaceholder}
-            selectlinks={selectlinks}
-            links={links}
+            popFilter={popFilter}
           />
         </div>
         <Table className="border-y w-full">

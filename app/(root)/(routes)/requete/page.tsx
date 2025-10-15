@@ -17,7 +17,6 @@ import { DataTable } from "@/components/datatables";
 import { useEffect, useState } from "react";
 import { getRequeteById } from "@/services/requete.service";
 import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
 
 interface RequeteWithClient extends Requete {
   client?: Client | null;
@@ -34,6 +33,11 @@ const PageRequete = () => {
     queryKey: ["requete"],
     queryFn: () => fetcher(`/api/requete`)
   });
+  const { data: clients } = useQuery<Client[]>({
+    queryKey: ["clients"],
+    queryFn: () => fetcher(`/api/client`)
+  });
+
   useEffect(() => {
     getRequeteById(selectedId).then((data) => {
       if (data?.dateCloture) {
@@ -64,7 +68,6 @@ const PageRequete = () => {
       </div>
     );
   }
-  console.log(requetes);
   const listes =
     requetes?.map((requete) => ({
       ...requete,
@@ -73,13 +76,18 @@ const PageRequete = () => {
         "_" +
         requete.logiciel +
         "_#",
-      etat: requete.dateCloture ? (
-        <Badge>Cloturée</Badge>
-      ) : (
-        <Badge className="bg-yellow-500 text-black">En cours</Badge>
-      ),
+      etat: requete.dateCloture ? "Cloturée" : "En cours",
       client: requete.client?.nomClient || "N/A"
     })) || [];
+
+  const filterClients = [
+    ...(clients?.map((client) => ({
+      label: client.nomClient,
+      value: client.nomClient
+    })) || []),
+    { label: "Pas de client", value: "N/A" }
+  ];
+
   return (
     <DataTable
       chemins={[
@@ -142,6 +150,19 @@ const PageRequete = () => {
       ]}
       searchId="sujet"
       searchPlaceholder="Rechercher un sujet..."
+      popFilter={[
+        {
+          dataFilter: "etat",
+          options: [
+            { label: "En cours", value: "En cours" },
+            { label: "Cloturée", value: "Cloturée" }
+          ]
+        },
+        {
+          dataFilter: "client",
+          options: filterClients
+        }
+      ]}
       onRowSelect={(id) => setSelectedId(id)}
     />
   );

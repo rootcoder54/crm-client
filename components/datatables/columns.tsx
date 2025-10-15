@@ -97,7 +97,7 @@ export function generateColumns<T extends Record<string, unknown>>(
   const sample = data[0]; // on prend la première ligne comme modèle
 
   return Object.keys(sample).map((key) => ({
-    accessorKey: key,
+    accessorKey: key, 
     header: ({ column }) => {
       return (
         <Button
