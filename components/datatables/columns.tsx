@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -79,6 +80,9 @@ const renderCell = (value: unknown) => {
         </TooltipContent>
       </Tooltip>
     );
+  }
+  if (React.isValidElement(value)) {
+    return value;
   }
 
   return <span>-</span>;

@@ -2,22 +2,40 @@
 
 import { DataTable } from "@/components/datatables";
 import { Spinner } from "@/components/ui/spinner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { fetcher } from "@/lib/fetcher";
 import { Facture } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import { FileBox, Plus, SquarePen, Trash } from "lucide-react";
+import { AlertCircleIcon, FileBox, Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 
 const PageFacture = () => {
   const [selectedId, setSelectedId] = useState<string>("");
-  const { data: factures } = useQuery<Facture[]>({
+  const {
+    isError,
+    isPending,
+    data: factures
+  } = useQuery<Facture[]>({
     queryKey: ["facture"],
     queryFn: () => fetcher(`/api/facture`)
   });
-  if (!factures) {
+  if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
         <Spinner className="size-8" />
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div className="m-4">
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle> Erreur de donnée </AlertTitle>
+          <AlertDescription>
+            <p>Une erreur est survenue lors du chargement des factures.</p>
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
@@ -55,7 +73,7 @@ const PageFacture = () => {
           variantbtn: "danger"
         }
       ]}
-      data={factures}
+      data={factures || []}
       hideList={[
         "createdAt",
         "updatedAt",

@@ -1,6 +1,7 @@
 "use client";
 import { Requete } from "@prisma/client";
 import {
+  AlertCircleIcon,
   CalendarCheck2,
   FileArchive,
   FileBox,
@@ -11,15 +12,21 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { Spinner } from "@/components/ui/spinner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DataTable } from "@/components/datatables";
 import { useEffect, useState } from "react";
 import { getRequeteById } from "@/services/requete.service";
 import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
 
 const PageRequete = () => {
   const [selectedId, setSelectedId] = useState<string>("");
   const [isCloture, setIscloture] = useState<boolean>(false);
-  const { data: requetes } = useQuery<Requete[]>({
+  const {
+    isError,
+    isPending,
+    data: requetes
+  } = useQuery<Requete[]>({
     queryKey: ["requete"],
     queryFn: () => fetcher(`/api/requete`)
   });
@@ -33,18 +40,40 @@ const PageRequete = () => {
     });
   }, [selectedId]);
 
-  if (!requetes) {
+  if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
         <Spinner className="size-8" />
       </div>
     );
   }
-  const nrequetes = requetes.map((requete) => ({
-    ...requete,
-    numero:
-      format(requete.dateDebut, "yyyyMMdd_HHss") + "_" + requete.logiciel + "_#"
-  }));
+  if (isError) {
+    return (
+      <div className="m-4">
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle> Erreur de donnée </AlertTitle>
+          <AlertDescription>
+            <p>Une erreur est survenue lors du chargement des requêtes.</p>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+  const nrequetes =
+    requetes?.map((requete) => ({
+      ...requete,
+      numero:
+        format(requete.dateDebut, "yyyyMMdd_HHss") +
+        "_" +
+        requete.logiciel +
+        "_#",
+      etat: requete.dateCloture ? (
+        <Badge>Cloturée</Badge>
+      ) : (
+        <Badge className="bg-yellow-500 text-black">En cours</Badge>
+      )
+    })) || [];
   return (
     <DataTable
       chemins={[
@@ -103,7 +132,6 @@ const PageRequete = () => {
         "observation",
         "clientId",
         "dateDebut",
-        "etat",
         "description",
         "isTacheClient"
       ]}

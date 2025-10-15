@@ -1,24 +1,42 @@
 "use client";
 
 import { DataTable } from "@/components/datatables";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
 import { fetcher } from "@/lib/fetcher";
 import { Client } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, SquarePen, Trash } from "lucide-react";
+import { AlertCircleIcon, Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 
 const ClientPage = () => {
   const [selectedId, setSelectedId] = useState<string>("");
-  const { data: clients } = useQuery<Client[]>({
+  const {
+    isPending,
+    isError,
+    data: clients
+  } = useQuery<Client[]>({
     queryKey: ["clients"],
     queryFn: () => fetcher(`/api/client`)
   });
 
-  if (!clients) {
+  if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
         <Spinner className="size-8" />
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div className="m-4">
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle> Erreur de donnée </AlertTitle>
+          <AlertDescription>
+            <p>Une erreur est survenue lors du chargement des clients.</p>
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
@@ -50,7 +68,7 @@ const ClientPage = () => {
           variantbtn: "danger"
         }
       ]}
-      data={clients}
+      data={clients || []}
       hideList={[
         "createdAt",
         "updatedAt",
