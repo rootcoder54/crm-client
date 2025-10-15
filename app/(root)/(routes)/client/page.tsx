@@ -19,6 +19,14 @@ const ClientPage = () => {
     queryKey: ["clients"],
     queryFn: () => fetcher(`/api/client`)
   });
+  const dataFiltered = Array.from(
+    new Map(
+      (clients ?? []).map((client) => [
+        client.activite || "N/A",
+        { label: client.activite || "N/A", value: client.activite || "N/A" }
+      ])
+    ).values()
+  );
 
   if (isPending) {
     return (
@@ -76,6 +84,12 @@ const ClientPage = () => {
         "sigle",
         "dateInscription",
         "dateNewVisite"
+      ]}
+      popFilter={[
+        {
+          dataFilter: "activite",
+          options: dataFiltered
+        }
       ]}
       searchId="nomClient"
       searchPlaceholder="Rechercher une nom de client"
