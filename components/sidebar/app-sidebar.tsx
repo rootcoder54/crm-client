@@ -78,7 +78,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         isActive: pathname.startsWith("/ask")
       },
       {
-        title: "Settings",
+        title: "Parametres",
         url: "/setting",
         icon: Settings,
         isActive: pathname === "/setting"

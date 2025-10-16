@@ -2,15 +2,7 @@
 import * as React from "react";
 import { useSession } from "next-auth/react";
 
-import {
-  Cloud,
-  HelpCircle,
-  LogOut,
-  Plus,
-  Settings,
-  User,
-  Users
-} from "lucide-react";
+import { HelpCircle, LogOut, Plus, Settings, User, Users } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -49,7 +41,7 @@ export const UserButton = () => {
         {session?.user !== null && session?.user !== undefined && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuButton className="w-fit px-1.5">
+              <SidebarMenuButton className="w-fit px-1.5 cursor-pointer">
                 <span className="sr-only"> user </span>
                 <div className="flex items-center justify-center rounded-md">
                   <Avatar className="size-7">
@@ -70,16 +62,18 @@ export const UserButton = () => {
               <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <Link href={"/user"}>
+                <Link href={"#"}>
                   <DropdownMenuItem className="cursor-pointer">
                     <User />
                     <span>Profile</span>
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>
-                  <Settings />
-                  <span>Parametres</span>
-                </DropdownMenuItem>
+                <Link href={"/setting"}>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Settings />
+                    <span>Parametres</span>
+                  </DropdownMenuItem>
+                </Link>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
@@ -94,23 +88,19 @@ export const UserButton = () => {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <a href="/support" className="flex w-full gap-2 items-center">
+              <Link href={"/support"}>
+                <DropdownMenuItem className="cursor-pointer">
                   <HelpCircle />
                   <span>Support</span>
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem disabled>
-                <Cloud />
-                <span>API</span>
-              </DropdownMenuItem>
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <a href="/logout" className="flex w-full gap-2 items-center">
+              <Link href={"/logout"}>
+                <DropdownMenuItem className="cursor-pointer">
                   <LogOut />
                   <span>Deconnexion</span>
-                </a>
-              </DropdownMenuItem>
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
