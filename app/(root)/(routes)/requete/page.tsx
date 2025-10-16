@@ -17,6 +17,8 @@ import { DataTable } from "@/components/datatables";
 import { useEffect, useState } from "react";
 import { getRequeteById } from "@/services/requete.service";
 import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface RequeteWithClient extends Requete {
   client?: Client | null;
@@ -76,18 +78,6 @@ const PageRequete = () => {
       client: requete.client?.nomClient || "N/A"
     })) || [];
 
-  const dataFiltered = Array.from(
-    new Map(
-      (requetes ?? []).map((requete) => [
-        requete.client?.nomClient || "N/A",
-        {
-          label: requete.client?.nomClient || "N/A",
-          value: requete.client?.nomClient || "N/A"
-        }
-      ])
-    ).values()
-  );
-
   return (
     <DataTable
       chemins={[
@@ -136,6 +126,17 @@ const PageRequete = () => {
         }
       ]}
       data={listes}
+      columnStyles={{
+        etat: (value) => (
+          <Badge
+            variant={"default"}
+            className={cn(value !== "Cloturée" && "bg-yellow-400 text-black")}
+          >
+            {value as string}
+          </Badge>
+        ),
+        type: (value) => <span className="uppercase">{value as string}</span>
+      }}
       hideList={[
         "createdAt",
         "updatedAt",
@@ -157,10 +158,6 @@ const PageRequete = () => {
             { label: "En cours", value: "En cours" },
             { label: "Cloturée", value: "Cloturée" }
           ]
-        },
-        {
-          dataFilter: "client",
-          options: dataFiltered
         }
       ]}
       onRowSelect={(id) => setSelectedId(id)}

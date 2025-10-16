@@ -62,6 +62,10 @@ interface DataTableProps<TData extends Record<string, unknown>> {
       icon?: React.ComponentType<{ className?: string }>;
     }[];
   }[];
+  columnStyles?: Record<
+    string,
+    (value: unknown, row: TData) => React.ReactNode
+  >;
 }
 
 export function DataTable<TData extends Record<string, unknown>>({
@@ -74,7 +78,8 @@ export function DataTable<TData extends Record<string, unknown>>({
   chemins,
   action,
   selectAction,
-  popFilter
+  popFilter,
+  columnStyles
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [open, setOpen] = React.useState(false);
@@ -86,7 +91,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const columns = buildColumns(data);
+  const columns = buildColumns(data, columnStyles);
 
   const initialVisibility: VisibilityState = hideList
     ? hideList.reduce((acc, key) => ({ ...acc, [key]: false }), {})

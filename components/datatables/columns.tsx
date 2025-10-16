@@ -4,8 +4,7 @@ import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowUp, ChevronsUpDown, FileImage } from "lucide-react";
+import { FileImage } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Tooltip,
@@ -14,6 +13,8 @@ import {
 } from "@/components/ui/tooltip";
 
 import Image from "next/image";
+
+import { ColumnHeader } from "./columnHeader";
 
 const isImageUrl = (url: string) => {
   return /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(url);
@@ -90,39 +91,40 @@ const renderCell = (value: unknown) => {
 
 // Fonction qui génère les colonnes dynamiquement
 export function generateColumns<T extends Record<string, unknown>>(
-  data: T[]
+  data: T[],
+  customStyles?: Record<string, (value: unknown, row: T) => React.ReactNode>
 ): ColumnDef<T>[] {
   if (data.length === 0) return [];
 
   const sample = data[0]; // on prend la première ligne comme modèle
 
   return Object.keys(sample).map((key) => ({
-    accessorKey: key, 
+    accessorKey: key,
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          {key.charAt(0).toUpperCase() + key.slice(1)}
-          {column.getIsSorted() === "desc" ? (
-            <ArrowDown />
-          ) : column.getIsSorted() === "asc" ? (
-            <ArrowUp />
-          ) : (
-            <ChevronsUpDown />
-          )}
-        </Button>
+        <ColumnHeader
+          title={key.charAt(0).toUpperCase() + key.slice(1)}
+          column={column}
+        />
       );
     },
-    cell: ({ getValue }) => renderCell(getValue())
+    cell: ({ row, getValue }) => {
+      const value = getValue();
+      // Si un style personnalisé existe pour cette colonne → on l'utilise
+      if (customStyles && customStyles[key]) {
+        return customStyles[key](value, row.original);
+      }
+      // Sinon on applique le rendu par défaut
+      return renderCell(value);
+    }
   }));
 }
 
 export function buildColumns<T extends Record<string, unknown>>(
-  data: T[]
+  data: T[],
+  customStyles?: Record<string, (value: unknown, row: T) => React.ReactNode>
 ): ColumnDef<T>[] {
-  const dynamicCols = generateColumns(data);
+  const dynamicCols = generateColumns(data, customStyles);
 
   return [
     {
