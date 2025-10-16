@@ -8,7 +8,7 @@ import { ReactNode } from "react";
 
 interface headerprops {
   chemins?: { title: string; url: string }[];
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 function HeaderPage({ chemins, children }: headerprops) {

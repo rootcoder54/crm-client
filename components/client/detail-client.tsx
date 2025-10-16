@@ -6,7 +6,6 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { File, FileArchive, FileArchiveIcon, Phone, Trash2 } from "lucide-react";
 import { format } from "date-fns";
-import { Mode } from "../features/theme";
 
 const DetailClient = ({ client }: { client: Client | null }) => {
   if (!client) {
@@ -65,7 +64,6 @@ const DetailClient = ({ client }: { client: Client | null }) => {
             <span className="hidden sm:flex">Contrat</span>
           </Link>
         </Button>
-        <Mode />
       </HeaderPage>
       <div className="my-4 p-5 rounded-lg border-2 space-y-2">
         <h1 className="text-2xl font-bold">{client.nomClient}</h1>

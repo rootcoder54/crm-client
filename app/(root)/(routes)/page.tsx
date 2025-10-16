@@ -1,7 +1,6 @@
 "use client";
 
 import HeaderPage from "@/components/features/header-page";
-import { Mode } from "@/components/features/theme";
 import {
   Table,
   TableBody,
@@ -24,9 +23,7 @@ export default function Home() {
 
   return (
     <div>
-      <HeaderPage chemins={[{ title: "Home", url: "/" }]}>
-        <Mode />
-      </HeaderPage>
+      <HeaderPage chemins={[{ title: "Home", url: "/" }]}></HeaderPage>
       <div className="flex-1 h-full p-4">
         <h1 className="text-xl">Page d&apos;accueil</h1>
         <p>Bienvenue sur la page d&apos;accueil de notre application !</p>

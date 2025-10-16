@@ -7,7 +7,6 @@ import Link from "next/link";
 import { Table } from "@tanstack/react-table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Home, X } from "lucide-react";
-import { Mode } from "../features/theme";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
@@ -145,7 +144,6 @@ function Header<TData>({
               ))}
             </div>
           )}
-          <Mode />
         </div>
       </div>
     </header>
