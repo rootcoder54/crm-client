@@ -21,13 +21,16 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
+import { Popover, PopoverContent } from "@/components/ui/popover";
 import React, { useEffect } from "react";
 import DataToolBar from "./toolbar";
 import { DataTablePagination } from "./PaginationTable";
 import { buildColumns } from "./columns";
 import { VariantProps } from "class-variance-authority";
-import { buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Header from "./header";
+import Link from "next/link";
+import { X } from "lucide-react";
 
 interface DataTableProps<TData extends Record<string, unknown>> {
   data: TData[];
@@ -74,6 +77,11 @@ export function DataTable<TData extends Record<string, unknown>>({
   popFilter
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [open, setOpen] = React.useState(false);
+  const [position, setPosition] = React.useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0
+  });
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -130,6 +138,55 @@ export function DataTable<TData extends Record<string, unknown>>({
         action={action}
         selectAction={selectAction}
       />
+      {selectAction && selectAction.length > 0 && (
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverContent
+            side="right"
+            align="start"
+            className="p-2 w-40 absolute"
+            style={{
+              top: position.y,
+              left: position.x,
+              transform: "translate(2%, 2%)"
+            }}
+          >
+            <div className="flex flex-col space-y-2">
+              <>
+                {selectAction.map(
+                  (actionItem, index) =>
+                    !actionItem.hide && (
+                      <Link key={index} href={actionItem.url}>
+                        <Button
+                          variant={"ghost"}
+                          className="w-full justify-start"
+                        >
+                          {actionItem.icon && (
+                            <span className="mr-2">{actionItem.icon}</span>
+                          )}{" "}
+                          {actionItem.label}
+                        </Button>
+                      </Link>
+                    )
+                )}
+              </>
+              <Button
+                variant={"danger"}
+                onClick={() => {
+                  setOpen(false);
+                  table.resetRowSelection();
+                }}
+                className="w-full justify-start"
+              >
+                <span className="mr-2">
+                  {" "}
+                  <X />
+                </span>
+                <span>Annuler</span>
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
+      )}
       <div className="overflow-hidden">
         <div>
           <DataToolBar
@@ -145,7 +202,7 @@ export function DataTable<TData extends Record<string, unknown>>({
               <TableRow key={headerGroup.id} className="w-full">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="border">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -170,9 +227,17 @@ export function DataTable<TData extends Record<string, unknown>>({
                     const selectedId = row.getValue("id") as string;
                     if (onRowSelect) onRowSelect(selectedId);
                   }}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    table.setRowSelection({ [row.id]: true });
+                    const selectedId = row.getValue("id") as string;
+                    if (onRowSelect) onRowSelect(selectedId);
+                    setOpen(true);
+                    setPosition({ x: event.clientX, y: event.clientY });
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="border">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
