@@ -41,7 +41,7 @@ export const AddIntervention = ({
   const instance = format(new Date(), "yyyy-MM-dd");
 
   const [interventions, setInterventions] = useState<Item[]>([
-    { date: instance, debut: "", fin: "", texte: "" }
+    { date: instance, debut: "00:00", fin: "00:00", texte: "" }
   ]);
 
   const addInterventionIt = () => {

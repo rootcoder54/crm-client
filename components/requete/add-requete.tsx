@@ -1,13 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Ban,
-  CalendarIcon,
-  Check,
-  ChevronsUpDown,
-  Plus
-} from "lucide-react";
+import { Ban, CalendarIcon, Check, ChevronsUpDown, Plus } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -54,6 +48,7 @@ import { Client } from "@prisma/client";
 import { createRequete } from "@/services/requete.service";
 import HeaderPage from "../features/header-page";
 import { Spinner } from "../ui/spinner";
+import { lastVisite } from "@/services/client.service";
 
 const AddRequete = ({ clients }: { clients: Client[] }) => {
   const router = useRouter();
@@ -89,8 +84,13 @@ const AddRequete = ({ clients }: { clients: Client[] }) => {
   function onSubmit(values: z.infer<typeof schema>) {
     transition(() => {
       createRequete(values).then((data) => {
-        toast.success(`Requête ${data.sujet} enregistrer avec succes`);
-        router.push("/requete");
+        if (data.clientId) {
+          lastVisite(data.clientId, data.dateDebut).then((result) => {
+            console.log(result);
+            toast.success(`Requête ${data.sujet} enregistrer avec succes`);
+            router.push("/requete");
+          });
+        }
       });
     });
   }

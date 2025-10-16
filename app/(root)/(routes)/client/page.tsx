@@ -6,6 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { fetcher } from "@/lib/fetcher";
 import { Client } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { AlertCircleIcon, Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 
@@ -48,6 +49,13 @@ const ClientPage = () => {
       </div>
     );
   }
+  const listes =
+    clients?.map((client) => ({
+      ...client,
+      derniereRequete: client.dateLastVisite
+        ? format(client.dateLastVisite, "dd/MM/yyyy")
+        : client.dateLastVisite
+    })) || [];
   return (
     <DataTable
       chemins={[
@@ -76,14 +84,15 @@ const ClientPage = () => {
           variantbtn: "danger"
         }
       ]}
-      data={clients || []}
+      data={listes || []}
       hideList={[
         "createdAt",
         "updatedAt",
         "adresse",
         "sigle",
         "dateInscription",
-        "dateNewVisite"
+        "dateNewVisite",
+        "dateLastVisite"
       ]}
       popFilter={[
         {

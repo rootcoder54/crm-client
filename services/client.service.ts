@@ -39,6 +39,15 @@ export async function updateClient(
   return prisma.client.update({ where: { id }, data });
 }
 
+export async function lastVisite(id: string, date: Date) {
+  return prisma.client.update({
+    where: { id },
+    data: {
+      dateLastVisite: date
+    }
+  });
+}
+
 export async function deleteClient(id: string) {
   return prisma.client.delete({ where: { id } });
 }
