@@ -49,10 +49,16 @@ import { createRequete } from "@/services/requete.service";
 import HeaderPage from "../features/header-page";
 import { Spinner } from "../ui/spinner";
 import { lastVisite } from "@/services/client.service";
+import { useQuery } from "@tanstack/react-query";
+import { fetcher } from "@/lib/fetcher";
 
-const AddRequete = ({ clients }: { clients: Client[] }) => {
+const AddRequete = () => {
   const router = useRouter();
   const [isPending, transition] = useTransition();
+  const { isPending: isLoading, data: clients } = useQuery<Client[]>({
+    queryKey: ["clients"],
+    queryFn: () => fetcher(`/api/client`)
+  });
   console.log(clients);
 
   const schema = z.object({
@@ -301,6 +307,7 @@ const AddRequete = ({ clients }: { clients: Client[] }) => {
                         <CommandList>
                           <CommandEmpty>Pas de client.</CommandEmpty>
                           <CommandGroup>
+                            {isLoading && <Spinner />}
                             {clients?.map((client) => (
                               <CommandItem
                                 value={client.nomClient}
