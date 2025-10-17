@@ -53,6 +53,7 @@ import { lastVisite } from "@/services/client.service";
 const AddRequete = ({ clients }: { clients: Client[] }) => {
   const router = useRouter();
   const [isPending, transition] = useTransition();
+  console.log(clients);
 
   const schema = z.object({
     sujet: z.string(),
@@ -307,6 +308,7 @@ const AddRequete = ({ clients }: { clients: Client[] }) => {
                                 onSelect={() => {
                                   form.setValue("clientId", client.id);
                                 }}
+                                className="cursor-pointer"
                               >
                                 {client.nomClient}
                                 <Check
