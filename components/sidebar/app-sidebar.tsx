@@ -3,6 +3,7 @@
 import * as React from "react";
 import {
   AlignLeft,
+  AppWindow,
   FileArchive,
   FileChartColumn,
   FileChartPie,
@@ -82,6 +83,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/setting",
         icon: Settings,
         isActive: pathname === "/setting"
+      },
+      {
+        title: "Importations",
+        url: "/importation",
+        icon: AppWindow,
+        isActive: pathname === "/importation"
       }
     ]
   };

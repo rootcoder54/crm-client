@@ -307,7 +307,11 @@ const AddRequete = () => {
                         <CommandList>
                           <CommandEmpty>Pas de client.</CommandEmpty>
                           <CommandGroup>
-                            {isLoading && <Spinner />}
+                            {isLoading && (
+                              <div className="flex flex-col items-center p-5">
+                                <Spinner />
+                              </div>
+                            )}
                             {clients?.map((client) => (
                               <CommandItem
                                 value={client.nomClient}
