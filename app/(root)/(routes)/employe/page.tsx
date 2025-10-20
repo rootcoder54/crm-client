@@ -15,7 +15,7 @@ const PageEmploye = () => {
       selectAction={[]}
       data={employes}
       searchId="nom"
-      searchPlaceholder="Rechercher un nom d'employé"
+      searchPlaceholder="Rechercher un nom d'employé..."
       notData="Aucun employé trouvé"
       hideList={[
         "id"
