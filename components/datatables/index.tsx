@@ -31,6 +31,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import Header from "./header";
 import Link from "next/link";
 import { X } from "lucide-react";
+import { RiFileExcel2Line } from "react-icons/ri";
 
 interface DataTableProps<TData extends Record<string, unknown>> {
   data: TData[];
@@ -66,6 +67,7 @@ interface DataTableProps<TData extends Record<string, unknown>> {
     string,
     (value: unknown, row: TData) => React.ReactNode
   >;
+  exportLien?: string;
 }
 
 export function DataTable<TData extends Record<string, unknown>>({
@@ -79,7 +81,8 @@ export function DataTable<TData extends Record<string, unknown>>({
   action,
   selectAction,
   popFilter,
-  columnStyles
+  columnStyles,
+  exportLien
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [open, setOpen] = React.useState(false);
@@ -169,6 +172,17 @@ export function DataTable<TData extends Record<string, unknown>>({
                     )
                 )}
               </>
+              {exportLien && (
+                <Link href={exportLien} target="_blank">
+                  <Button className="w-full justify-start text-green-600 bg-green-400/20 hover:bg-green-400/10">
+                    <span className="mr-2">
+                      <RiFileExcel2Line />
+                    </span>
+                    <span>Excel</span>
+                  </Button>
+                </Link>
+              )}
+
               <Button
                 variant={"danger"}
                 onClick={() => {

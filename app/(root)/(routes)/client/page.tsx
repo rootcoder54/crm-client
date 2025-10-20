@@ -104,6 +104,7 @@ const ClientPage = () => {
       searchPlaceholder="Rechercher une nom de client"
       notData="Aucun client trouvé"
       onRowSelect={(id) => setSelectedId(id)}
+      exportLien="/api/export/client"
     />
   );
 };
