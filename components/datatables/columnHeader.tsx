@@ -32,6 +32,11 @@ export function ColumnHeader<TData, TValue>({
   const [text, setText] = React.useState(
     (column.getFilterValue() as string) ?? ""
   );
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      column.setFilterValue(text);
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -72,6 +77,7 @@ export function ColumnHeader<TData, TValue>({
             placeholder="Filtrer..."
             value={text}
             onChange={(event) => setText(event.target.value)}
+            onKeyDown={handleKeyDown}
           />
           {column.getIsFiltered() && (
             <Button
