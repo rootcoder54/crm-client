@@ -5,7 +5,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   RowSelectionState,
   SortingState,
@@ -24,7 +23,6 @@ import {
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import React, { useEffect } from "react";
 import DataToolBar from "./toolbar";
-import { DataTablePagination } from "./PaginationTable";
 import { buildColumns } from "./columns";
 import { VariantProps } from "class-variance-authority";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -112,7 +110,7 @@ export function DataTable<TData extends Record<string, unknown>>({
     //enableRowSelection: true,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    //getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -134,7 +132,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   }, [rowSelection, table, onRowSelect]);
 
   return (
-    <div className="w-full">
+    <div className="w-full pb-5">
       <Header
         table={table}
         chemins={chemins}
@@ -182,7 +180,6 @@ export function DataTable<TData extends Record<string, unknown>>({
                   </Button>
                 </Link>
               )}
-
               <Button
                 variant={"danger"}
                 onClick={() => {
@@ -272,9 +269,6 @@ export function DataTable<TData extends Record<string, unknown>>({
             )}
           </TableBody>
         </Table>
-        {table.getRowModel().rows?.length !== 0 && (
-          <DataTablePagination table={table} />
-        )}
       </div>
     </div>
   );

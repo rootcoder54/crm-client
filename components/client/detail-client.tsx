@@ -4,7 +4,14 @@ import { Client } from "@prisma/client";
 import HeaderPage from "../features/header-page";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { File, FileArchive, FileArchiveIcon, Phone, Trash2 } from "lucide-react";
+import {
+  File,
+  FileArchive,
+  FileArchiveIcon,
+  Phone,
+  SquarePen,
+  Trash2
+} from "lucide-react";
 import { format } from "date-fns";
 
 const DetailClient = ({ client }: { client: Client | null }) => {
@@ -35,6 +42,14 @@ const DetailClient = ({ client }: { client: Client | null }) => {
           >
             <Phone />
             <span className="hidden sm:flex">Contact</span>
+          </Link>
+        </Button>
+        <Button variant={"default"} asChild size="sm">
+          <Link
+            href={"/client/edite/" + client.id}
+          >
+            <SquarePen />
+            <span className="hidden sm:flex">Editer</span>
           </Link>
         </Button>
         <Button variant={"outline"} asChild size="sm">
