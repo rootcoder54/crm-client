@@ -30,6 +30,7 @@ import Header from "./header";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { RiFileExcel2Line } from "react-icons/ri";
+import { dateRangeFilter } from "./dateRangeFilter";
 
 interface DataTableProps<TData extends Record<string, unknown>> {
   data: TData[];
@@ -61,6 +62,8 @@ interface DataTableProps<TData extends Record<string, unknown>> {
       icon?: React.ComponentType<{ className?: string }>;
     }[];
   }[];
+  dateChose?: string;
+  dateChoseTitle?: string;
   columnStyles?: Record<
     string,
     (value: unknown, row: TData) => React.ReactNode
@@ -79,6 +82,8 @@ export function DataTable<TData extends Record<string, unknown>>({
   action,
   selectAction,
   popFilter,
+  dateChose,
+  dateChoseTitle,
   columnStyles,
   exportLien
 }: DataTableProps<TData>) {
@@ -114,6 +119,9 @@ export function DataTable<TData extends Record<string, unknown>>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    filterFns: {
+      dateRange: dateRangeFilter
+    },
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
@@ -148,7 +156,7 @@ export function DataTable<TData extends Record<string, unknown>>({
             style={{
               top: position.y,
               left: position.x,
-              transform: "translate(2%, 2%)"
+              transform: "translate(1%, 1%)"
             }}
           >
             <div className="flex flex-col space-y-2">
@@ -205,6 +213,8 @@ export function DataTable<TData extends Record<string, unknown>>({
             searchId={searchId}
             searchPlaceholder={searchPlaceholder}
             popFilter={popFilter}
+            dateChose={dateChose}
+            dateChoseTitle={dateChoseTitle}
           />
         </div>
         <Table className="border-y w-full">

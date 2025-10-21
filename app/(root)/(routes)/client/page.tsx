@@ -53,8 +53,8 @@ const ClientPage = () => {
     clients?.map((client) => ({
       ...client,
       derniereRequete: client.dateLastVisite
-        ? format(client.dateLastVisite, "dd/MM/yyyy")
-        : client.dateLastVisite
+        ? format(client.dateLastVisite, "dd/MM/yyy")
+        : null
     })) || [];
   return (
     <DataTable
@@ -100,6 +100,8 @@ const ClientPage = () => {
           options: dataFiltered
         }
       ]}
+      dateChose="dateLastVisite"
+      dateChoseTitle="Filter derniere requete"
       searchId="nomClient"
       searchPlaceholder="Rechercher un nom de client..."
       notData="Aucun client trouvé"

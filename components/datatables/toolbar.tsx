@@ -11,6 +11,7 @@ import {
   TooltipTrigger
 } from "@/components/ui/tooltip";
 import DataTableFilter from "./data-filter";
+import DateFilter from "./date-table-filter";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -30,6 +31,8 @@ interface DataTableToolbarProps<TData> {
       icon?: React.ComponentType<{ className?: string }>;
     }[];
   }[];
+  dateChose?: string;
+  dateChoseTitle?: string;
 }
 function safeGetColumn<TData>(table: Table<TData>, id: string) {
   const exists = table.getAllColumns().some((c) => c.id === id);
@@ -44,7 +47,9 @@ function DataToolBar<TData>({
   table,
   searchId,
   searchPlaceholder,
-  popFilter
+  popFilter,
+  dateChose,
+  dateChoseTitle
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -64,7 +69,6 @@ function DataToolBar<TData>({
               className="max-w-sm"
             />
           )}
-
           {popFilter &&
             popFilter.map((filter, index) => (
               <DataTableFilter
@@ -74,6 +78,12 @@ function DataToolBar<TData>({
                 options={filter.options ?? []}
               />
             ))}
+          {dateChose && (
+            <DateFilter
+              column={safeGetColumn(table, dateChose) ?? undefined}
+              title={dateChoseTitle}
+            />
+          )}
           {isFiltered && (
             <Tooltip>
               <TooltipTrigger asChild>

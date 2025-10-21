@@ -89,7 +89,6 @@ const renderCell = (value: unknown) => {
   return <span>-</span>;
 };
 
-// Fonction qui génère les colonnes dynamiquement
 export function generateColumns<T extends Record<string, unknown>>(
   data: T[],
   customStyles?: Record<string, (value: unknown, row: T) => React.ReactNode>
@@ -98,26 +97,29 @@ export function generateColumns<T extends Record<string, unknown>>(
 
   const sample = data[0]; // on prend la première ligne comme modèle
 
-  return Object.keys(sample).map((key) => ({
-    accessorKey: key,
-    header: ({ column }) => {
-      return (
-        <ColumnHeader
-          title={key.charAt(0).toUpperCase() + key.slice(1)}
-          column={column}
-        />
-      );
-    },
-    cell: ({ row, getValue }) => {
-      const value = getValue();
-      // Si un style personnalisé existe pour cette colonne → on l'utilise
-      if (customStyles && customStyles[key]) {
-        return customStyles[key](value, row.original);
+  return Object.keys(sample).map((key) => {
+    const isDateColumn = true;
+
+    return {
+      accessorKey: key,
+      header: ({ column }) => {
+        return (
+          <ColumnHeader
+            title={key.charAt(0).toUpperCase() + key.slice(1)}
+            column={column}
+          />
+        );
+      },
+      filterFn: isDateColumn ? "dateRange" : undefined,
+      cell: ({ row, getValue }) => {
+        const value = getValue();
+        if (customStyles && customStyles[key]) {
+          return customStyles[key](value, row.original);
+        }
+        return renderCell(value);
       }
-      // Sinon on applique le rendu par défaut
-      return renderCell(value);
-    }
-  }));
+    } as ColumnDef<T>;
+  });
 }
 
 export function buildColumns<T extends Record<string, unknown>>(

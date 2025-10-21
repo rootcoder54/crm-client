@@ -126,6 +126,8 @@ const PageRequete = () => {
         }
       ]}
       data={listes}
+      dateChose="dateDebut"
+      dateChoseTitle="Filter par Date"
       columnStyles={{
         etat: (value) => (
           <Badge
