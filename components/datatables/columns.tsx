@@ -98,7 +98,11 @@ export function generateColumns<T extends Record<string, unknown>>(
   const sample = data[0]; // on prend la première ligne comme modèle
 
   return Object.keys(sample).map((key) => {
-    const isDateColumn = true;
+    const firstNonNull = data.find((row) => row[key] != null)?.[key];
+    const isDateColumn =
+      firstNonNull instanceof Date ||
+      (typeof firstNonNull === "string" && !isNaN(Date.parse(firstNonNull)));
+    console.log(key, isDateColumn);
 
     return {
       accessorKey: key,
