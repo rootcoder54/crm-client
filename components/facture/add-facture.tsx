@@ -45,6 +45,8 @@ import { Client } from "@prisma/client";
 import { Spinner } from "../ui/spinner";
 import { createFacture, maxorder } from "@/services/facture.service";
 import { toast } from "sonner";
+import HeaderPage from "../features/header-page";
+import Link from "next/link";
 
 const FactureSchema = z.object({
   numero: z.string(),
@@ -119,123 +121,110 @@ export const AddFacturation = () => {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-5">
+    <div className="w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="numero"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>ID de la fiche</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "yyyy-MM-dd")
-                        ) : (
-                          <span>choix une date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="numeroOrdre"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>N° Ordre</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Type</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="modeReglement"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mode de règlement</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl className="w-full">
-                    <SelectTrigger>
-                      <SelectValue placeholder="reglement" />
-                    </SelectTrigger>
+          <HeaderPage
+            chemins={[
+              { title: "Factures", url: "/facture" },
+              { title: "Nouvelle Facture", url: "#" }
+            ]}
+          >
+            <Button type="submit" variant={"blue"}>
+              Suivant
+            </Button>
+            <Link href={"/facture"}>
+              <Button variant={"destructive"}>Annuler</Button>
+            </Link>
+          </HeaderPage>
+          <div className="space-y-4 px-5">
+            <FormField
+              control={form.control}
+              name="numero"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ID de la fiche</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Espèce">Espèce</SelectItem>
-                    <SelectItem value="Chèque">Chèque</SelectItem>
-                    <SelectItem value="Virement">Virement</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="devise"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Devise</FormLabel>
-                <FormControl>
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "yyyy-MM-dd")
+                          ) : (
+                            <span>choix une date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="numeroOrdre"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>N° Ordre</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="modeReglement"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mode de règlement</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -246,99 +235,123 @@ export const AddFacturation = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="CFA">CFA</SelectItem>
-                      <SelectItem value="EURO">EURO</SelectItem>
-                      <SelectItem value="DOLLAR">DOLLAR</SelectItem>
+                      <SelectItem value="Espèce">Espèce</SelectItem>
+                      <SelectItem value="Chèque">Chèque</SelectItem>
+                      <SelectItem value="Virement">Virement</SelectItem>
                     </SelectContent>
                   </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="observation"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Observations</FormLabel>
-                <FormControl>
-                  <Textarea {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="devise"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Devise</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl className="w-full">
+                        <SelectTrigger>
+                          <SelectValue placeholder="reglement" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="CFA">CFA</SelectItem>
+                        <SelectItem value="EURO">EURO</SelectItem>
+                        <SelectItem value="DOLLAR">DOLLAR</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="clientId"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Client</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value
-                          ? clientList?.find(
-                              (client) => client.id === field.value
-                            )?.nomClient
-                          : "Selectionner le client"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0">
-                    {isLoading ? (
-                      <Spinner />
-                    ) : (
-                      <Command>
-                        <CommandInput placeholder="Recherche client..." />
-                        <CommandList>
-                          <CommandEmpty>Pas de client.</CommandEmpty>
-                          <CommandGroup>
-                            {clientList?.map((client) => (
-                              <CommandItem
-                                value={client.nomClient}
-                                key={client.id}
-                                onSelect={() => {
-                                  form.setValue("clientId", client.id);
-                                }}
-                              >
-                                {client.nomClient}
-                                <Check
-                                  className={cn(
-                                    "ml-auto",
-                                    client.id === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    )}
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="observation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Observations</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <Button type="submit" className="w-full" variant={"secondary"}>
-            Suivant
-          </Button>
+            <FormField
+              control={form.control}
+              name="clientId"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Client</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? clientList?.find(
+                                (client) => client.id === field.value
+                              )?.nomClient
+                            : "Selectionner le client"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      {isLoading ? (
+                        <Spinner />
+                      ) : (
+                        <Command>
+                          <CommandInput placeholder="Recherche client..." />
+                          <CommandList>
+                            <CommandEmpty>Pas de client.</CommandEmpty>
+                            <CommandGroup>
+                              {clientList?.map((client) => (
+                                <CommandItem
+                                  value={client.nomClient}
+                                  key={client.id}
+                                  onSelect={() => {
+                                    form.setValue("clientId", client.id);
+                                  }}
+                                >
+                                  {client.nomClient}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      client.id === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </form>
       </Form>
     </div>
