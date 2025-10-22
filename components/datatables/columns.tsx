@@ -114,7 +114,7 @@ export function generateColumns<T extends Record<string, unknown>>(
           />
         );
       },
-      filterFn: isDateColumn ? "dateRange" : undefined,
+      filterFn: isDateColumn ? "dateRange" : "auto",
       cell: ({ row, getValue }) => {
         const value = getValue();
         if (customStyles && customStyles[key]) {
