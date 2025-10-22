@@ -27,7 +27,9 @@ const DateFilter = <TData,>({
   title
 }: DataTableDateFilterProps<TData>) => {
   // ✅ Lecture directe de la valeur du filtre depuis la colonne
-  const filterValueChose = column?.getFilterValue() as [string, string] | undefined;
+  const filterValueChose = column?.getFilterValue() as
+    | [string, string]
+    | undefined;
 
   // ✅ Transformation de la valeur en objet DateRange
   const rangeFromColumn: DateRange | undefined = filterValueChose
@@ -56,14 +58,6 @@ const DateFilter = <TData,>({
     } else {
       column?.setFilterValue(undefined);
     }
-    if (newRange?.from && newRange?.to) {
-      column?.setFilterValue([
-        newRange.from.toISOString(),
-        newRange.to.toISOString()
-      ]);
-    } else {
-      column?.setFilterValue(undefined);
-    }
   };
 
   const handleReset = () => {
@@ -79,7 +73,7 @@ const DateFilter = <TData,>({
           {title || "Filtrer"}
           {range?.from && range?.to && (
             <>
-            <Separator orientation="vertical" className="mx-2 h-4" />
+              <Separator orientation="vertical" className="mx-2 h-4" />
               <Badge
                 variant="secondary"
                 className="rounded-sm px-1 font-normal "
@@ -101,16 +95,20 @@ const DateFilter = <TData,>({
           onSelect={handleSelect}
           initialFocus
           locale={fr}
+          captionLayout="dropdown"
         />
         {(range?.from || range?.to) && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleReset}
-            className="mt-2 w-full text-center"
-          >
-            Nettoyer le filter
-          </Button>
+          <>
+            <Separator />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleReset}
+              className="mt-2 w-full text-center"
+            >
+              Nettoyer le filter
+            </Button>
+          </>
         )}
       </PopoverContent>
     </Popover>

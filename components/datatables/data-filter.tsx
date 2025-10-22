@@ -134,7 +134,7 @@ const DataTableFilter = <TData, TValue>({
                 <CommandGroup>
                   <CommandItem
                     onSelect={() => column?.setFilterValue(undefined)}
-                    className="justify-center text-center"
+                    className="justify-center text-center cursor-pointer"
                   >
                     Nettoyer le filter
                   </CommandItem>
