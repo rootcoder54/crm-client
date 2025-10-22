@@ -19,6 +19,7 @@ interface headerprops<TData> {
     url: string;
     variantbtn: VariantProps<typeof buttonVariants>["variant"];
     hide?: boolean;
+    target?: boolean;
   }[];
   selectAction?: {
     label: string;
@@ -136,7 +137,11 @@ function Header<TData>({
                   size="sm"
                   className={cn(act.hide && "hidden")}
                 >
-                  <Link href={act.url} className="dark:text-foreground">
+                  <Link
+                    href={act.url}
+                    target={act.target ? "_blank" : "_self"}
+                    className="dark:text-foreground"
+                  >
                     {act.icon}
                     <span className="hidden sm:flex">{act.label}</span>
                   </Link>

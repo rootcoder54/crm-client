@@ -46,6 +46,7 @@ interface DataTableProps<TData extends Record<string, unknown>> {
     url: string;
     variantbtn: VariantProps<typeof buttonVariants>["variant"];
     hide?: boolean;
+    target?: boolean;
   }[];
   selectAction?: {
     label: string;
@@ -180,7 +181,7 @@ export function DataTable<TData extends Record<string, unknown>>({
               </>
               {exportLien && (
                 <Link href={exportLien} target="_blank">
-                  <Button className="w-full justify-start text-green-600 bg-green-400/20 hover:bg-green-400/10">
+                  <Button className="w-full justify-start text-green-600 dark:text-white bg-green-400/20 hover:bg-green-400/10">
                     <span className="mr-2">
                       <RiFileExcel2Line />
                     </span>

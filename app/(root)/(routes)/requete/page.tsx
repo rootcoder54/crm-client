@@ -19,6 +19,7 @@ import { getRequeteById } from "@/services/requete.service";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { RiFileExcel2Line } from "react-icons/ri";
 
 interface RequeteWithClient extends Requete {
   client?: Client | null;
@@ -70,7 +71,8 @@ const PageRequete = () => {
     requetes?.map((requete) => ({
       ...requete,
       numero:
-        format(requete.dateDebut, "yyyyMMdd_HHss") +
+        format(requete.dateDebut, "yyyyMMdd_") +
+        requete.client?.numero +
         "_" +
         requete.logiciel +
         "_#",
@@ -90,6 +92,13 @@ const PageRequete = () => {
           icon: <Plus />,
           url: "/requete/add",
           variantbtn: "secondary"
+        },
+        {
+          label: "Excel",
+          icon: <RiFileExcel2Line />,
+          url: "/api/export/requete",
+          variantbtn: "green",
+          target: true
         }
       ]}
       selectAction={[
