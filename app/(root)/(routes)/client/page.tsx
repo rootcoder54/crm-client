@@ -55,7 +55,8 @@ const ClientPage = () => {
       ...client,
       derniereRequete: client.dateLastVisite
         ? format(client.dateLastVisite, "dd/MM/yyy")
-        : null
+        : null,
+      numero: client.numero
     })) || [];
   return (
     <DataTable

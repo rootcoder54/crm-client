@@ -31,7 +31,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Lecture du fichier Excel
     const buffer = Buffer.from(await file.arrayBuffer());
     const workbook = XLSX.read(buffer, { type: "buffer" });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -44,8 +43,37 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Parcourir les lignes Excel et insérer dans la BDD
-    for (const row of data) {
+    // ✅ Colonnes attendues
+    const expectedColumns = [
+      "nomClient",
+      "sigle",
+      "adresse",
+      "telephone",
+      "activite",
+      "numero",
+      "dateInscription"
+    ];
+
+    // Vérification du modèle du fichier
+    const firstRow = data[0] as Record<string, unknown>;
+    const missingColumns = expectedColumns.filter((col) => !(col in firstRow));
+
+    if (missingColumns.length > 0) {
+      return NextResponse.json(
+        {
+          message: "Le modèle du fichier Excel n’est pas conforme.",
+          colonnesAttendues: expectedColumns,
+          colonnesManquantes: missingColumns
+        },
+        { status: 400 }
+      );
+    }
+
+    let insertedCount = 0;
+    let skippedCount = 0;
+    const skippedRows: unknown[] = [];
+
+    for (const [index, row] of data.entries()) {
       const {
         nomClient,
         sigle,
@@ -56,28 +84,53 @@ export async function POST(req: NextRequest) {
         dateInscription
       } = row as {
         nomClient: string;
-        sigle: string;
-        adresse: string;
-        telephone: string;
-        activite: string;
-        numero: string;
-        dateInscription: string;
+        sigle?: string;
+        adresse?: string;
+        telephone?: string;
+        activite?: string;
+        numero?: string;
+        dateInscription?: string;
       };
 
-      await prisma.client.create({
-        data: {
-          nomClient: String(nomClient || ""),
-          sigle: sigle ? String(sigle) : null,
-          adresse: adresse ? String(adresse) : null,
-          telephone: telephone ? String(telephone) : null,
-          activite: activite ? String(activite) : null,
-          numero: numero ? String(numero) : null,
-          dateInscription: excelDate(dateInscription)
-        }
-      });
+      // Vérification de cohérence minimale
+      if (!nomClient || !numero) {
+        skippedCount++;
+        skippedRows.push({
+          ligne: index + 2,
+          raison: "nomClient ou numero manquant"
+        });
+        continue;
+      }
+
+      try {
+        await prisma.client.create({
+          data: {
+            nomClient: String(nomClient).trim(),
+            sigle: sigle ? String(sigle).trim() : null,
+            adresse: adresse ? String(adresse).trim() : null,
+            telephone: telephone ? String(telephone).trim() : null,
+            activite: activite ? String(activite).trim() : null,
+            numero: numero ? String(numero).trim() : null,
+            dateInscription: excelDate(dateInscription ?? null)
+          }
+        });
+
+        insertedCount++;
+      } catch (err) {
+        skippedCount++;
+        skippedRows.push({
+          ligne: index + 2,
+          raison: "Erreur d’insertion : " + (err as Error).message
+        });
+      }
     }
 
-    return NextResponse.json({ message: "Importation réussie !" });
+    return NextResponse.json({
+      message: "Importation terminée",
+      lignesImportées: insertedCount,
+      lignesIgnorées: skippedCount,
+      detailsIgnorées: skippedRows
+    });
   } catch (error) {
     console.error("Erreur lors de l'import :", error);
     return NextResponse.json(

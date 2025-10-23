@@ -99,10 +99,16 @@ export function generateColumns<T extends Record<string, unknown>>(
 
   return Object.keys(sample).map((key) => {
     const firstNonNull = data.find((row) => row[key] != null)?.[key];
+
     const isDateColumn =
       firstNonNull instanceof Date ||
-      (typeof firstNonNull === "string" && !isNaN(Date.parse(firstNonNull)));
-    console.log(key, isDateColumn);
+      (typeof firstNonNull === "string" &&
+        !/^\d+$/.test(firstNonNull) && // 🔹 exclut les nombres purs
+        firstNonNull.length >= 6 && // 🔹 évite les chaînes trop courtes
+        !isNaN(Date.parse(firstNonNull)) && // 🔹 valide par Date.parse
+        /[-/]/.test(firstNonNull)); // 🔹 doit contenir - ou /
+
+    console.log(key, ":", isDateColumn);
 
     return {
       accessorKey: key,
