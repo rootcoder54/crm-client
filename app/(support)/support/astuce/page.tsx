@@ -7,6 +7,7 @@ import { BiSearchAlt2 } from "react-icons/bi";
 import { IoVideocamOff } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import { Button } from "@/components/ui/button";
+import { TracingBeam } from "@/components/ui/tracing-beam";
 import {
   InputGroup,
   InputGroupAddon,
@@ -26,48 +27,52 @@ const AstucePage = () => {
   );
 
   return (
-    <div className="w-full flex flex-col gap-6 py-10">
-      <h1 className="text-3xl font-bold text-neutral-600">Vidéos pratiques</h1>
-      <InputGroup>
-        <InputGroupInput
-          placeholder="Recherche..."
-          className="border-0 text-blue-700 placeholder:text-zinc-400"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <InputGroupAddon>
-          <BiSearchAlt2 className="h-7 w-7 text-blue-700" />
-        </InputGroupAddon>
-        {search && (
-          <InputGroupAddon align="inline-end">
-            <Button
-              variant="ghost"
-              className="h-8 w-8 p-0 rounded-full hover:bg-zinc-200"
-              onClick={() => setSearch("")}
-            >
-              <IoMdClose className="h-5 w-5 text-zinc-500" />
-            </Button>
-          </InputGroupAddon>
-        )}
-      </InputGroup>
-      {filteredVideos.length > 0 ? (
-        filteredVideos.map((video, index) => (
-          <CardVideo
-            key={index}
-            nom={video.nom}
-            description={video.description}
-            link={`/support/astuce/${video.id}`}
+    <TracingBeam className="px-6">
+      <div className="w-full flex flex-col gap-6 py-10">
+        <h1 className="text-3xl font-bold text-neutral-600">
+          Vidéos pratiques
+        </h1>
+        <InputGroup>
+          <InputGroupInput
+            placeholder="Recherche..."
+            className="border-0 text-blue-700 placeholder:text-zinc-400"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
-        ))
-      ) : (
-        <div className="text-zinc-400 border rounded-md text-center p-5 border-blue-300 bg-blue-400/10 shadow flex flex-col items-center gap-2">
-          <IoVideocamOff className="h-12 w-12 text-blue-500" />
-          <span className="text-blue-500 text-lg">
-            Aucune vidéo trouvée pour &quot;{search}&quot;
-          </span>
-        </div>
-      )}
-    </div>
+          <InputGroupAddon>
+            <BiSearchAlt2 className="h-7 w-7 text-blue-700" />
+          </InputGroupAddon>
+          {search && (
+            <InputGroupAddon align="inline-end">
+              <Button
+                variant="ghost"
+                className="h-8 w-8 p-0 rounded-full hover:bg-zinc-200"
+                onClick={() => setSearch("")}
+              >
+                <IoMdClose className="h-5 w-5 text-zinc-500" />
+              </Button>
+            </InputGroupAddon>
+          )}
+        </InputGroup>
+        {filteredVideos.length > 0 ? (
+          filteredVideos.map((video, index) => (
+            <CardVideo
+              key={index}
+              nom={video.nom}
+              description={video.description}
+              link={`/support/astuce/${video.id}`}
+            />
+          ))
+        ) : (
+          <div className="text-zinc-400 border rounded-md text-center p-5 border-blue-300 bg-blue-400/10 shadow flex flex-col items-center gap-2">
+            <IoVideocamOff className="h-12 w-12 text-blue-500" />
+            <span className="text-blue-500 text-lg">
+              Aucune vidéo trouvée pour &quot;{search}&quot;
+            </span>
+          </div>
+        )}
+      </div>{" "}
+    </TracingBeam>
   );
 };
 
