@@ -7,7 +7,13 @@ import { fetcher } from "@/lib/fetcher";
 import { Client } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { AlertCircleIcon, Plus, SquarePen, Trash } from "lucide-react";
+import {
+  AlertCircleIcon,
+  FileChartPie,
+  Plus,
+  SquarePen,
+  Trash2
+} from "lucide-react";
 import { useState } from "react";
 import { RiFileExcel2Line } from "react-icons/ri";
 
@@ -25,7 +31,7 @@ const ClientPage = () => {
     new Map(
       (clients ?? []).map((client) => [
         client.activite || "N/A",
-        { label: client.activite || "N/A", value: client.activite || "N/A" }
+        { label: client.activite || "Pas d'activité", value: client.activite || "Pas d'activité" }
       ])
     ).values()
   );
@@ -56,7 +62,8 @@ const ClientPage = () => {
       derniereRequete: client.dateLastVisite
         ? format(client.dateLastVisite, "dd/MM/yyy")
         : null,
-      numero: client.numero
+      numero: client.numero,
+      activite: client.activite ? client.activite : "Pas d'activité"
     })) || [];
   return (
     <DataTable
@@ -88,7 +95,7 @@ const ClientPage = () => {
         },
         {
           label: "Supprimer",
-          icon: <Trash />,
+          icon: <Trash2 />,
           url: `/client/delete/${selectedId}`,
           variantbtn: "danger"
         }
@@ -106,6 +113,7 @@ const ClientPage = () => {
       popFilter={[
         {
           dataFilter: "activite",
+          icon: <FileChartPie />,
           options: dataFiltered
         }
       ]}

@@ -25,6 +25,7 @@ interface DataTableToolbarProps<TData> {
   }[];
   popFilter?: {
     dataFilter: string;
+    icon?: React.ReactNode;
     options: {
       label: string;
       value: string;
@@ -75,6 +76,7 @@ function DataToolBar<TData>({
                 key={index}
                 column={safeGetColumn(table, filter.dataFilter) ?? undefined}
                 title={filter.dataFilter}
+                icon={filter.icon}
                 options={filter.options ?? []}
               />
             ))}
@@ -88,12 +90,13 @@ function DataToolBar<TData>({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  variant="destructive"
+                  variant="danger"
                   onClick={() => {
                     table.resetColumnFilters();
                   }}
                   className="h-8 px-2 lg:px-3"
                 >
+                  Reset
                   <X />
                 </Button>
               </TooltipTrigger>

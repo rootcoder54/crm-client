@@ -22,6 +22,7 @@ import { Check, PlusCircle } from "lucide-react";
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title?: string;
+  icon?: React.ReactNode;
   options: {
     label: string;
     value: string;
@@ -32,6 +33,7 @@ interface DataTableFacetedFilterProps<TData, TValue> {
 const DataTableFilter = <TData, TValue>({
   column,
   title,
+  icon,
   options
 }: DataTableFacetedFilterProps<TData, TValue>) => {
   const facets = column?.getFacetedUniqueValues();
@@ -40,7 +42,7 @@ const DataTableFilter = <TData, TValue>({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 border-dashed">
-          <PlusCircle />
+          {icon ? icon : <PlusCircle />}
           {title}
           {selectedValues?.size > 0 && (
             <>

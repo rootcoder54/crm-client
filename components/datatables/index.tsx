@@ -57,6 +57,7 @@ interface DataTableProps<TData extends Record<string, unknown>> {
   }[];
   popFilter?: {
     dataFilter: string;
+    icon?: React.ReactNode;
     options: {
       label: string;
       value: string;

@@ -8,16 +8,18 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ButtonGroup } from "../ui/button-group";
 import {
   ArrowDown,
   ArrowUp,
-  ChevronsUpDown,
   SearchIcon,
   SlidersHorizontal,
   X
 } from "lucide-react";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput
+} from "../ui/input-group";
 
 interface ColumnHeaderProps<TData, TValue> {
   title: string;
@@ -42,7 +44,7 @@ export function ColumnHeader<TData, TValue>({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="ghost"
+          variant="transparent"
           onClick={(e) => {
             e.stopPropagation();
             setOpen((v) => !v);
@@ -51,6 +53,11 @@ export function ColumnHeader<TData, TValue>({
         >
           {title}
           {column.getIsFiltered() && <SlidersHorizontal />}
+          {column.getIsSorted() === "desc" ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "asc" ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : null}
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -59,48 +66,53 @@ export function ColumnHeader<TData, TValue>({
         className="w-80"
         onClick={(e) => e.stopPropagation()}
       >
-        <ButtonGroup>
+        <div className="flex flex-col space-y-2">
           <Button
-            variant="outline"
-            aria-label="Search"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            variant={column.getIsSorted() === "asc" ? "secondary" : "ghost"}
+            onClick={() => column.toggleSorting(false)}
+            className="justify-start"
           >
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : (
-              <ChevronsUpDown className="ml-2 h-4 w-4" />
+            <ArrowUp className="ml-2 h-4 w-4" /> Croissant
+          </Button>
+          <Button
+            variant={column.getIsSorted() === "desc" ? "secondary" : "ghost"}
+            onClick={() => column.toggleSorting(true)}
+            className="justify-start"
+          >
+            <ArrowDown className="ml-2 h-4 w-4" /> Decroissant
+          </Button>
+          <InputGroup>
+            <InputGroupInput
+              placeholder="Filtrer..."
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            {column.getIsFiltered() && (
+              <Button
+                variant={"ghost"}
+                className="hover:text-red-800"
+                onClick={() => {
+                  column.setFilterValue("");
+                  column.toggleSorting(false);
+                }}
+              >
+                <X />
+              </Button>
             )}
-          </Button>
-          <Input
-            placeholder="Filtrer..."
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-          {column.getIsFiltered() && (
-            <Button
-              variant={"danger"}
-              className="border"
-              onClick={() => {
-                column.setFilterValue("");
-                column.toggleSorting(false);
-              }}
-            >
-              <X />
-            </Button>
-          )}
-          <Button
-            variant="outline"
-            aria-label="Search"
-            onClick={() => {
-              column.setFilterValue(text);
-            }}
-          >
-            <SearchIcon />
-          </Button>
-        </ButtonGroup>
+            <InputGroupAddon align="inline-end">
+              <Button
+                variant="ghost"
+                aria-label="Search"
+                onClick={() => {
+                  column.setFilterValue(text);
+                }}
+              >
+                <SearchIcon />
+              </Button>
+            </InputGroupAddon>
+          </InputGroup>
+        </div>
       </PopoverContent>
     </Popover>
   );

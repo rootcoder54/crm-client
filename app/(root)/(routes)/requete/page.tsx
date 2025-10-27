@@ -2,7 +2,9 @@
 import { Client, Requete } from "@prisma/client";
 import {
   AlertCircleIcon,
+  AlignHorizontalJustifyCenter,
   CalendarCheck2,
+  ChartPie,
   FileArchive,
   FileBox,
   Plus,
@@ -165,9 +167,20 @@ const PageRequete = () => {
       popFilter={[
         {
           dataFilter: "etat",
+          icon: <ChartPie />,
           options: [
             { label: "En cours", value: "En cours" },
             { label: "Cloturée", value: "Cloturée" }
+          ]
+        },
+        {
+          dataFilter: "logiciel",
+          icon: <AlignHorizontalJustifyCenter />,
+          options: [
+            { label: "RHPaie", value: "RHPaie" },
+            { label: "TimeSheet", value: "TimeSheet" },
+            { label: "RHData", value: "RHData" },
+            { label: "RHFacture", value: "RHfacture" }
           ]
         }
       ]}
