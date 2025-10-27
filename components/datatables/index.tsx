@@ -31,6 +31,7 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { dateRangeFilter } from "./dateRangeFilter";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData extends Record<string, unknown>> {
   data: TData[];
@@ -40,6 +41,7 @@ interface DataTableProps<TData extends Record<string, unknown>> {
   searchPlaceholder?: string;
   hideList?: string[];
   chemins?: { title: string; url: string }[];
+  isHeader?: boolean;
   action?: {
     label: string;
     icon?: React.ReactNode;
@@ -81,6 +83,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   searchPlaceholder,
   hideList,
   chemins,
+  isHeader = true,
   action,
   selectAction,
   popFilter,
@@ -143,12 +146,14 @@ export function DataTable<TData extends Record<string, unknown>>({
 
   return (
     <div className="w-full pb-5">
-      <Header
-        table={table}
-        chemins={chemins}
-        action={action}
-        selectAction={selectAction}
-      />
+      {isHeader && (
+        <Header
+          table={table}
+          chemins={chemins}
+          action={action}
+          selectAction={selectAction}
+        />
+      )}
       {selectAction && selectAction.length > 0 && (
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverContent
@@ -223,9 +228,12 @@ export function DataTable<TData extends Record<string, unknown>>({
           <TableHeader className="bg-zinc-600/10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="w-full">
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header, index) => {
                   return (
-                    <TableHead key={header.id} className="border">
+                    <TableHead
+                      key={header.id}
+                      className={cn(index !== 0 && "border-r")}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -260,7 +268,10 @@ export function DataTable<TData extends Record<string, unknown>>({
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="border">
+                    <TableCell
+                      key={cell.id}
+                      className={cn(cell.column.getIndex() !== 0 && "border-r")}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

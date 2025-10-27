@@ -2,11 +2,11 @@
 import { Client, Requete } from "@prisma/client";
 import {
   AlertCircleIcon,
-  AlignHorizontalJustifyCenter,
   CalendarCheck2,
   ChartPie,
   FileArchive,
   FileBox,
+  LayoutGrid,
   Plus,
   SquarePen,
   Trash
@@ -175,7 +175,7 @@ const PageRequete = () => {
         },
         {
           dataFilter: "logiciel",
-          icon: <AlignHorizontalJustifyCenter />,
+          icon: <LayoutGrid />,
           options: [
             { label: "RHPaie", value: "RHPaie" },
             { label: "TimeSheet", value: "TimeSheet" },
