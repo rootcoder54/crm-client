@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import {
+  AArrowDown,
+  AArrowUp,
   ArrowDown,
   ArrowUp,
   SearchIcon,
@@ -20,6 +22,7 @@ import {
   InputGroupAddon,
   InputGroupInput
 } from "../ui/input-group";
+import { Badge } from "../ui/badge";
 
 interface ColumnHeaderProps<TData, TValue> {
   title: string;
@@ -54,9 +57,13 @@ export function ColumnHeader<TData, TValue>({
           {title}
           {column.getIsFiltered() && <SlidersHorizontal />}
           {column.getIsSorted() === "desc" ? (
-            <ArrowDown className="ml-2 h-4 w-4" />
+            <Badge className="bg-yellow-400 text-black">
+              <AArrowDown className="h-4 w-4" />
+            </Badge>
           ) : column.getIsSorted() === "asc" ? (
-            <ArrowUp className="ml-2 h-4 w-4" />
+            <Badge className="bg-yellow-400 text-black">
+              <AArrowUp className="h-4 w-4" />
+            </Badge>
           ) : null}
         </Button>
       </PopoverTrigger>

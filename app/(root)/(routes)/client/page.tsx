@@ -31,7 +31,10 @@ const ClientPage = () => {
     new Map(
       (clients ?? []).map((client) => [
         client.activite || "N/A",
-        { label: client.activite || "Pas d'activité", value: client.activite || "Pas d'activité" }
+        {
+          label: client.activite || "Pas d'activité",
+          value: client.activite || "Pas d'activité"
+        }
       ])
     ).values()
   );
@@ -59,7 +62,7 @@ const ClientPage = () => {
   const listes =
     clients?.map((client) => ({
       ...client,
-      derniereRequete: client.dateLastVisite
+      dateRequete: client.dateLastVisite
         ? format(client.dateLastVisite, "dd/MM/yyy")
         : null,
       numero: client.numero,
@@ -71,6 +74,7 @@ const ClientPage = () => {
         { title: "Clients", url: "/client" },
         { title: "Listes", url: "#" }
       ]}
+      titre="Liste des clients"
       action={[
         {
           label: "Nouvelle Client",

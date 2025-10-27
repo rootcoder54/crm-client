@@ -42,6 +42,8 @@ interface DataTableProps<TData extends Record<string, unknown>> {
   hideList?: string[];
   chemins?: { title: string; url: string }[];
   isHeader?: boolean;
+  titre?: string;
+  description?: string;
   action?: {
     label: string;
     icon?: React.ReactNode;
@@ -77,6 +79,8 @@ interface DataTableProps<TData extends Record<string, unknown>> {
 
 export function DataTable<TData extends Record<string, unknown>>({
   data,
+  titre,
+  description,
   onRowSelect,
   notData,
   searchId,
@@ -213,6 +217,10 @@ export function DataTable<TData extends Record<string, unknown>>({
           </PopoverContent>
         </Popover>
       )}
+      <div className="space-y-3 px-3">
+        {titre && <h2 className="text-xl pt-5 font-bold">{titre}</h2>}
+        {description && <p className="wrap-break-word">{description}</p>}
+      </div>
       <div className="overflow-hidden">
         <div>
           <DataToolBar

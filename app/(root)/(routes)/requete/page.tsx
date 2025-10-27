@@ -88,6 +88,7 @@ const PageRequete = () => {
         { title: "Requête", url: "/requete" },
         { title: "Listes", url: "#" }
       ]}
+      titre="Liste des Requêtes"
       action={[
         {
           label: "Nouvelle Requête",

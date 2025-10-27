@@ -17,7 +17,6 @@ interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   searchId?: string;
   searchPlaceholder?: string;
-  dataFilter?: string;
   options?: {
     label: string;
     value: string;
