@@ -5,32 +5,40 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { SidebarMenuButton } from "../ui/sidebar";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput
+} from "../ui/input-group";
 
 export const SearchButton = () => {
   const [filter, setFilter] = useState("");
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <SidebarMenuButton>
+        <SidebarMenuButton className="cursor-pointer">
           <Search />
           Recherche
         </SidebarMenuButton>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[825px]">
-        <div className="flex items-center border-b px-3">
+      <DialogContent showCloseButton={false} className="sm:max-w-[825px]">
+        <div className="flex items-center">
           <DialogTitle />
-          <Search className="mr-2 h-8 w-8 shrink-0 opacity-50" />
-          <Input
-            type="text"
-            placeholder="recherche..."
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="flex h-11 w-full rounded-md border-0 bg-transparent py-3 text-lg outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-          />
+          <InputGroup>
+            <InputGroupInput
+              type="text"
+              placeholder="recherche..."
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            />
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">12 resultats</InputGroupAddon>
+          </InputGroup>
         </div>
         <div className="flex flex-col">
           {!filter ? (

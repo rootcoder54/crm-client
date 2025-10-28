@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useState, useTransition } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useForm } from "react-hook-form";
 import { loginSchema } from "./shemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +27,12 @@ import {
 } from "@/components/ui/form";
 import FormError from "./form-error";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput
+} from "../ui/input-group";
+import { Eye, EyeOff } from "lucide-react";
 
 export function LoginForm({
   className,
@@ -36,7 +41,6 @@ export function LoginForm({
   const [error, setError] = useState<string | undefined>("");
 
   const [typePassword, setTypePassword] = useState("password");
-  const [showPassword, setShowPassword] = useState(false);
 
   const [isPending, startTransition] = useTransition();
 
@@ -60,7 +64,6 @@ export function LoginForm({
   }
 
   const ckeckChange = () => {
-    setShowPassword((s) => !s);
     if (typePassword === "password") {
       setTypePassword("text");
     } else {
@@ -113,22 +116,28 @@ export function LoginForm({
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input type={typePassword} {...field} />
+                          <InputGroup>
+                            <InputGroupInput type={typePassword} {...field} />
+                            <InputGroupAddon align={"inline-end"}>
+                              <Button
+                                type="button"
+                                onClick={ckeckChange}
+                                size={"sm"}
+                                variant={"ghost"}
+                              >
+                                {typePassword === "password" ? (
+                                  <Eye />
+                                ) : (
+                                  <EyeOff />
+                                )}
+                              </Button>
+                            </InputGroupAddon>
+                          </InputGroup>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  {!isPending && (
-                    <div className="flex items-center justify-center gap-x-3">
-                      <Checkbox
-                        id="check"
-                        checked={showPassword}
-                        onCheckedChange={ckeckChange}
-                      />
-                      <label htmlFor="check">Afficher le mot de passe</label>
-                    </div>
-                  )}
                   <FormError message={error} />
                   <Button type="submit" size={"lg"} className="w-full">
                     <span>Se connecter</span>
