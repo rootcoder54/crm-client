@@ -74,85 +74,91 @@ export function LoginForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="shadow-md">
-        {isPending && (
-          <CardHeader className="text-center flex flex-col items-center justify-center p-9">
-            <CardTitle className="text-xl">Connexion</CardTitle>
-            <Spinner />
+        <>
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl">
+              🔐 Bienvenue Sur Admin Malisystem
+            </CardTitle>
+            <CardDescription>
+              Connectez-vous pour avoir accès au BackOffice
+            </CardDescription>
           </CardHeader>
-        )}
-        {!isPending && (
-          <>
-            <CardHeader className="text-center">
-              <CardTitle className="text-xl">
-                🔐 Bienvenue Sur Admin Malisystem
-              </CardTitle>
-              <CardDescription>
-                Connectez-vous pour avoir accès au BackOffice
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-6"
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Username</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={isPending}
+                          placeholder="bfof@gmail.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <InputGroup>
+                          <InputGroupInput
+                            disabled={isPending}
+                            type={typePassword}
+                            {...field}
+                          />
+                          <InputGroupAddon align={"inline-end"}>
+                            <Button
+                              type="button"
+                              onClick={ckeckChange}
+                              size={"sm"}
+                              variant={"ghost"}
+                            >
+                              {typePassword === "password" ? (
+                                <Eye />
+                              ) : (
+                                <EyeOff />
+                              )}
+                            </Button>
+                          </InputGroupAddon>
+                        </InputGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormError message={error} />
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  size={"lg"}
+                  className="w-full"
                 >
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Username</FormLabel>
-                        <FormControl>
-                          <Input placeholder="bfof@gmail.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <InputGroup>
-                            <InputGroupInput type={typePassword} {...field} />
-                            <InputGroupAddon align={"inline-end"}>
-                              <Button
-                                type="button"
-                                onClick={ckeckChange}
-                                size={"sm"}
-                                variant={"ghost"}
-                              >
-                                {typePassword === "password" ? (
-                                  <Eye />
-                                ) : (
-                                  <EyeOff />
-                                )}
-                              </Button>
-                            </InputGroupAddon>
-                          </InputGroup>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormError message={error} />
-                  <Button type="submit" size={"lg"} className="w-full">
-                    <span>Se connecter</span>
-                  </Button>
-                </form>
-              </Form>
-              <div className="flex items-center justify-center py-4">
-                Aller sur le
-                <a href={"/support"}>
-                  <Button variant={"link"}>Support</Button>
-                </a>
-              </div>
-            </CardContent>
-          </>
-        )}
+                  {isPending && <Spinner />}
+                  <span>Se connecter</span>
+                </Button>
+              </form>
+            </Form>
+            <div className="flex items-center justify-center py-4">
+              Aller sur le
+              <a href={"/support"}>
+                <Button variant={"link"}>Support</Button>
+              </a>
+            </div>
+          </CardContent>
+        </>
       </Card>
     </div>
   );
