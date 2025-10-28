@@ -2,7 +2,15 @@
 import * as React from "react";
 import { useSession } from "next-auth/react";
 
-import { HelpCircle, LogOut, Plus, Settings, User, Users } from "lucide-react";
+import {
+  BookUser,
+  HelpCircle,
+  LogOut,
+  Plus,
+  Settings,
+  User,
+  Users
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -66,6 +74,12 @@ export const UserButton = () => {
                   <DropdownMenuItem className="cursor-pointer">
                     <User />
                     <span>Profile</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link href={"/userlog"}>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <BookUser />
+                    <span>User Log</span>
                   </DropdownMenuItem>
                 </Link>
                 <Link href={"/setting"}>

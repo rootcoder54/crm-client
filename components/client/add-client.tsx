@@ -33,8 +33,11 @@ import { Calendar } from "@/components/ui/calendar";
 import HeaderPage from "../features/header-page";
 import { Spinner } from "../ui/spinner";
 import { createClient } from "@/services/client.service";
+import { useSession } from "next-auth/react";
+import { createLog } from "@/services/log.service";
 
 const AddClient = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const [isPending, transition] = useTransition();
 
@@ -64,9 +67,15 @@ const AddClient = () => {
   function onSubmit(values: z.infer<typeof schema>) {
     transition(() => {
       createClient(values)
-        .then(() => {
-          toast.success("Client ajouté avec succès");
-          router.push("/client");
+        .then((data) => {
+          createLog({
+            action: "Ajout Client",
+            details: `Client ${data.nomClient} a été crée`,
+            userId: session?.user.id ?? ""
+          }).then(() => {
+            toast.success("Client ajouté avec succès");
+            router.push("/client");
+          });
         })
         .catch(() => {
           toast.error("Une erreur est survenue");

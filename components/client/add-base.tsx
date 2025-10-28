@@ -32,10 +32,13 @@ import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
 import { cn } from "@/lib/utils";
 import { Textarea } from "../ui/textarea";
+import { createLog } from "@/services/log.service";
+import { useSession } from "next-auth/react";
 
 const AddBase = ({ clientId }: { clientId: string }) => {
   const router = useRouter();
   const [isPending, transition] = useTransition();
+  const { data: session } = useSession();
 
   const schema = z.object({
     societe: z.string(),
@@ -92,9 +95,15 @@ const AddBase = ({ clientId }: { clientId: string }) => {
     };
     transition(() => {
       createBase(data)
-        .then(() => {
-          toast.success("Base ajouté avec succès");
-          router.push("/client/base/" + clientId);
+        .then((data) => {
+          createLog({
+            action: "Ajout Base",
+            details: `Base de ${data.societe} a été crée`,
+            userId: session?.user.id ?? ""
+          }).then(() => {
+            toast.success("Base ajouté avec succès");
+            router.push("/client/base/" + clientId);
+          });
         })
         .catch((erreur) => {
           toast.error("Une erreur est survenue" + erreur.message);

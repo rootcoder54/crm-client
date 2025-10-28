@@ -28,7 +28,7 @@ export function NavItems({
           <SearchButton />
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton>
+          <SidebarMenuButton asChild>
             <Link href={"/requete/add"} className="flex items-center gap-x-1">
               <AlignLeft />
               <span>Nouvelle requête</span>
