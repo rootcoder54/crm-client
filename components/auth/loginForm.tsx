@@ -40,7 +40,9 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const [error, setError] = useState<string | undefined>("");
 
-  const [typePassword, setTypePassword] = useState("password");
+  const [typePassword, setTypePassword] = useState<"password" | "text">(
+    "password"
+  );
 
   const [isPending, startTransition] = useTransition();
 
