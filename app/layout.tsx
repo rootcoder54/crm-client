@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { QueryProvider } from "@/components/provider/query-provider";
-import { ThemeProvider } from "@/components/provider/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -29,15 +28,8 @@ export default function RootLayout({
     <html lang="fr" suppressHydrationWarning>
       <body className={`${font.className} antialiased`}>
         <QueryProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Toaster richColors position="top-center" />
-            {children}
-          </ThemeProvider>
+          <Toaster richColors position="top-center" />
+          {children}
         </QueryProvider>
       </body>
     </html>
