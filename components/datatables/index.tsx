@@ -74,7 +74,7 @@ interface DataTableProps<TData extends Record<string, unknown>> {
     string,
     (value: unknown, row: TData) => React.ReactNode
   >;
-  exportLien?: string;
+  exportName?: string;
 }
 
 export function DataTable<TData extends Record<string, unknown>>({
@@ -94,7 +94,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   dateChose,
   dateChoseTitle,
   columnStyles,
-  exportLien
+  exportName
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [open, setOpen] = React.useState(false);
@@ -148,6 +148,43 @@ export function DataTable<TData extends Record<string, unknown>>({
     }
   }, [rowSelection, table, onRowSelect]);
 
+  console.log(
+    table.getRowModel().rows.map((row) => {
+      return row.getAllCells().reduce((acc, cell) => {
+        acc[cell.column.id] = cell.getValue();
+        return acc;
+      }, {} as Record<string, unknown>);
+    })
+  );
+  const exportExcel = async () => {
+    const data = table.getRowModel().rows.map((row) => {
+      return row.getAllCells().reduce((acc, cell) => {
+        acc[cell.column.id] = cell.getValue();
+        return acc;
+      }, {} as Record<string, unknown>);
+    });
+    const response = await fetch("/api/export", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ data })
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = exportName ? exportName + ".xlsx" : "data.xlsx";
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      const error = await response.json();
+      alert(error.message);
+    }
+  };
+
   return (
     <div className="w-full pb-5">
       {isHeader && (
@@ -158,7 +195,7 @@ export function DataTable<TData extends Record<string, unknown>>({
           selectAction={selectAction}
         />
       )}
-      {selectAction && selectAction.length > 0 && (
+      {selectAction && (
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverContent
             side="right"
@@ -189,16 +226,16 @@ export function DataTable<TData extends Record<string, unknown>>({
                     )
                 )}
               </>
-              {exportLien && (
-                <Link href={exportLien} target="_blank">
-                  <Button className="w-full justify-start text-green-600 dark:text-white bg-green-400/20 hover:bg-green-400/10">
-                    <span className="mr-2">
-                      <RiFileExcel2Line />
-                    </span>
-                    <span>Excel</span>
-                  </Button>
-                </Link>
-              )}
+              <Button
+                variant={"green"}
+                className="w-full justify-start text-green-600 dark:text-white"
+                onClick={exportExcel}
+              >
+                <span className="mr-2">
+                  <RiFileExcel2Line />
+                </span>
+                Excel
+              </Button>
               <Button
                 variant={"danger"}
                 onClick={() => {

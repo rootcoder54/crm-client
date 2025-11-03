@@ -41,6 +41,7 @@ const PageIntervention = () => {
       searchId="intervenant"
       searchPlaceholder="Recherche par intervenant..."
       notData="Aucune intervention trouvée"
+      exportName="liste_intervantions"
     />
   );
 };

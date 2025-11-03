@@ -18,6 +18,7 @@ const PageEmploye = () => {
       searchPlaceholder="Rechercher un nom d'employé..."
       notData="Aucun employé trouvé"
       hideList={["id"]}
+      exportName="liste_employes"
     />
   );
 };

@@ -186,7 +186,7 @@ const PageRequete = () => {
         }
       ]}
       onRowSelect={(id) => setSelectedId(id)}
-      exportLien="/api/export/requete"
+      exportName="liste_requetes"
     />
   );
 };
