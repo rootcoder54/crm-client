@@ -7,6 +7,7 @@ import { fetcher } from "@/lib/fetcher";
 import { Client } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import {
   AlertCircleIcon,
   FileChartPie,
@@ -59,15 +60,26 @@ const ClientPage = () => {
       </div>
     );
   }
-  const listes =
-    clients?.map((client) => ({
+
+  const listes = clients
+    ?.sort((a, b) => {
+      if (!a.dateLastVisite) return 1;
+      if (!b.dateLastVisite) return -1;
+      const dateA = new Date(a.dateLastVisite);
+      const dateB = new Date(b.dateLastVisite);
+      return dateB.getTime() - dateA.getTime(); // plus récent en premier
+    })
+    .map((client) => ({
       ...client,
       dateRequete: client.dateLastVisite
-        ? format(client.dateLastVisite, "dd/MM/yyy")
+        ? format(new Date(client.dateLastVisite), "dd MMM yyyy", {
+            locale: fr
+          })
         : null,
       numero: client.numero,
-      activite: client.activite ? client.activite : "Pas d'activité"
-    })) || [];
+      activite: client.activite || "Pas d'activité"
+    }));
+
   return (
     <DataTable
       chemins={[

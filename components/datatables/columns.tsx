@@ -76,7 +76,7 @@ const renderCell = (value: unknown) => {
         <TooltipTrigger asChild>
           <span>{displayText}</span>
         </TooltipTrigger>
-        <TooltipContent className="w-[560px] p-4">
+        <TooltipContent className="w-[560px] p-4" side="bottom">
           <p>{value}</p>
         </TooltipContent>
       </Tooltip>
@@ -112,11 +112,12 @@ export function generateColumns<T extends Record<string, unknown>>(
 
     return {
       accessorKey: key,
-      header: ({ column }) => {
+      header: ({ column, table }) => {
         return (
           <ColumnHeader
             title={key.charAt(0).toUpperCase() + key.slice(1)}
             column={column}
+            table={table}
           />
         );
       },
