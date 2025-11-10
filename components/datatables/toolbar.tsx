@@ -69,7 +69,8 @@ function DataToolBar<TData>({
               className="max-w-sm"
             />
           )}
-          {popFilter &&
+          {filtreValeur &&
+            popFilter &&
             popFilter.map((filter, index) => (
               <DataTableFilter
                 key={index}
@@ -79,7 +80,7 @@ function DataToolBar<TData>({
                 options={filter.options ?? []}
               />
             ))}
-          {dateChose && (
+          {filtreValeur && dateChose && (
             <DateFilter
               column={safeGetColumn(table, dateChose) ?? undefined}
               title={dateChoseTitle}
