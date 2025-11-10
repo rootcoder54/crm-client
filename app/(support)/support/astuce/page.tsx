@@ -13,17 +13,49 @@ import {
   InputGroupAddon,
   InputGroupInput
 } from "@/components/ui/input-group";
-import { videos } from "@/constante/videoAstuce";
+import { fetcher } from "@/lib/fetcher";
+import { useQuery } from "@tanstack/react-query";
+import { Video } from "@prisma/client";
+import { Spinner } from "@/components/ui/spinner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 const AstucePage = () => {
   const [search, setSearch] = useState("");
-
+  const {
+    isError,
+    isPending,
+    data: videos
+  } = useQuery<Video[]>({
+    queryKey: ["videos"],
+    queryFn: () => fetcher(`/api/video`)
+  });
+  if (isPending) {
+    return (
+      <div className="h-24 flex items-center w-full justify-center text-center">
+        <Spinner className="size-8" />
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div className="m-4">
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle> Erreur de donnée </AlertTitle>
+          <AlertDescription>
+            <p>Une erreur est survenue lors du chargement des Videos.</p>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
   // Filtrage par nom ou description
   const filteredVideos = videos.filter(
     (video) =>
       video.nom.toLowerCase().includes(search.toLowerCase()) ||
       video.description.toLowerCase().includes(search.toLowerCase()) ||
-      video.detail.toLowerCase().includes(search.toLowerCase())
+      video?.detail?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (

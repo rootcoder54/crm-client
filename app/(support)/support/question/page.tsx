@@ -6,14 +6,20 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput
+} from "@/components/ui/input-group";
+import { TracingBeam } from "@/components/ui/tracing-beam";
 
-import Image from "next/image";
 import Link from "next/link";
+import { BiSearchAlt2 } from "react-icons/bi";
 import { TbHelpSquareRoundedFilled } from "react-icons/tb";
 
 const PageQuestion = () => {
   return (
-    <div className="flex flex-col justify-center items-start gap-y-3 py-4 space-y-3">
+    <div className="container lg:w-[80%] px-5 lg:px-9 pt-5 pb-10">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -37,12 +43,26 @@ const PageQuestion = () => {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <Image src={"/question.png"} alt="logo" width={40} height={30} />
-      <h1 className="text-2xl font-bold">Vos questions fréquentes</h1>
-      <span className="text-neutral-400">
-        Regroupe les thématiques qui reviennent le plus souvent dans vos
-        interrogations
-      </span>
+      <TracingBeam className="px-6">
+        <div className="w-full flex flex-col gap-6 py-10">
+          <h1 className="text-3xl font-bold text-neutral-600">
+            Vos questions fréquentes
+          </h1>
+          <span className="text-neutral-400">
+            Regroupe les thématiques qui reviennent le plus souvent dans vos
+            interrogations
+          </span>
+          <InputGroup>
+            <InputGroupInput
+              placeholder="Recherche..."
+              className="border-0 text-blue-700 placeholder:text-zinc-400"
+            />
+            <InputGroupAddon>
+              <BiSearchAlt2 className="h-7 w-7 text-blue-700" />
+            </InputGroupAddon>
+          </InputGroup>
+        </div>{" "}
+      </TracingBeam>
     </div>
   );
 };

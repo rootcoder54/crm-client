@@ -11,22 +11,21 @@ import {
 import Link from "next/link";
 import { TbHelpSquareRoundedFilled } from "react-icons/tb";
 import { usePathname } from "next/navigation";
-import { videos } from "@/constante/videoAstuce";
+import { useQuery } from "@tanstack/react-query";
+import { fetcher } from "@/lib/fetcher";
+import { Video } from "@prisma/client";
 
-type Video = {
-  id: string;
-  nom: string;
-  description: string;
-  detail: string;
-  video: string;
-};
 const AstuceLayout = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
   const [video, setvideo] = useState<Video | undefined>();
+  const { data: videos } = useQuery<Video[]>({
+    queryKey: ["videos"],
+    queryFn: () => fetcher(`/api/video`)
+  });
   useEffect(() => {
     if (pathname !== "/support/astuce") {
       const id = pathname.split("/")[3];
-      const video = videos.find((item) => item.id === id);
+      const video = videos?.find((item) => item.id === id);
       setvideo(video);
     }
   }, [pathname]);

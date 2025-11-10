@@ -67,6 +67,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         isActive: pathname.startsWith("/facture")
       },
       {
+        title: "Video Astuce",
+        url: "/video",
+        icon: FileChartPie,
+        isActive: pathname.startsWith("/video")
+      },
+      {
         title: "Formation User",
         url: "/formationuser",
         icon: FileArchive,
