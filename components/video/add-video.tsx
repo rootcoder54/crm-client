@@ -27,6 +27,7 @@ import { useTransition } from "react";
 import HeaderPage from "../features/header-page";
 import { Spinner } from "../ui/spinner";
 import { createVideo } from "@/services/video.service";
+import MyEditor from "../features/Editor";
 
 const AddVideo = () => {
   const router = useRouter();
@@ -122,7 +123,7 @@ const AddVideo = () => {
                 <FormItem>
                   <FormLabel>Detail</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <MyEditor value={field.value} onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

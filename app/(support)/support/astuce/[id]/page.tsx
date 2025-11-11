@@ -1,3 +1,4 @@
+import Writor from "@/components/features/Writor";
 import { getVideoById } from "@/services/video.service";
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
@@ -17,7 +18,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
       ></iframe>
       <div className="flex flex-col bg-zinc-100 border shadow-md rounded-md p-6 sm:w-full md:w-[700px] lg:w-[950px] xl:w-[1150px]">
         <h2 className="text-2xl font-semibold text-zinc-700">{video.nom}</h2>
-        <div dangerouslySetInnerHTML={{ __html: video.detail || "" }} />
+        <Writor value={video.detail || ""} />
       </div>
     </div>
   );
