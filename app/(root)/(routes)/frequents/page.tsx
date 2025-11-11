@@ -1,21 +1,83 @@
-import HeaderPage from "@/components/features/header-page";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import Link from "next/link";
+"use client";
 
-const PageFrequents = () => {
+import { DataTable } from "@/components/datatables";
+import { Spinner } from "@/components/ui/spinner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { fetcher } from "@/lib/fetcher";
+import { Article } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { AlertCircleIcon, FileBox, Plus, SquarePen, Trash } from "lucide-react";
+import { useState } from "react";
+
+const PageFrequente = () => {
+  const [selectedId, setSelectedId] = useState<string>("");
+  const {
+    isError,
+    isPending,
+    data: articles
+  } = useQuery<Article[]>({
+    queryKey: ["articles"],
+    queryFn: () => fetcher(`/api/article`)
+  });
+  if (isPending) {
+    return (
+      <div className="h-24 flex items-center w-full justify-center text-center">
+        <Spinner className="size-8" />
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div className="m-4">
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle> Erreur de donnée </AlertTitle>
+          <AlertDescription>
+            <p>Une erreur est survenue lors du chargement des Articles.</p>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
   return (
-    <div>
-      <HeaderPage>
-        <Link href={"#"}>
-          <Button size={"sm"} variant={"outline"}>
-            <Plus /> Nouvelle Question
-          </Button>
-        </Link>
-      </HeaderPage>
-      <p>Page Question frequents</p>
-    </div>
+    <DataTable
+      chemins={[
+        { title: "Questions Frequentes", url: "/frequents" },
+        { title: "Listes", url: "#" }
+      ]}
+      action={[
+        {
+          label: "Nouvelle Article",
+          icon: <Plus />,
+          url: "/frequents/add",
+          variantbtn: "secondary"
+        }
+      ]}
+      selectAction={[
+        {
+          label: "Details",
+          icon: <FileBox />,
+          url: `#`,
+          variantbtn: "blue"
+        },
+        {
+          label: "Editer",
+          icon: <SquarePen />,
+          url: `#`,
+          variantbtn: "outline"
+        },
+        {
+          label: "Supprimer",
+          icon: <Trash />,
+          url: `/frequents/delete/${selectedId}`,
+          variantbtn: "danger"
+        }
+      ]}
+      data={articles || []}
+      hideList={["createdAt", "updatedAt", "contenu"]}
+      onRowSelect={(id) => setSelectedId(id)}
+    />
   );
 };
 
-export default PageFrequents;
+export default PageFrequente;
