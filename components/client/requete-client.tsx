@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
-import { Spinner } from "@/components/ui/spinner";
 import { DataTable } from "@/components/datatables";
 import { useEffect, useState } from "react";
 import { getRequeteById } from "@/services/requete.service";
+import { LoaderOne } from "../ui/loader";
 
 export const RequeteClient = ({ id }: { id: string }) => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -34,7 +34,7 @@ export const RequeteClient = ({ id }: { id: string }) => {
   if (!requetes) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner className="size-8" />
+        <LoaderOne />
       </div>
     );
   }

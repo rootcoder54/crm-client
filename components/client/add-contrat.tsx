@@ -28,7 +28,6 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import HeaderPage from "../features/header-page";
-import { Spinner } from "../ui/spinner";
 import { createContrat } from "@/services/contrat.service";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
@@ -36,6 +35,7 @@ import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
 import { useSession } from "next-auth/react";
 import { createLog } from "@/services/log.service";
+import { LoaderOne } from "../ui/loader";
 
 const AddContrat = ({ clientId }: { clientId: string }) => {
   const { data: session } = useSession();
@@ -83,7 +83,7 @@ const AddContrat = ({ clientId }: { clientId: string }) => {
   if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner />
+        <LoaderOne />
       </div>
     );
   }

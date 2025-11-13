@@ -47,10 +47,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { Client } from "@prisma/client";
 import { createRequete } from "@/services/requete.service";
 import HeaderPage from "../features/header-page";
-import { Spinner } from "../ui/spinner";
 import { lastVisite } from "@/services/client.service";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
+import { LoaderOne } from "../ui/loader";
 
 const AddRequete = () => {
   const router = useRouter();
@@ -104,7 +104,7 @@ const AddRequete = () => {
   if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner />
+        <LoaderOne />
       </div>
     );
   }
@@ -309,7 +309,7 @@ const AddRequete = () => {
                           <CommandGroup>
                             {isLoading && (
                               <div className="flex flex-col items-center p-5">
-                                <Spinner />
+                                <LoaderOne />
                               </div>
                             )}
                             {clients?.map((client) => (

@@ -1,13 +1,13 @@
 "use client";
 
 import { DataTable } from "@/components/datatables";
-import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { fetcher } from "@/lib/fetcher";
 import { Video } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircleIcon, FileBox, Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
+import { LoaderOne } from "@/components/ui/loader";
 
 const PageVideoAstuce = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -21,8 +21,8 @@ const PageVideoAstuce = () => {
   });
   if (isPending) {
     return (
-      <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner className="size-8" />
+      <div className="min-h-screen flex items-center w-full justify-center text-center">
+        <LoaderOne />
       </div>
     );
   }

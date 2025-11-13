@@ -15,10 +15,10 @@ import { Ban, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { Spinner } from "../ui/spinner";
 import { deleteBase } from "@/services/base.service";
 import { createLog } from "@/services/log.service";
 import { useSession } from "next-auth/react";
+import { LoaderOne } from "../ui/loader";
 
 const DeleteBase = ({ base }: { base: Base }) => {
   const router = useRouter();
@@ -49,7 +49,7 @@ const DeleteBase = ({ base }: { base: Base }) => {
       <AlertDialogContent>
         {isPending ? (
           <div className="w-full flex flex-col items-center">
-            <Spinner />
+            <LoaderOne />
           </div>
         ) : (
           <>

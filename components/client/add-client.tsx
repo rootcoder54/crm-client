@@ -31,10 +31,10 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import HeaderPage from "../features/header-page";
-import { Spinner } from "../ui/spinner";
 import { createClient } from "@/services/client.service";
 import { useSession } from "next-auth/react";
 import { createLog } from "@/services/log.service";
+import { LoaderOne } from "../ui/loader";
 
 const AddClient = () => {
   const { data: session } = useSession();
@@ -85,7 +85,7 @@ const AddClient = () => {
   if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner />
+        <LoaderOne />
       </div>
     );
   }

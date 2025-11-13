@@ -20,7 +20,7 @@ import { createIntervention } from "@/services/intervention.service";
 import { createItemIntervention } from "@/services/itemIntervention.service";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Spinner } from "../ui/spinner";
+import { LoaderOne } from "../ui/loader";
 
 type Item = {
   date: string;
@@ -175,7 +175,7 @@ export const AddIntervention = ({
             </>
           ) : (
             <div className="w-full flex items-center justify-center">
-              <Spinner />
+              <LoaderOne />
             </div>
           )}
         </DialogContent>

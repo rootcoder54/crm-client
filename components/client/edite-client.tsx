@@ -31,9 +31,9 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import HeaderPage from "../features/header-page";
-import { Spinner } from "../ui/spinner";
 import { updateClient } from "@/services/client.service";
 import { Client } from "@prisma/client";
+import { LoaderOne } from "../ui/loader";
 
 const EditeClient = ({ client }: { client: Client }) => {
   const router = useRouter();
@@ -77,7 +77,7 @@ const EditeClient = ({ client }: { client: Client }) => {
   if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner />
+        <LoaderOne />
       </div>
     );
   }

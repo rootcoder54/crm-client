@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { deleteItemIntervention } from "@/services/itemIntervention.service";
-import { Spinner } from "../ui/spinner";
+import { LoaderOne } from "../ui/loader";
 
 const DeleteIntervention = ({
   intervention,
@@ -46,7 +46,7 @@ const DeleteIntervention = ({
       <AlertDialogContent>
         {isPending ? (
           <div className="w-full flex flex-col items-center">
-            <Spinner className="size-4" />
+            <LoaderOne />
           </div>
         ) : (
           <>

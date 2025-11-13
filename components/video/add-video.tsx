@@ -25,9 +25,9 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
 import HeaderPage from "../features/header-page";
-import { Spinner } from "../ui/spinner";
 import { createVideo } from "@/services/video.service";
 import MyEditor from "../features/Editor";
+import { LoaderOne } from "../ui/loader";
 
 const AddVideo = () => {
   const router = useRouter();
@@ -61,7 +61,7 @@ const AddVideo = () => {
   if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner />
+        <LoaderOne />
       </div>
     );
   }

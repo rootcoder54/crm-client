@@ -3,8 +3,8 @@ import { Intervention } from "@prisma/client";
 
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
-import { Spinner } from "@/components/ui/spinner";
 import { DataTable } from "@/components/datatables";
+import { LoaderOne } from "@/components/ui/loader";
 
 const PageIntervention = () => {
   const { data: interventions } = useQuery<Intervention[]>({
@@ -14,8 +14,8 @@ const PageIntervention = () => {
 
   if (!interventions) {
     return (
-      <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner className="size-8" />
+      <div className="min-h-screen flex items-center w-full justify-center text-center">
+        <LoaderOne />
       </div>
     );
   }

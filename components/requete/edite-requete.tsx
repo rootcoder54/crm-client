@@ -31,7 +31,7 @@ import { updateRequete } from "@/services/requete.service";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import HeaderPage from "../features/header-page";
-import { Spinner } from "../ui/spinner";
+import { LoaderOne } from "../ui/loader";
 
 const EditeRequete = ({ requete }: { requete: Requete }) => {
   const router = useRouter();
@@ -71,7 +71,7 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
   if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner />
+        <LoaderOne />
       </div>
     );
   }

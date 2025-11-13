@@ -42,11 +42,11 @@ import {
   CommandList
 } from "@/components/ui/command";
 import { Client } from "@prisma/client";
-import { Spinner } from "../ui/spinner";
 import { createFacture, maxorder } from "@/services/facture.service";
 import { toast } from "sonner";
 import HeaderPage from "../features/header-page";
 import Link from "next/link";
+import { LoaderOne } from "../ui/loader";
 
 const FactureSchema = z.object({
   numero: z.string(),
@@ -115,7 +115,7 @@ export const AddFacturation = () => {
   if (isPending) {
     return (
       <div className="w-full flex flex-row items-center justify-center">
-        <Spinner />
+        <LoaderOne />
       </div>
     );
   }
@@ -315,7 +315,7 @@ export const AddFacturation = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-full p-0">
                       {isLoading ? (
-                        <Spinner />
+                        <LoaderOne />
                       ) : (
                         <Command>
                           <CommandInput placeholder="Recherche client..." />

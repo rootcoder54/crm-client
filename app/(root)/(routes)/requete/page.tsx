@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
-import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DataTable } from "@/components/datatables";
 import { useEffect, useState } from "react";
@@ -22,6 +21,7 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { RiFileExcel2Line } from "react-icons/ri";
+import { LoaderOne } from "@/components/ui/loader";
 
 interface RequeteWithClient extends Requete {
   client?: Client | null;
@@ -51,8 +51,8 @@ const PageRequete = () => {
 
   if (isPending) {
     return (
-      <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner className="size-8" />
+      <div className="min-h-screen flex items-center w-full justify-center text-center">
+        <LoaderOne />
       </div>
     );
   }

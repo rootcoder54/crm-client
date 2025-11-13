@@ -24,7 +24,7 @@ import { Ban, CalendarCheck2, ChevronDownIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Spinner } from "../ui/spinner";
+import { LoaderOne } from "../ui/loader";
 
 const ClotureRequete = ({ requete }: { requete: Requete }) => {
   const router = useRouter();
@@ -50,7 +50,7 @@ const ClotureRequete = ({ requete }: { requete: Requete }) => {
       <AlertDialogContent>
         {isPending ? (
           <div className="w-full flex flex-col items-center">
-            <Spinner />
+            <LoaderOne />
           </div>
         ) : (
           <>

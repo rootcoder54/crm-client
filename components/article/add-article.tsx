@@ -25,9 +25,9 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
 import HeaderPage from "../features/header-page";
-import { Spinner } from "../ui/spinner";
 import MyEditor from "../features/Editor";
 import { createArticle } from "@/services/article.service";
+import { LoaderOne } from "../ui/loader";
 
 const AddArticle = () => {
   const router = useRouter();
@@ -59,7 +59,7 @@ const AddArticle = () => {
   if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner />
+        <LoaderOne />
       </div>
     );
   }

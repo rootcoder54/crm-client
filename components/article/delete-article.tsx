@@ -15,8 +15,8 @@ import { Ban, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { Spinner } from "../ui/spinner";
 import { deleteArticle } from "@/services/article.service";
+import { LoaderOne } from "../ui/loader";
 
 const DeleteArticle = ({ article }: { article: Article }) => {
   const router = useRouter();
@@ -39,7 +39,7 @@ const DeleteArticle = ({ article }: { article: Article }) => {
       <AlertDialogContent>
         {isPending ? (
           <div className="w-full flex flex-col items-center">
-            <Spinner />
+            <LoaderOne />
           </div>
         ) : (
           <>

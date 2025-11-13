@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/datatables";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Spinner } from "@/components/ui/spinner";
+import { LoaderOne } from "@/components/ui/loader";
 import { fetcher } from "@/lib/fetcher";
 import { Client } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
@@ -42,8 +42,8 @@ const ClientPage = () => {
 
   if (isPending) {
     return (
-      <div className="h-24 flex items-center w-full justify-center text-center">
-        <Spinner className="size-8" />
+      <div className="min-h-screen flex items-center w-full justify-center text-center">
+        <LoaderOne />
       </div>
     );
   }
