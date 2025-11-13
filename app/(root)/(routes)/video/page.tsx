@@ -76,6 +76,8 @@ const PageVideoAstuce = () => {
       data={videos || []}
       hideList={["createdAt", "updatedAt", "detail"]}
       onRowSelect={(id) => setSelectedId(id)}
+      searchId="nom"
+      searchPlaceholder="Recherche le nom..."
     />
   );
 };

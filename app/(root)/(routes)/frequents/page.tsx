@@ -76,6 +76,8 @@ const PageFrequente = () => {
       data={articles || []}
       hideList={["createdAt", "updatedAt", "contenu"]}
       onRowSelect={(id) => setSelectedId(id)}
+      searchId="titre"
+      searchPlaceholder="Recherche le titre..."
     />
   );
 };
