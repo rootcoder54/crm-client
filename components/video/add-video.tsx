@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Ban, Plus } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,7 +53,7 @@ const AddVideo = () => {
     transition(() => {
       createVideo(values).then((data) => {
         toast.success(`Video ${data.nom} enregistrer avec succes`);
-        router.push("/video");
+        router.push("/video/details/" + data.id);
       });
     });
   }
@@ -81,12 +80,14 @@ const AddVideo = () => {
                 <Plus />
                 Nouvelle Video
               </Button>
-              <Link href={"/video"}>
-                <Button variant={"destructive"}>
-                  <Ban />
-                  Annuler
-                </Button>
-              </Link>
+              <Button
+                variant={"destructive"}
+                type="button"
+                onClick={() => router.back()}
+              >
+                <Ban />
+                Annuler
+              </Button>
             </div>
           </HeaderPage>
           <div className="space-y-8 px-12 py-5">

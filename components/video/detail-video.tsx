@@ -1,6 +1,9 @@
 import { Video } from "@prisma/client";
 import HeaderPage from "../features/header-page";
 import Writor from "../features/Writor";
+import Link from "next/link";
+import { Button } from "../ui/button";
+import { SquarePen, Trash2 } from "lucide-react";
 
 const DetailVideo = ({ video }: { video: Video }) => {
   return (
@@ -10,7 +13,18 @@ const DetailVideo = ({ video }: { video: Video }) => {
           { title: "Videos", url: "/video" },
           { title: "Details Video", url: "#" }
         ]}
-      ></HeaderPage>
+      >
+        <Link href={`/video/edite/${video.id}`}>
+          <Button variant={"outline"}>
+            <SquarePen /> Editer
+          </Button>
+        </Link>
+        <Link href={`/video/delete/${video.id}`}>
+          <Button variant={"danger"}>
+            <Trash2 /> Supprimer
+          </Button>
+        </Link>
+      </HeaderPage>
       <div className="flex flex-col items-center gap-4 px-5 py-10">
         <iframe
           src={video.url}

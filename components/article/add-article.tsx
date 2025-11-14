@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Ban, Plus } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -52,7 +51,7 @@ const AddArticle = () => {
     transition(() => {
       createArticle(values).then((data) => {
         toast.success(`Article ${data.titre} enregistrer avec succes`);
-        router.push("/frequents");
+        router.push("/frequents/details/" + data.id);
       });
     });
   }
@@ -79,12 +78,14 @@ const AddArticle = () => {
                 <Plus />
                 Nouvelle Article
               </Button>
-              <Link href={"/frequents"}>
-                <Button variant={"destructive"}>
-                  <Ban />
-                  Annuler
-                </Button>
-              </Link>
+              <Button
+                variant={"destructive"}
+                type="button"
+                onClick={() => router.back()}
+              >
+                <Ban />
+                Annuler
+              </Button>
             </div>
           </HeaderPage>
           <div className="space-y-8 px-12 py-5">
