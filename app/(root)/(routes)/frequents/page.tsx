@@ -57,7 +57,7 @@ const PageFrequente = () => {
         {
           label: "Details",
           icon: <FileBox />,
-          url: `#`,
+          url: `/frequents/details/${selectedId}`,
           variantbtn: "blue"
         },
         {

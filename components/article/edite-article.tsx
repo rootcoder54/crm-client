@@ -72,7 +72,7 @@ const EditeArticle = ({ article }: { article: Article }) => {
           <HeaderPage
             chemins={[
               { title: "Question Frequentes", url: "/frequents" },
-              { title: "Nouvelle Article", url: "#" }
+              { title: "Modifier Article", url: "#" }
             ]}
           >
             <div className="flex items-center gap-2">
