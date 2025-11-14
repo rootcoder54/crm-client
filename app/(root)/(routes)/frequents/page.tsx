@@ -63,7 +63,7 @@ const PageFrequente = () => {
         {
           label: "Editer",
           icon: <SquarePen />,
-          url: `#`,
+          url: `/frequents/edite/${selectedId}`,
           variantbtn: "outline"
         },
         {
