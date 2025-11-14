@@ -63,7 +63,7 @@ const PageVideoAstuce = () => {
         {
           label: "Editer",
           icon: <SquarePen />,
-          url: `#`,
+          url: `/video/edite/${selectedId}`,
           variantbtn: "outline"
         },
         {
