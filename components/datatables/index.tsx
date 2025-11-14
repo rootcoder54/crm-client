@@ -146,7 +146,7 @@ export function DataTable<TData extends Record<string, unknown>>({
       const selectedId = selectedRows[0].getValue("id") as string;
       if (onRowSelect) onRowSelect(selectedId);
     }
-  }, [rowSelection, table, onRowSelect]);
+  }, [rowSelection, onRowSelect]);
 
   console.log(
     table.getRowModel().rows.map((row) => {
@@ -300,14 +300,10 @@ export function DataTable<TData extends Record<string, unknown>>({
                   data-state={row.getIsSelected() && "selected"}
                   onClick={() => {
                     table.setRowSelection({ [row.id]: true });
-                    const selectedId = row.getValue("id") as string;
-                    if (onRowSelect) onRowSelect(selectedId);
                   }}
                   onContextMenu={(event) => {
                     event.preventDefault();
                     table.setRowSelection({ [row.id]: true });
-                    const selectedId = row.getValue("id") as string;
-                    if (onRowSelect) onRowSelect(selectedId);
                     setOpen(true);
                     setPosition({ x: event.clientX, y: event.clientY });
                   }}

@@ -122,12 +122,14 @@ export function generateColumns<T extends Record<string, unknown>>(
         );
       },
       filterFn: isDateColumn ? "dateRange" : "auto",
-      cell: ({ row, getValue }) => {
-        const value = getValue();
+      cell: ({ row }) => {
+        const raw = row.original[key]; // toujours la donnée brute
+
         if (customStyles && customStyles[key]) {
-          return customStyles[key](value, row.original);
+          return customStyles[key](raw, row.original);
         }
-        return renderCell(value);
+
+        return renderCell(raw); // on rend le JSX mais on ne pollue pas getValue()
       }
     } as ColumnDef<T>;
   });

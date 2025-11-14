@@ -41,9 +41,7 @@ export function ColumnHeader<TData, TValue>({
   table
 }: ColumnHeaderProps<TData, TValue>) {
   const [open, setOpen] = React.useState(false);
-  const [text, setText] = React.useState(
-    (column.getFilterValue() as string) ?? ""
-  );
+  const [text, setText] = React.useState("");
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -52,23 +50,21 @@ export function ColumnHeader<TData, TValue>({
     }
   };
 
-  const allValues = table
-    .getCoreRowModel()
-    .rows.map((row) => row.getValue(column.id));
-  const dataFiltered = Array.from(
-    new Map(
-      (allValues ?? []).map((value) => [
-        value,
-        {
-          label: value,
-          value: value
-        }
-      ])
-    ).values()
-  ) as { label: string; value: string }[];
+  const dataFiltered = React.useMemo(() => {
+    const allValues = table
+      .getCoreRowModel()
+      .rows.map((row) => row.getValue(column.id));
+
+    return Array.from(
+      new Map(
+        (allValues ?? []).map((value) => [value, { label: value, value }])
+      ).values()
+    ) as { label: string; value: string }[];
+  }, [table, column.id]);
 
   const facets = column?.getFacetedUniqueValues();
-  const selectedValues = new Set(column?.getFilterValue() as string[]);
+  //const selectedValues = new Set(column?.getFilterValue() as string[]);
+  const selected = (column.getFilterValue() as string[]) ?? [];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -100,53 +96,6 @@ export function ColumnHeader<TData, TValue>({
         className="w-80"
         onClick={(e) => e.stopPropagation()}
       >
-        {/*<div className="flex flex-col space-y-2">
-          <InputGroup>
-            <InputGroupInput
-              placeholder="Filtrer..."
-              value={text}
-              onChange={(event) => setText(event.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            {column.getIsFiltered() && (
-              <Button
-                variant={"ghost"}
-                className="hover:text-red-800"
-                onClick={() => {
-                  column.setFilterValue("");
-                  column.toggleSorting(false);
-                }}
-              >
-                <X />
-              </Button>
-            )}
-            <InputGroupAddon align="inline-end">
-              <Button
-                variant="ghost"
-                aria-label="Search"
-                onClick={() => {
-                  column.setFilterValue(text);
-                }}
-              >
-                <SearchIcon />
-              </Button>
-            </InputGroupAddon>
-          </InputGroup>
-          <Button
-            variant={column.getIsSorted() === "asc" ? "secondary" : "ghost"}
-            onClick={() => column.toggleSorting(false)}
-            className="justify-start"
-          >
-            <ArrowUp className="ml-2 h-4 w-4" /> Croissant
-          </Button>
-          <Button
-            variant={column.getIsSorted() === "desc" ? "secondary" : "ghost"}
-            onClick={() => column.toggleSorting(true)}
-            className="justify-start"
-          >
-            <ArrowDown className="ml-2 h-4 w-4" /> Decroissant
-          </Button>
-        </div>*/}
         <Command>
           <div className="flex flex-row py-1 gap-2 items-center">
             <CommandInput
@@ -177,7 +126,7 @@ export function ColumnHeader<TData, TValue>({
             <CommandEmpty>Aucun resultat.</CommandEmpty>
             <CommandGroup>
               {dataFiltered.map((option, index) => {
-                const isSelected = selectedValues.has(option.value);
+                const isSelected = selected.includes(option.value);
                 return (
                   <CommandItem
                     key={index}
@@ -186,15 +135,16 @@ export function ColumnHeader<TData, TValue>({
                       "cursor-pointer"
                     )}
                     onSelect={() => {
+                      let newValues;
+
                       if (isSelected) {
-                        selectedValues.delete(option.value);
+                        newValues = selected.filter((v) => v !== option.value);
                       } else {
-                        selectedValues.clear();
-                        selectedValues.add(option.value);
+                        newValues = [option.value];
                       }
-                      const filterValues = Array.from(selectedValues);
-                      column?.setFilterValue(
-                        filterValues.length ? filterValues : undefined
+
+                      column.setFilterValue(
+                        newValues.length ? newValues : undefined
                       );
                     }}
                   >
@@ -220,7 +170,7 @@ export function ColumnHeader<TData, TValue>({
             </CommandGroup>
           </CommandList>
         </Command>
-        {selectedValues.size > 0 && (
+        {selected.length > 0 && (
           <>
             <Separator className="mt-2" />
             <Button
