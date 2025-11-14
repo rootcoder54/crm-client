@@ -74,7 +74,7 @@ const EditeVideo = ({ video }: { video: Video }) => {
           <HeaderPage
             chemins={[
               { title: "Videos", url: "/video" },
-              { title: "Nouvelle Video", url: "#" }
+              { title: "Editer Video", url: "#" }
             ]}
           >
             <div className="flex items-center gap-2">

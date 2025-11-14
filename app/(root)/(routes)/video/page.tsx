@@ -57,7 +57,7 @@ const PageVideoAstuce = () => {
         {
           label: "Details",
           icon: <FileBox />,
-          url: `#`,
+          url: `/video/details/${selectedId}`,
           variantbtn: "blue"
         },
         {
