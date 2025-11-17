@@ -7,6 +7,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Color from "@tiptap/extension-color";
 import { TextStyle } from "@tiptap/extension-text-style";
+import Youtube from "@tiptap/extension-youtube";
 import ListItem from "@tiptap/extension-list-item";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +27,8 @@ import {
   Heading3,
   Heading2,
   Heading1,
-  SeparatorVertical
+  SeparatorVertical,
+  YoutubeIcon
 } from "lucide-react";
 
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
@@ -95,6 +97,26 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         }}
       >
         <ImageIcon />
+      </Button>
+      <Button
+        variant="outline"
+        type="button"
+        onClick={() => {
+          const url = window.prompt("Entrez l'URL YouTube");
+          if (url) {
+            editor
+              .chain()
+              .focus()
+              .setYoutubeVideo({
+                src: url,
+                width: 640,
+                height: 360
+              })
+              .run();
+          }
+        }}
+      >
+        <YoutubeIcon /> {/* ou un autre icône */}
       </Button>
       <Button
         type="button"
@@ -252,7 +274,11 @@ const MyEditor = ({
       StarterKit,
       Image,
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
-      TextStyle
+      TextStyle,
+      Youtube.configure({
+        controls: false,
+        nocookie: true
+      })
     ],
     content: value,
     onUpdate: ({ editor }) => {
