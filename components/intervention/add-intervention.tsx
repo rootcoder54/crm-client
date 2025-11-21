@@ -15,7 +15,6 @@ import { useState, useTransition } from "react";
 import { format } from "date-fns";
 import { OctagonX, Plus } from "lucide-react";
 import { Intervention, Requete } from "@prisma/client";
-import Link from "next/link";
 import { createIntervention } from "@/services/intervention.service";
 import { createItemIntervention } from "@/services/itemIntervention.service";
 import { useRouter } from "next/navigation";
@@ -97,7 +96,7 @@ export const AddIntervention = ({
           })
           .then(() => {
             toast.success(`Intervention enregistrer avec succès`);
-            router.push(`/requete/intervention/${requete.id}`);
+            router.push(`/requete/detail/${requete.id}`);
           });
       } else {
         Promise.all(
@@ -115,10 +114,14 @@ export const AddIntervention = ({
           })
         ).then(() => {
           toast.success(`Intervention enregistrer avec succès`);
-          router.push(`/requete/intervention/${requete.id}`);
+          router.push(`/requete/detail/${requete.id}`);
         });
       }
     });
+  };
+
+  const handleBack = () => {
+    router.back();
   };
 
   return (
@@ -163,11 +166,9 @@ export const AddIntervention = ({
                     <OctagonX />
                   </Button>
                 )}
-                <Link href={`/requete/intervention/${requete.id}`}>
-                  <Button type="button" variant={"danger"}>
-                    Annuler
-                  </Button>
-                </Link>
+                <Button type="button" variant={"danger"} onClick={handleBack}>
+                  Annuler
+                </Button>
                 <Button type="submit" variant={"blue"} onClick={handlerSubmit}>
                   Enregistrer
                 </Button>

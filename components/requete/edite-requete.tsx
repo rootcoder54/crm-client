@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Ban, Save } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -64,10 +63,15 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
     transition(() =>
       updateRequete(requete.id, values).then((data) => {
         toast.success(`Requete ${data.sujet} a été modifié avec succes`);
-        router.push("/requete");
+        router.push("/requete/detail/" + requete.id);
       })
     );
   }
+
+  const handleCancel = () => {
+    router.back();
+  };
+
   if (isPending) {
     return (
       <div className="h-24 flex items-center w-full justify-center text-center">
@@ -91,12 +95,14 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
                 <Save />
                 Enregistrer
               </Button>
-              <Link href={"/requete"}>
-                <Button variant={"destructive"}>
-                  <Ban />
-                  Annuler
-                </Button>
-              </Link>
+              <Button
+                variant={"destructive"}
+                type="button"
+                onClick={handleCancel}
+              >
+                <Ban />
+                Annuler
+              </Button>
             </div>
           </HeaderPage>
           <div className="space-y-8 px-12 py-5">

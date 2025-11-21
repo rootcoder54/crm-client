@@ -2,21 +2,17 @@
 import { Client, Requete } from "@prisma/client";
 import {
   AlertCircleIcon,
-  CalendarCheck2,
   ChartPie,
-  FileArchive,
   FileBox,
   LayoutGrid,
   Plus,
-  SquarePen,
   Trash
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DataTable } from "@/components/datatables";
-import { useEffect, useState } from "react";
-import { getRequeteById } from "@/services/requete.service";
+import { useState } from "react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -29,7 +25,6 @@ interface RequeteWithClient extends Requete {
 
 const PageRequete = () => {
   const [selectedId, setSelectedId] = useState<string>("");
-  const [isCloture, setIscloture] = useState<boolean>(false);
   const {
     isError,
     isPending,
@@ -38,16 +33,6 @@ const PageRequete = () => {
     queryKey: ["requete"],
     queryFn: () => fetcher(`/api/requete`)
   });
-
-  useEffect(() => {
-    getRequeteById(selectedId).then((data) => {
-      if (data?.dateCloture) {
-        setIscloture(true);
-      } else {
-        setIscloture(false);
-      }
-    });
-  }, [selectedId]);
 
   if (isPending) {
     return (
@@ -106,29 +91,10 @@ const PageRequete = () => {
       ]}
       selectAction={[
         {
-          label: "Interventions",
-          icon: <FileArchive />,
-          url: `/requete/intervention/${selectedId}`,
-          variantbtn: "blue"
-        },
-        {
-          label: "Clôture",
-          icon: <CalendarCheck2 />,
-          url: `/requete/cloture/${selectedId}`,
-          variantbtn: "gray",
-          hide: isCloture
-        },
-        {
           label: "Details",
           icon: <FileBox />,
           url: `/requete/detail/${selectedId}`,
           variantbtn: "blue"
-        },
-        {
-          label: "Editer",
-          icon: <SquarePen />,
-          url: `/requete/edite/${selectedId}`,
-          variantbtn: "outline"
         },
         {
           label: "Supprimer",

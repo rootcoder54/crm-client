@@ -40,7 +40,7 @@ const ClotureRequete = ({ requete }: { requete: Requete }) => {
     transition(() => {
       clotureRequete(requete.id, date, "CLOTURER").then((data) => {
         toast.info(`Requête ${data.sujet} a été Cloturée avec succès`);
-        router.push("/requete");
+        router.push("/requete/detail/" + requete.id);
       });
     });
   };
