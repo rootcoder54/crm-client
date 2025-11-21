@@ -1,0 +1,21 @@
+/* Cacher les éléments avec la classe 'no-print' pendant l'impression */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    margin: 0;
+    /* Supprime les marges, y compris les en-têtes/pieds */
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

@@ -20,7 +20,7 @@ export async function createIntervention(data: {
 export async function getInterventionById(id: string) {
   return prisma.intervention.findUnique({
     where: { id },
-    include: { items: true, document: true }
+    include: { items: true, document: true , client: true }
   });
 }
 

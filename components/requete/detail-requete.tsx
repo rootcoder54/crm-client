@@ -29,6 +29,7 @@ type Item = {
 const DetailRequete = ({ requete }: { requete: Requete }) => {
   const [items, setitems] = useState<Item[]>();
   const [selectedId, setSelectedId] = useState<string>("");
+  const [interventionID, setInterventionID] = useState<string>("");
 
   useEffect(() => {
     getItemsByRequete(requete.id).then((data) => {
@@ -36,6 +37,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
         ...item,
         date: format(item.date, "dd/MM/yyyy")
       }));
+      setInterventionID(listes[0]?.interventionId || "");
       setitems(listes);
     });
   }, [requete.id]);
@@ -180,7 +182,15 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
             </div>
           </div>
           <div className="flex flex-col space-y-2">
-            <h3 className="text-xl md:text-2xl lg:text-3xl">Interventions</h3>
+            <div className="flex items-center space-x-2">
+              <h3 className="text-xl md:text-2xl lg:text-3xl">Interventions</h3>
+              <Link
+                target="_blank"
+                href={"/imprime/intervention/" + interventionID}
+              >
+                <FileText />
+              </Link>
+            </div>
             <hr />
             {items ? (
               <DataTable
