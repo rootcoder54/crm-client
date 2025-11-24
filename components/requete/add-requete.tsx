@@ -40,12 +40,12 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { Client } from "@prisma/client";
-import { createRequete } from "@/services/requete.service";
+import { Client, Requete } from "@prisma/client";
+import { autoSaveRequete } from "@/services/requete.service";
 import HeaderPage from "../features/header-page";
 import { lastVisite } from "@/services/client.service";
 import { useQuery } from "@tanstack/react-query";
@@ -55,11 +55,14 @@ import { LoaderOne } from "../ui/loader";
 const AddRequete = () => {
   const router = useRouter();
   const [isPending, transition] = useTransition();
+
+  const [requete, setRequete] = useState<Requete>({
+    id: crypto.randomUUID()
+  } as Requete);
   const { isPending: isLoading, data: clients } = useQuery<Client[]>({
     queryKey: ["clients"],
     queryFn: () => fetcher(`/api/client`)
   });
-  console.log(clients);
 
   const schema = z.object({
     sujet: z.string(),
@@ -88,9 +91,20 @@ const AddRequete = () => {
     }
   });
 
-  function onSubmit(values: z.infer<typeof schema>) {
+  useEffect(() => {
+    const sub = form.watch((values) => {
+      setRequete((prev) => ({ ...prev, ...values } as Requete));
+    });
+    console.log(requete);
+    autoSaveRequete(requete).then((res) => {
+      console.log("Auto saved", res);
+    });
+    return () => sub.unsubscribe();
+  }, [form, requete]);
+
+  function onSubmit() {
     transition(() => {
-      createRequete(values).then((data) => {
+      autoSaveRequete(requete, "submitted").then((data) => {
         if (data.clientId) {
           lastVisite(data.clientId, data.dateDebut).then((result) => {
             console.log(result);

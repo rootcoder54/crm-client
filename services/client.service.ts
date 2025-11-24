@@ -39,7 +39,7 @@ export async function updateClient(
   return prisma.client.update({ where: { id }, data });
 }
 
-export async function lastVisite(id: string, date: Date) {
+export async function lastVisite(id: string, date: Date | null) {
   return prisma.client.update({
     where: { id },
     data: {

@@ -186,7 +186,7 @@ model Logiciel {
 model Requete {
   id String @id @default(uuid())
 
-  sujet       String
+  sujet       String?
   description String?
   type        String?
   observation String?
@@ -194,7 +194,7 @@ model Requete {
 
   demandeur     String?
   technicien    String?
-  dateDebut     DateTime
+  dateDebut     DateTime?
   dateCloture   DateTime?
   etat          String?
   isTacheClient Boolean   @default(true)
@@ -206,6 +206,8 @@ model Requete {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  status String @default("draft") // "draft" | "submitted"
 }
 
 model Facture {

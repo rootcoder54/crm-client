@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
+import { Requete } from "@prisma/client";
 
 export async function createRequete(data: {
   sujet: string;
@@ -36,6 +37,21 @@ export async function getAllRequetes() {
   });
 }
 
+export async function getDraftRequetes() {
+  return prisma.requete.findMany({
+    where: { status: "draft" },
+    include: { client: true, Intervention: true },
+    orderBy: { updatedAt: "desc" }
+  });
+}
+
+export async function getSubmittedRequetes() {
+  return prisma.requete.findMany({
+    where: { status: "submitted" },
+    include: { client: true, Intervention: true },
+    orderBy: { createdAt: "desc" }
+  });
+}
 export async function updateRequete(
   id: string,
   data: Partial<
@@ -46,6 +62,15 @@ export async function updateRequete(
   >
 ) {
   return prisma.requete.update({ where: { id }, data });
+}
+
+export async function autoSaveRequete(requete: Requete, status?: string) {
+  const { id, ...data } = requete;
+  return prisma.requete.upsert({
+    where: { id },
+    update: { ...data, status: status || requete.status },
+    create: { ...data, status: status, id }
+  });
 }
 
 export async function clotureRequete(id: string, date: Date, etat: string) {
