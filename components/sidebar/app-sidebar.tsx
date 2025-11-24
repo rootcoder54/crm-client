@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   AlignLeft,
   AppWindow,
+  BookDashed,
   FileArchive,
   FileChartColumn,
   FileChartPie,
@@ -53,6 +54,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/requete",
         icon: AlignLeft,
         isActive: pathname.startsWith("/requete")
+      },
+      {
+        title: "Requête Brouillon",
+        url: "/draft",
+        icon: BookDashed,
+        isActive: pathname.startsWith("/draft")
       },
       {
         title: "Intervention",
