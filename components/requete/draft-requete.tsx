@@ -136,7 +136,7 @@ const DraftRequete = ({ requeteDraft }: { requeteDraft: Requete }) => {
                 <Check />
                 Valider
               </Button>
-              <Link href={"/requete"}>
+              <Link href={"/draft"}>
                 <Button variant={"destructive"}>
                   <Ban />
                   Annuler

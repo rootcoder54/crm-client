@@ -16,6 +16,8 @@ import { getItemsByRequete } from "@/services/itemIntervention.service";
 import { DataTable } from "../datatables";
 import { LoaderOne } from "../ui/loader";
 import { format } from "date-fns";
+import { getClientById } from "@/services/client.service";
+import { Badge } from "../ui/badge";
 
 type Item = {
   id: string;
@@ -28,6 +30,7 @@ type Item = {
 
 const DetailRequete = ({ requete }: { requete: Requete }) => {
   const [items, setitems] = useState<Item[]>();
+  const [client, setClient] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>("");
   const [interventionID, setInterventionID] = useState<string>("");
 
@@ -40,7 +43,12 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
       setInterventionID(listes[0]?.interventionId || "");
       setitems(listes);
     });
-  }, [requete.id]);
+    if (requete.clientId) {
+      getClientById(requete.clientId).then((data) => {
+        setClient(data?.nomClient);
+      });
+    }
+  }, [requete.id, requete.clientId]);
 
   return (
     <div>
@@ -83,33 +91,52 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
       </HeaderPage>
       <div className="p-4">
         <div className="flex flex-col space-y-3">
-          <div className="flex items-center space-x-2 text-lg">
-            <FileText />
-            <span>Requête detail</span>
-          </div>
-          <div className="flex flex-col">
-            <h2 className="text-xl md:text-2xl lg:text-3xl">
-              Sujet: {requete.sujet}
-            </h2>
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
+            <div className="flex flex-row items-center space-x-2">
+              <FileText />
+              <h2 className="text-xl md:text-2xl lg:text-3xl">
+                Sujet: {requete.sujet}
+              </h2>
+            </div>
+            <div className="flex flex-row items-center space-x-2">
+              <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Date de création :
+              </p>
+              <p className="text-sm">
+                {requete.dateDebut
+                  ? new Date(requete.dateDebut).toLocaleDateString()
+                  : "N/A"}
+              </p>
+            </div>
           </div>
           <hr />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-            {requete.sujet && (
-              <div className="flex flex-row items-center space-x-2">
-                <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Titre :
+          <div className="flex flex-col space-y-4">
+            {client && (
+              <div className="flex flex-row items-start space-x-3">
+                <p className="text-lg font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Client :
                 </p>
-                <p className="text-sm">{requete.sujet}</p>
+                <p className="text-sm">
+                  {requete.demandeur} -{client}
+                </p>
               </div>
             )}
             {requete.description && (
-              <div className="flex flex-row items-center space-x-25">
-                <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <div className="flex flex-col items-start space-y-3 lg:w-3/4 xl:w-3/5">
+                <p className="text-lg underline font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                   Description :
                 </p>
                 <p className="text-sm">{requete.description}</p>
               </div>
             )}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+            <div className="flex flex-row items-center space-x-2">
+              <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Etat de la requête :
+              </p>
+              <Badge>{requete.etat ? requete.etat : "En Cours"}</Badge>
+            </div>
             {requete.type && (
               <div className="flex flex-row items-center space-x-2">
                 <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -150,24 +177,6 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
               </p>
               <p className="text-sm">
                 {requete.technicien ? requete.technicien : "Non assigné"}
-              </p>
-            </div>
-            <div className="flex flex-row items-center space-x-2">
-              <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Etat :
-              </p>
-              <p className="text-sm">
-                {requete.etat ? requete.etat : "En Cours"}
-              </p>
-            </div>
-            <div className="flex flex-row items-center space-x-2">
-              <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Date de création :
-              </p>
-              <p className="text-sm">
-                {requete.dateDebut
-                  ? new Date(requete.dateDebut).toLocaleDateString()
-                  : "N/A"}
               </p>
             </div>
             <div className="flex flex-row items-center space-x-2">
