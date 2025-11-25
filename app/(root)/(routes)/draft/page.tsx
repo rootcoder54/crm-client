@@ -62,6 +62,12 @@ const PageRequete = () => {
           icon: <FileBox />,
           url: `/draft/${selectedId}`,
           variantbtn: "blue"
+        },
+        {
+          label: "Supprimer",
+          icon: <AlertCircleIcon />,
+          url: `/draft/${selectedId}/delete`,
+          variantbtn: "danger"
         }
       ]}
       data={listes}

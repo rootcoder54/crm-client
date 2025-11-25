@@ -79,7 +79,7 @@ const PageRequete = () => {
           label: "Nouvelle Requête",
           icon: <Plus />,
           url: "/requete/add",
-          variantbtn: "secondary"
+          variantbtn: "blue"
         },
         {
           label: "Excel",
