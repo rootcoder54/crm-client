@@ -58,9 +58,9 @@ const PageRequete = () => {
       titre="Liste des Requêtes Brouillons"
       selectAction={[
         {
-          label: "Details",
+          label: "Voir",
           icon: <FileBox />,
-          url: `/requete/detail/${selectedId}`,
+          url: `/draft/${selectedId}`,
           variantbtn: "blue"
         }
       ]}

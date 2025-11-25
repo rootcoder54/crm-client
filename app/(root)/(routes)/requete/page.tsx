@@ -107,6 +107,9 @@ const PageRequete = () => {
       dateChose="dateDebut"
       dateChoseTitle="Filter par Date"
       columnStyles={{
+        sujet: (value) => (
+          <span className="font-medium">{value as string}</span>
+        ),
         etat: (value) => (
           <Badge
             variant={"default"}

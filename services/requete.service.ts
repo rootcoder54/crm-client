@@ -26,6 +26,12 @@ export async function getRequeteById(id: string) {
   });
 }
 
+export async function getRequeteByIdWithOutIntervention(id: string) {
+  return prisma.requete.findUnique({
+    where: { id }
+  });
+}
+
 export async function getRequetesByClient(clientId: string) {
   return prisma.requete.findMany({ where: { clientId } });
 }

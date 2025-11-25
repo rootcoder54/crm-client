@@ -52,13 +52,11 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { LoaderOne } from "../ui/loader";
 
-const AddRequete = () => {
+const DraftRequete = ({ requeteDraft }: { requeteDraft: Requete }) => {
   const router = useRouter();
   const [isPending, transition] = useTransition();
 
-  const [requete, setRequete] = useState<Requete>({
-    id: crypto.randomUUID()
-  } as Requete);
+  const [requete, setRequete] = useState<Requete>(requeteDraft);
   const { isPending: isLoading, data: clients } = useQuery<Client[]>({
     queryKey: ["clients"],
     queryFn: () => fetcher(`/api/client`)
@@ -79,15 +77,15 @@ const AddRequete = () => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      sujet: "",
-      description: "",
-      type: "",
-      observation: "",
-      logiciel: "",
-      demandeur: "",
-      technicien: "",
-      dateDebut: new Date(),
-      clientId: undefined
+      sujet: requete.sujet || "",
+      description: requete.description || "",
+      type: requete.type || "",
+      observation: requete.observation || "",
+      logiciel: requete.logiciel || "",
+      demandeur: requete.demandeur || "",
+      technicien: requete.technicien || "",
+      dateDebut: requete.dateDebut || new Date(),
+      clientId: requete.clientId || undefined
     }
   });
 
@@ -129,8 +127,8 @@ const AddRequete = () => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Requête", url: "/requete" },
-              { title: "Nouvelle Requête", url: "#" }
+              { title: "Requête Brouillon", url: "/draft" },
+              { title: "Brouillon", url: "#" }
             ]}
           >
             <div className="flex items-center gap-2">
@@ -167,7 +165,7 @@ const AddRequete = () => {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <Textarea {...field} className="h-[250px]" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -193,7 +191,7 @@ const AddRequete = () => {
                 <FormItem>
                   <FormLabel>Observation</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <Textarea {...field} className="h-[250px]" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -362,4 +360,4 @@ const AddRequete = () => {
   );
 };
 
-export default AddRequete;
+export default DraftRequete;
