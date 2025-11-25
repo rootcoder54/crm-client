@@ -65,7 +65,7 @@ export const AddIntervention = ({
       if (requete.Intervention.length === 0) {
         const data = {
           numero:
-            format(requete.dateDebut, "yyyyMMdd") +
+            format(requete.dateDebut || new Date(), "yyyyMMdd") +
             "_" +
             requete.logiciel +
             "_#",

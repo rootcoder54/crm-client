@@ -49,7 +49,7 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      sujet: requete.sujet,
+      sujet: requete.sujet || "",
       description: requete.description || "",
       type: requete.type || "",
       observation: requete.observation || "",

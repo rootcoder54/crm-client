@@ -9,13 +9,7 @@ import { cn } from "@/lib/utils";
 import { Client, Requete } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import {
-  FileArchive,
-  FileBox,
-  LayoutGrid,
-  SquarePen,
-  Trash
-} from "lucide-react";
+import { FileBox, LayoutGrid, Trash } from "lucide-react";
 import { useState } from "react";
 
 interface RequeteWithClient extends Requete {
@@ -35,7 +29,7 @@ export default function Home() {
     mlistes?.map((requete) => ({
       ...requete,
       numero:
-        format(requete.dateDebut, "yyyyMMdd_") +
+        format(requete.dateDebut || new Date(), "yyyyMMdd_") +
         requete.client?.numero +
         "_" +
         requete.logiciel +
@@ -59,23 +53,12 @@ export default function Home() {
             dateChoseTitle="Filter par Date"
             selectAction={[
               {
-                label: "Interventions",
-                icon: <FileArchive />,
-                url: `/requete/intervention/${selectedId}`,
-                variantbtn: "blue"
-              },
-              {
                 label: "Details",
                 icon: <FileBox />,
                 url: `/requete/detail/${selectedId}`,
                 variantbtn: "blue"
               },
-              {
-                label: "Editer",
-                icon: <SquarePen />,
-                url: `/requete/edite/${selectedId}`,
-                variantbtn: "outline"
-              },
+
               {
                 label: "Supprimer",
                 icon: <Trash />,
@@ -109,7 +92,9 @@ export default function Home() {
               "clientId",
               "dateDebut",
               "description",
-              "isTacheClient"
+              "isTacheClient",
+              "status",
+              "technicien"
             ]}
             searchId="sujet"
             searchPlaceholder="Rechercher un sujet..."
