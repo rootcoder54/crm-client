@@ -76,7 +76,7 @@ const AddVideo = () => {
             ]}
           >
             <div className="flex items-center gap-2">
-              <Button variant={"secondary"} type="submit">
+              <Button variant={"default"} type="submit">
                 <Plus />
                 Nouvelle Video
               </Button>

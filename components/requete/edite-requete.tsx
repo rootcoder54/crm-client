@@ -126,33 +126,7 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Type</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="observation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Observation</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
+                    <Textarea {...field} className="h-[250px]" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -180,6 +154,32 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
                       <SelectItem value="RHData">RHData</SelectItem>
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="observation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Observation</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} className="h-[250px]" />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

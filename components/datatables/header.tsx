@@ -119,7 +119,7 @@ function Header<TData>({
                     >
                       <Link href={act.url} className="dark:text-foreground">
                         {act.icon}
-                        <span className="hidden sm:flex">{act.label}</span>
+                        <span className="hidden md:flex">{act.label}</span>
                       </Link>
                     </Button>
                   ))}

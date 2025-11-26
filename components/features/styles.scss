@@ -23,6 +23,11 @@
 }
 
 .tiptap {
+  min-height: 250px;
+  overflow-y: auto;
+  padding: 1rem;
+  border-radius: 5px;
+  
   :first-child {
     margin-top: 0;
   }
