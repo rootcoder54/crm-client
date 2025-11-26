@@ -52,12 +52,12 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { LoaderOne } from "../ui/loader";
 
-const AddRequete = () => {
+const AddRequete = ({ id }: { id: string }) => {
   const router = useRouter();
   const [isPending, transition] = useTransition();
 
   const [requete, setRequete] = useState<Requete>({
-    id: crypto.randomUUID()
+    id: id
   } as Requete);
   const { isPending: isLoading, data: clients } = useQuery<Client[]>({
     queryKey: ["clients"],
