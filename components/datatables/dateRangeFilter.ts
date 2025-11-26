@@ -1,6 +1,6 @@
-import { Row } from "@tanstack/react-table";
+import { FilterFn, Row } from "@tanstack/react-table";
 
-export const dateRangeFilter = <TData,>(
+export const dateRangeFilter = <TData>(
   row: Row<TData>,
   columnId: string,
   filterValue: [string | undefined, string | undefined] | undefined
@@ -17,4 +17,17 @@ export const dateRangeFilter = <TData,>(
   if (to) return value <= to;
 
   return true;
+};
+
+export const unionFilter: FilterFn<unknown> = (
+  row,
+  columnId,
+  filterValues: string[]
+) => {
+  if (!Array.isArray(filterValues) || filterValues.length === 0) return true;
+
+  const cellValue = row.getValue(columnId) as string;
+
+  // 🔥 UNION : si la valeur de la cellule correspond à l'une des valeurs sélectionnées
+  return filterValues.includes(cellValue);
 };

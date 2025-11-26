@@ -15,6 +15,7 @@ import {
 import Image from "next/image";
 
 import { ColumnHeader } from "./columnHeader";
+import { unionFilter } from "./dateRangeFilter";
 
 const isImageUrl = (url: string) => {
   return /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(url);
@@ -121,7 +122,7 @@ export function generateColumns<T extends Record<string, unknown>>(
           />
         );
       },
-      filterFn: isDateColumn ? "dateRange" : "auto",
+      filterFn: isDateColumn ? "dateRange" : unionFilter,
       cell: ({ row }) => {
         const raw = row.original[key]; // toujours la donnée brute
 

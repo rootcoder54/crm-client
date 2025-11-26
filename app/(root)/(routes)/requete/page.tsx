@@ -151,7 +151,7 @@ const PageRequete = () => {
             { label: "RHPaie", value: "RHPaie" },
             { label: "TimeSheet", value: "TimeSheet" },
             { label: "RHData", value: "RHData" },
-            { label: "RHFacture", value: "RHfacture" }
+            { label: "RHFacture", value: "RHFacture" }
           ]
         }
       ]}

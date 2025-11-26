@@ -98,7 +98,7 @@ const DataTableFilter = <TData, TValue>({
                       if (isSelected) {
                         selectedValues.delete(option.value);
                       } else {
-                        selectedValues.clear();
+                        //selectedValues.clear();
                         selectedValues.add(option.value);
                       }
                       const filterValues = Array.from(selectedValues);
