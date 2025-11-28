@@ -95,6 +95,11 @@ const ClientPage = () => {
           variantbtn: "danger"
         }
       ]}
+      columnStyles={{
+        nomClient: (value) => (
+          <span className="font-medium">{value as string}</span>
+        )
+      }}
       data={clients || []}
       hideList={[
         "createdAt",
