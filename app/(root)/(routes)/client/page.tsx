@@ -13,6 +13,7 @@ import {
   SquarePen,
   Trash2
 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { RiFileExcel2Line } from "react-icons/ri";
 
@@ -96,8 +97,10 @@ const ClientPage = () => {
         }
       ]}
       columnStyles={{
-        nomClient: (value) => (
-          <span className="font-medium">{value as string}</span>
+        nomClient: (value, row) => (
+          <Link href={`/client/detail/${row.id}`} className="font-medium hover:underline">
+            {value as string}
+          </Link>
         )
       }}
       data={clients || []}

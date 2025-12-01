@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { LoaderOne } from "@/components/ui/loader";
+import Link from "next/link";
 
 interface RequeteWithClient extends Requete {
   client?: Client | null;
@@ -107,8 +108,13 @@ const PageRequete = () => {
       dateChose="dateDebut"
       dateChoseTitle="Filter par Date"
       columnStyles={{
-        sujet: (value) => (
-          <span className="font-medium">{value as string}</span>
+        sujet: (value, row) => (
+          <Link
+            href={`/requete/detail/${row.id}`}
+            className="font-medium hover:underline"
+          >
+            {value as string}
+          </Link>
         ),
         etat: (value) => (
           <Badge
