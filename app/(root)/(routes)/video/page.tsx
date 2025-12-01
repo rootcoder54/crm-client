@@ -8,6 +8,12 @@ import { useQuery } from "@tanstack/react-query";
 import { AlertCircleIcon, FileBox, Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 import { LoaderOne } from "@/components/ui/loader";
+import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 const PageVideoAstuce = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -50,7 +56,7 @@ const PageVideoAstuce = () => {
           label: "Nouvelle Video",
           icon: <Plus />,
           url: "/video/add",
-          variantbtn: "secondary"
+          variantbtn: "default"
         }
       ]}
       selectAction={[
@@ -73,8 +79,27 @@ const PageVideoAstuce = () => {
           variantbtn: "danger"
         }
       ]}
+      columnStyles={{
+        nom: (value, row) => (
+          <Link
+            href={`/video/details/${row.id}`}
+            className="font-medium hover:underline"
+          >
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  {row.nom.length > 30 ? row.nom.slice(0, 30) + "..." : row.nom}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className="w-[560px] p-4" side="bottom">
+                <p>{value as string}</p>
+              </TooltipContent>
+            </Tooltip>
+          </Link>
+        )
+      }}
       data={videos || []}
-      hideList={["createdAt", "updatedAt", "detail"]}
+      hideList={["createdAt", "updatedAt", "detail", "url"]}
       onRowSelect={(id) => setSelectedId(id)}
       searchId="nom"
       searchPlaceholder="Recherche le nom..."

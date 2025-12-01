@@ -8,6 +8,12 @@ import { useQuery } from "@tanstack/react-query";
 import { AlertCircleIcon, FileBox, Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 import { LoaderOne } from "@/components/ui/loader";
+import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 const PageFrequente = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -73,6 +79,27 @@ const PageFrequente = () => {
           variantbtn: "danger"
         }
       ]}
+      columnStyles={{
+        titre: (value, row) => (
+          <Link
+            href={`/frequents/details/${row.id}`}
+            className="font-medium hover:underline"
+          >
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>
+                  {row.titre.length > 30
+                    ? row.titre.slice(0, 30) + "..."
+                    : row.titre}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className="w-[560px] p-4" side="bottom">
+                <p>{value as string}</p>
+              </TooltipContent>
+            </Tooltip>
+          </Link>
+        )
+      }}
       data={articles || []}
       hideList={["createdAt", "updatedAt", "contenu"]}
       onRowSelect={(id) => setSelectedId(id)}
