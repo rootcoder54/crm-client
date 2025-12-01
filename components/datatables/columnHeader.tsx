@@ -64,7 +64,8 @@ export function ColumnHeader<TData, TValue>({
 
   const facets = column?.getFacetedUniqueValues();
   //const selectedValues = new Set(column?.getFilterValue() as string[]);
-  const selected = (column.getFilterValue() as string[]) ?? [];
+  //const selected = (column.getFilterValue() as string[]) ?? [];
+  const selectedValues = new Set(column?.getFilterValue() as string[]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -126,7 +127,7 @@ export function ColumnHeader<TData, TValue>({
             <CommandEmpty>Aucun resultat.</CommandEmpty>
             <CommandGroup>
               {dataFiltered.map((option, index) => {
-                const isSelected = selected.includes(option.value);
+                const isSelected = selectedValues.has(option.value);
                 return (
                   <CommandItem
                     key={index}
@@ -135,16 +136,15 @@ export function ColumnHeader<TData, TValue>({
                       "cursor-pointer"
                     )}
                     onSelect={() => {
-                      let newValues;
-
                       if (isSelected) {
-                        newValues = selected.filter((v) => v !== option.value);
+                        selectedValues.delete(option.value);
                       } else {
-                        newValues = [option.value];
+                        //selectedValues.clear();
+                        selectedValues.add(option.value);
                       }
-
-                      column.setFilterValue(
-                        newValues.length ? newValues : undefined
+                      const filterValues = Array.from(selectedValues);
+                      column?.setFilterValue(
+                        filterValues.length ? filterValues : undefined
                       );
                     }}
                   >
@@ -170,7 +170,7 @@ export function ColumnHeader<TData, TValue>({
             </CommandGroup>
           </CommandList>
         </Command>
-        {selected.length > 0 && (
+        {selectedValues.size > 0 && (
           <>
             <Separator className="mt-2" />
             <Button

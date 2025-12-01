@@ -32,6 +32,7 @@ import { X } from "lucide-react";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { dateRangeFilter } from "./dateRangeFilter";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface DataTableProps<TData extends Record<string, unknown>> {
   data: TData[];
@@ -181,7 +182,7 @@ export function DataTable<TData extends Record<string, unknown>>({
       URL.revokeObjectURL(url);
     } else {
       const error = await response.json();
-      alert(error.message);
+      toast.warning(error.message);
     }
   };
 
