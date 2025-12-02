@@ -19,15 +19,11 @@ export const dateRangeFilter = <TData>(
   return true;
 };
 
-export const unionFilter: FilterFn<unknown> = (
-  row,
-  columnId,
-  filterValues: string[]
-) => {
-  if (!Array.isArray(filterValues) || filterValues.length === 0) return true;
+export const unionFilter: FilterFn<unknown> = (row, columnId, filterValues) => {
+  const filters = Array.isArray(filterValues) ? filterValues : [filterValues];
 
-  const cellValue = row.getValue(columnId) as string;
-
-  // 🔥 UNION : si la valeur de la cellule correspond à l'une des valeurs sélectionnées
-  return filterValues.includes(cellValue);
+  if (filters.length === 0) return true;
+  const cellValue = String(row.getValue(columnId)).toLowerCase();
+  // 🔥 Approximation : on vérifie si la cellule contient AU MOINS un des filtres
+  return filters.some((f) => cellValue.includes(String(f).toLowerCase()));
 };

@@ -58,7 +58,7 @@ function DataToolBar<TData>({
   return (
     <div className="flex items-center py-4 w-full">
       <div className="flex flex-col items-center w-full">
-        <div className="flex flex-row items-center justify-start w-full gap-3 py-2">
+        <div className="flex flex-col md:flex-row md:items-center justify-start w-full gap-3 py-2 px-1">
           {filtreValeur && (
             <Input
               placeholder={`${searchPlaceholder ?? "Filter"}`}
@@ -69,42 +69,44 @@ function DataToolBar<TData>({
               className="max-w-sm"
             />
           )}
-          {filtreValeur &&
-            popFilter &&
-            popFilter.map((filter, index) => (
-              <DataTableFilter
-                key={index}
-                column={safeGetColumn(table, filter.dataFilter) ?? undefined}
-                title={filter.dataFilter}
-                icon={filter.icon}
-                options={filter.options ?? []}
+          <div className="flex flex-row items-center justify-start w-full gap-3 py-2">
+            {filtreValeur &&
+              popFilter &&
+              popFilter.map((filter, index) => (
+                <DataTableFilter
+                  key={index}
+                  column={safeGetColumn(table, filter.dataFilter) ?? undefined}
+                  title={filter.dataFilter}
+                  icon={filter.icon}
+                  options={filter.options ?? []}
+                />
+              ))}
+            {filtreValeur && dateChose && (
+              <DateFilter
+                column={safeGetColumn(table, dateChose) ?? undefined}
+                title={dateChoseTitle}
               />
-            ))}
-          {filtreValeur && dateChose && (
-            <DateFilter
-              column={safeGetColumn(table, dateChose) ?? undefined}
-              title={dateChoseTitle}
-            />
-          )}
-          {isFiltered && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="danger"
-                  onClick={() => {
-                    table.resetColumnFilters();
-                  }}
-                  className="h-8 px-2 lg:px-3"
-                >
-                  Reset
-                  <X />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Effacer les filtres</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
+            )}
+            {isFiltered && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="danger"
+                    onClick={() => {
+                      table.resetColumnFilters();
+                    }}
+                    className="h-8 px-2 lg:px-3"
+                  >
+                    Reset
+                    <X />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Effacer les filtres</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
         </div>
       </div>
     </div>

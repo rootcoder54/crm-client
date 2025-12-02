@@ -2,10 +2,10 @@
 import { Client, Requete } from "@prisma/client";
 import {
   AlertCircleIcon,
-  ChartPie,
   FileBox,
   LayoutGrid,
   Plus,
+  SquareUserRound,
   Trash
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -65,8 +65,21 @@ const PageRequete = () => {
         requete.logiciel +
         "_#",
       etat: requete.dateCloture ? "Cloturée" : "En cours",
+      nomClient: requete.demandeur + "-" + requete.client?.nomClient || "N/A",
       client: requete.client?.nomClient || "N/A"
     })) || [];
+
+  const clientFilter = Array.from(
+    new Map(
+      (requetes ?? []).map((requete) => [
+        requete.client?.nomClient || "N/A",
+        {
+          label: requete.client?.nomClient || "N/A",
+          value: requete.client?.nomClient || "N/A"
+        }
+      ])
+    ).values()
+  );
 
   return (
     <DataTable
@@ -137,19 +150,14 @@ const PageRequete = () => {
         "dateDebut",
         "description",
         "isTacheClient",
-        "status"
+        "status",
+        "demandeur",
+        "type",
+        "client"
       ]}
       searchId="sujet"
       searchPlaceholder="Rechercher un sujet..."
       popFilter={[
-        {
-          dataFilter: "etat",
-          icon: <ChartPie />,
-          options: [
-            { label: "En cours", value: "En cours" },
-            { label: "Cloturée", value: "Cloturée" }
-          ]
-        },
         {
           dataFilter: "logiciel",
           icon: <LayoutGrid />,
@@ -159,6 +167,11 @@ const PageRequete = () => {
             { label: "RHData", value: "RHData" },
             { label: "RHFacture", value: "RHFacture" }
           ]
+        },
+        {
+          dataFilter: "client",
+          icon: <SquareUserRound />,
+          options: clientFilter
         }
       ]}
       onRowSelect={(id) => setSelectedId(id)}
