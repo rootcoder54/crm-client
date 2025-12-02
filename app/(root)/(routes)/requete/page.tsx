@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { LoaderOne } from "@/components/ui/loader";
 import Link from "next/link";
+import Image from "next/image";
 
 interface RequeteWithClient extends Requete {
   client?: Client | null;
@@ -162,10 +163,34 @@ const PageRequete = () => {
           dataFilter: "logiciel",
           icon: <LayoutGrid />,
           options: [
-            { label: "RHPaie", value: "RHPaie" },
-            { label: "TimeSheet", value: "TimeSheet" },
-            { label: "RHData", value: "RHData" },
-            { label: "RHFacture", value: "RHFacture" }
+            {
+              label: "RHPaie",
+              value: "RHPaie",
+              icon: () => (
+                <Image src="/rhpaie.png" alt="p" width={20} height={20} />
+              )
+            },
+            {
+              label: "TimeSheet",
+              value: "TimeSheet",
+              icon: () => (
+                <Image src="/timesheet.png" alt="t" width={20} height={20} />
+              )
+            },
+            {
+              label: "RHData",
+              value: "RHData",
+              icon: () => (
+                <Image src="/rhdata.png" alt="d" width={20} height={20} />
+              )
+            },
+            {
+              label: "RHFacture",
+              value: "RHFacture",
+              icon: () => (
+                <Image src="/rhfacture.png" alt="f" width={20} height={20} />
+              )
+            }
           ]
         },
         {
