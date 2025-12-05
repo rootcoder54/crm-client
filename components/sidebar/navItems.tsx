@@ -4,12 +4,14 @@ import { AlignLeft, type LucideIcon } from "lucide-react";
 
 import {
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { SearchButton } from "./searchButton";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "../ui/badge";
 
 export function NavItems({
   items
@@ -19,6 +21,7 @@ export function NavItems({
     url: string;
     icon: LucideIcon;
     isActive?: boolean;
+    badge?: string;
   }[];
 }) {
   return (
@@ -44,6 +47,13 @@ export function NavItems({
                 <span>{item.title}</span>
               </Link>
             </SidebarMenuButton>
+            {item.badge && (
+              <SidebarMenuBadge>
+                <Badge variant={"default"} className="rounded-full bg-yellow-500 text-black">
+                  {item.badge}
+                </Badge>
+              </SidebarMenuBadge>
+            )}
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

@@ -23,12 +23,22 @@ import {
 import { UserButton } from "@/components/sidebar/userButton";
 import { NavItems } from "./navItems";
 import { usePathname } from "next/navigation";
+import { getNumberOfDraftRequetes } from "@/services/requete.service";
 
 // This is sample data.
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
-
+  const [draftCount, setdraftCount] = React.useState<string>();
+  React.useEffect(() => {
+    getNumberOfDraftRequetes().then((count) => {
+      if (count !== 0) {
+        setdraftCount(count + "");
+      } else {
+        setdraftCount(undefined);
+      }
+    });
+  }, [draftCount, pathname]);
   const data = {
     navMain: [
       {
@@ -59,7 +69,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Requête Brouillon",
         url: "/draft",
         icon: BookDashed,
-        isActive: pathname.startsWith("/draft")
+        isActive: pathname.startsWith("/draft"),
+        badge: draftCount
       },
       {
         title: "Intervention",

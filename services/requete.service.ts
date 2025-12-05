@@ -51,6 +51,12 @@ export async function getDraftRequetes() {
   });
 }
 
+export async function getNumberOfDraftRequetes() {
+  return prisma.requete.count({
+    where: { status: "draft" }
+  });
+}
+
 export async function getSubmittedRequetes() {
   return prisma.requete.findMany({
     where: { status: "submitted" },
