@@ -3,6 +3,11 @@ import { Outfit } from "next/font/google";
 import { QueryProvider } from "@/components/provider/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
+import {
+  Cursor,
+  CursorFollow,
+  CursorProvider
+} from "@/components/animate-ui/components/animate/cursor";
 
 const font = Outfit({
   subsets: ["latin"],
@@ -27,10 +32,14 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body className={`${font.className} antialiased`}>
-        <QueryProvider>
-          <Toaster richColors position="top-center" />
-          {children}
-        </QueryProvider>
+        <CursorProvider>
+          <QueryProvider>
+            <Toaster richColors position="top-center" />
+            {children}
+          </QueryProvider>
+          <Cursor />
+          <CursorFollow>rhpaie</CursorFollow>
+        </CursorProvider>
       </body>
     </html>
   );
