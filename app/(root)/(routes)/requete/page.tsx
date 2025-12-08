@@ -20,6 +20,11 @@ import { RiFileExcel2Line } from "react-icons/ri";
 import { LoaderOne } from "@/components/ui/loader";
 import Link from "next/link";
 import Image from "next/image";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 interface RequeteWithClient extends Requete {
   client?: Client | null;
@@ -127,7 +132,18 @@ const PageRequete = () => {
             href={`/requete/detail/${row.id}`}
             className="font-medium hover:underline"
           >
-            {value as string}
+            {row.sujet && row.sujet.length > 30 ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>{row.sujet.slice(0, 30) + "..."}</span>
+                </TooltipTrigger>
+                <TooltipContent className="w-[560px] p-4" side="bottom">
+                  <p>{value as string}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <span>{value as string}</span>
+            )}
           </Link>
         ),
         etat: (value) => (

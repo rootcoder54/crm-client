@@ -85,16 +85,18 @@ const PageVideoAstuce = () => {
             href={`/video/details/${row.id}`}
             className="font-medium hover:underline"
           >
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>
-                  {row.nom.length > 30 ? row.nom.slice(0, 30) + "..." : row.nom}
-                </span>
-              </TooltipTrigger>
-              <TooltipContent className="w-[560px] p-4" side="bottom">
-                <p>{value as string}</p>
-              </TooltipContent>
-            </Tooltip>
+            {row.nom.length > 30 ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>{row.nom.slice(0, 30) + "..."}</span>
+                </TooltipTrigger>
+                <TooltipContent className="w-[560px] p-4" side="bottom">
+                  <p>{value as string}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <span>{value as string}</span>
+            )}
           </Link>
         )
       }}

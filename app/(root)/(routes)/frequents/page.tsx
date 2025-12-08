@@ -85,18 +85,18 @@ const PageFrequente = () => {
             href={`/frequents/details/${row.id}`}
             className="font-medium hover:underline"
           >
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>
-                  {row.titre.length > 30
-                    ? row.titre.slice(0, 30) + "..."
-                    : row.titre}
-                </span>
-              </TooltipTrigger>
-              <TooltipContent className="w-[560px] p-4" side="bottom">
-                <p>{value as string}</p>
-              </TooltipContent>
-            </Tooltip>
+            {row.titre.length > 30 ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>{row.titre.slice(0, 30) + "..."}</span>
+                </TooltipTrigger>
+                <TooltipContent className="w-[560px] p-4" side="bottom">
+                  <p>{value as string}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <span>{value as string}</span>
+            )}
           </Link>
         )
       }}

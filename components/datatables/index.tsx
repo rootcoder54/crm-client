@@ -20,7 +20,11 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { Popover, PopoverContent } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover";
 import React, { useEffect } from "react";
 import DataToolBar from "./toolbar";
 import { buildColumns } from "./columns";
@@ -143,6 +147,7 @@ export function DataTable<TData extends Record<string, unknown>>({
 
   useEffect(() => {
     const selectedRows = table.getSelectedRowModel().rows;
+    console.log("Selected Rows:", selectedRows);
     if (selectedRows.length > 0) {
       const selectedId = selectedRows[0].getValue("id") as string;
       if (onRowSelect) onRowSelect(selectedId);
