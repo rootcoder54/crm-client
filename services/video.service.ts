@@ -15,7 +15,9 @@ export async function getVideoById(id: string) {
 }
 
 export async function getAllVideos() {
-  return prisma.video.findMany();
+  return prisma.video.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 }
 
 export async function updateVideo(
