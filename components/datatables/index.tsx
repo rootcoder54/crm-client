@@ -23,7 +23,6 @@ import {
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
 } from "@/components/ui/popover";
 import React, { useEffect } from "react";
 import DataToolBar from "./toolbar";
