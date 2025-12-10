@@ -3,6 +3,11 @@
 import { DataTable } from "@/components/datatables";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LoaderOne } from "@/components/ui/loader";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 import { fetcher } from "@/lib/fetcher";
 import { Client } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
@@ -98,8 +103,22 @@ const ClientPage = () => {
       ]}
       columnStyles={{
         nomClient: (value, row) => (
-          <Link href={`/client/detail/${row.id}`} className="font-medium hover:underline">
-            {value as string}
+          <Link
+            href={`/client/detail/${row.id}`}
+            className="font-medium hover:underline"
+          >
+            {row.nomClient && row.nomClient.length > 30 ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>{row.nomClient.slice(0, 30) + "..."}</span>
+                </TooltipTrigger>
+                <TooltipContent className="w-[560px] p-4" side="bottom">
+                  <p>{value as string}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <span>{value as string}</span>
+            )}
           </Link>
         )
       }}

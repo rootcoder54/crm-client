@@ -275,9 +275,9 @@ export function DataTable<TData extends Record<string, unknown>>({
           />
         </div>
         <Table className="border-y w-full">
-          <TableHeader className="bg-zinc-600/10">
+          <TableHeader className="bg-stone-600/30">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="w-full">
+              <TableRow key={headerGroup.id} className="w-full hover:bg-stone-600/10">
                 {headerGroup.headers.map((header, index) => {
                   return (
                     <TableHead
