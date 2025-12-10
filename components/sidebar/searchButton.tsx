@@ -72,7 +72,7 @@ export const SearchButton = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <SidebarMenuButton className="cursor-pointer">
+        <SidebarMenuButton variant={"seconde"} className="cursor-pointer">
           <Search />
           Recherche
         </SidebarMenuButton>

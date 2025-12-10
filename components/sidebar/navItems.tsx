@@ -31,7 +31,7 @@ export function NavItems({
           <SearchButton />
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
+          <SidebarMenuButton variant={"seconde"} asChild>
             <Link href={"/requete/add"} className="flex items-center gap-x-1">
               <AlignLeft />
               <span>Nouvelle requête</span>
@@ -41,7 +41,7 @@ export function NavItems({
         <hr />
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton asChild isActive={item.isActive}>
+            <SidebarMenuButton variant={"seconde"} asChild isActive={item.isActive}>
               <Link href={item.url}>
                 <item.icon />
                 <span>{item.title}</span>
@@ -49,7 +49,10 @@ export function NavItems({
             </SidebarMenuButton>
             {item.badge && (
               <SidebarMenuBadge>
-                <Badge variant={"default"} className="rounded-full bg-yellow-500 text-black">
+                <Badge
+                  variant={"default"}
+                  className="rounded-full bg-yellow-500 text-black"
+                >
                   {item.badge}
                 </Badge>
               </SidebarMenuBadge>
