@@ -491,7 +491,7 @@ const sidebarMenuButtonVariants = cva(
       }
     },
     defaultVariants: {
-      variant: "default",
+      variant: "seconde",
       size: "default"
     }
   }
@@ -500,7 +500,7 @@ const sidebarMenuButtonVariants = cva(
 function SidebarMenuButton({
   asChild = false,
   isActive = false,
-  variant = "default",
+  variant = "seconde",
   size = "default",
   tooltip,
   className,

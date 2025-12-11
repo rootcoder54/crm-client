@@ -53,7 +53,7 @@ const PageRequete = () => {
     <DataTable
       chemins={[
         { title: "Requête", url: "/requete" },
-        { title: "Requête Brouillon", url: "/requete/draft" }
+        { title: "Requête Brouillon", url: "/draft" }
       ]}
       titre="Liste des Requêtes Brouillons"
       selectAction={[
