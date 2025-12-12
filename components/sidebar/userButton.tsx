@@ -6,9 +6,9 @@ import {
   BookUser,
   HelpCircle,
   LogOut,
-  Plus,
   Settings,
   User,
+  UserPlus,
   Users
 } from "lucide-react";
 
@@ -70,7 +70,7 @@ export const UserButton = () => {
               <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <Link href={"#"}>
+                <Link href={"/register/" + session.user.id}>
                   <DropdownMenuItem className="cursor-pointer">
                     <User />
                     <span>Profile</span>
@@ -95,11 +95,13 @@ export const UserButton = () => {
                   <Users />
                   <span>Mes Taches</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Plus />
-                  <span>New Team</span>
-                  <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-                </DropdownMenuItem>
+                <Link href={"/register"}>
+                  <DropdownMenuItem>
+                    <UserPlus />
+                    <span>New User</span>
+                    <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </Link>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <Link href={"/support"}>
