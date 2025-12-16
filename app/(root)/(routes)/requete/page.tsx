@@ -99,7 +99,7 @@ const PageRequete = () => {
           label: "Nouvelle Requête",
           icon: <Plus />,
           url: "/requete/add",
-          variantbtn: "blue"
+          variantbtn: "default"
         },
         {
           label: "Excel",
@@ -114,7 +114,7 @@ const PageRequete = () => {
           label: "Details",
           icon: <FileBox />,
           url: `/requete/detail/${selectedId}`,
-          variantbtn: "blue"
+          variantbtn: "default"
         },
         {
           label: "Supprimer",

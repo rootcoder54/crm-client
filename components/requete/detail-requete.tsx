@@ -82,7 +82,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
             </Link>
           </Button>
         )}
-        <Button asChild variant={"destructive"}>
+        <Button asChild variant={"danger"}>
           <Link href={`/requete/delete/${requete.id}`}>
             <Trash2 />
             Supprimer

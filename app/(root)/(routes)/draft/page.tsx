@@ -7,6 +7,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DataTable } from "@/components/datatables";
 import { useState } from "react";
 import { LoaderOne } from "@/components/ui/loader";
+import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 interface RequeteWithClient extends Requete {
   client?: Client | null;
@@ -44,7 +50,7 @@ const PageRequete = () => {
     );
   }
   const listes =
-    requetes?.map((requete) => ({
+    requetes.map((requete) => ({
       ...requete,
       client: requete.client?.nomClient || "Pas de client"
     })) || [];
@@ -74,6 +80,25 @@ const PageRequete = () => {
       dateChose="dateDebut"
       dateChoseTitle="Filter par Date"
       columnStyles={{
+        sujet: (value, row) => (
+          <Link
+            href={`/draft/${row.id}`}
+            className="font-medium hover:underline"
+          >
+            {row.sujet && row.sujet.length > 30 ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>{row.sujet.slice(0, 30) + "..."}</span>
+                </TooltipTrigger>
+                <TooltipContent className="w-[560px] p-4" side="bottom">
+                  <p>{value as string}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <span>{value as string}</span>
+            )}
+          </Link>
+        ),
         type: (value) => <span className="uppercase">{value as string}</span>
       }}
       hideList={[
@@ -88,7 +113,8 @@ const PageRequete = () => {
         "description",
         "isTacheClient",
         "etat",
-        "status"
+        "status",
+        "technicien"
       ]}
       searchId="sujet"
       searchPlaceholder="Rechercher un sujet..."
