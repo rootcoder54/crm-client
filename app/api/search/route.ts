@@ -8,6 +8,7 @@ export async function GET(req: Request) {
   if (!query) {
     return NextResponse.json({ results: [] });
   }
+  const q = query.toLowerCase();
 
   try {
     // Recherches parallèles
@@ -16,11 +17,11 @@ export async function GET(req: Request) {
         prisma.client.findMany({
           where: {
             OR: [
-              { nomClient: { contains: query, mode: "insensitive" } },
-              { sigle: { contains: query, mode: "insensitive" } },
-              { adresse: { contains: query, mode: "insensitive" } },
-              { telephone: { contains: query, mode: "insensitive" } },
-              { activite: { contains: query, mode: "insensitive" } }
+              { nomClient: { contains: q } },
+              { sigle: { contains: q } },
+              { adresse: { contains: q } },
+              { telephone: { contains: q } },
+              { activite: { contains: q } }
             ]
           },
           select: {
@@ -35,10 +36,10 @@ export async function GET(req: Request) {
         prisma.contact.findMany({
           where: {
             OR: [
-              { nom: { contains: query, mode: "insensitive" } },
-              { telephone: { contains: query, mode: "insensitive" } },
-              { email: { contains: query, mode: "insensitive" } },
-              { poste: { contains: query, mode: "insensitive" } }
+              { nom: { contains: q } },
+              { telephone: { contains: q } },
+              { email: { contains: q } },
+              { poste: { contains: q } }
             ]
           },
           select: {
@@ -53,10 +54,7 @@ export async function GET(req: Request) {
 
         prisma.contrat.findMany({
           where: {
-            OR: [
-              { type: { contains: query, mode: "insensitive" } },
-              { reconduction: { contains: query, mode: "insensitive" } }
-            ]
+            OR: [{ type: { contains: q } }, { reconduction: { contains: q } }]
           },
           select: {
             id: true,
@@ -71,11 +69,11 @@ export async function GET(req: Request) {
         prisma.intervention.findMany({
           where: {
             OR: [
-              { numero: { contains: query, mode: "insensitive" } },
-              { service: { contains: query, mode: "insensitive" } },
-              { intervenant: { contains: query, mode: "insensitive" } },
-              { nature: { contains: query, mode: "insensitive" } },
-              { observations: { contains: query, mode: "insensitive" } }
+              { numero: { contains: q } },
+              { service: { contains: q } },
+              { intervenant: { contains: q } },
+              { nature: { contains: q } },
+              { observations: { contains: q } }
             ]
           },
           select: {
@@ -91,12 +89,12 @@ export async function GET(req: Request) {
         prisma.requete.findMany({
           where: {
             OR: [
-              { sujet: { contains: query, mode: "insensitive" } },
-              { description: { contains: query, mode: "insensitive" } },
-              { observation: { contains: query, mode: "insensitive" } },
-              { logiciel: { contains: query, mode: "insensitive" } },
-              { technicien: { contains: query, mode: "insensitive" } },
-              { demandeur: { contains: query, mode: "insensitive" } }
+              { sujet: { contains: q } },
+              { description: { contains: q } },
+              { observation: { contains: q } },
+              { logiciel: { contains: q } },
+              { technicien: { contains: q } },
+              { demandeur: { contains: q } }
             ]
           },
           select: {
@@ -113,11 +111,11 @@ export async function GET(req: Request) {
         prisma.facture.findMany({
           where: {
             OR: [
-              { numero: { contains: query, mode: "insensitive" } },
-              { type: { contains: query, mode: "insensitive" } },
-              { modeReglement: { contains: query, mode: "insensitive" } },
-              { observation: { contains: query, mode: "insensitive" } },
-              { devise: { contains: query, mode: "insensitive" } }
+              { numero: { contains: q } },
+              { type: { contains: q } },
+              { modeReglement: { contains: q } },
+              { observation: { contains: q } },
+              { devise: { contains: q } }
             ]
           },
           select: {
