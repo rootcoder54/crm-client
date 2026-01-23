@@ -12,122 +12,163 @@ export async function GET(req: Request) {
 
   try {
     // Recherches parallèles
-    const [clients, contacts, contrats, interventions, requetes, factures] =
-      await Promise.all([
-        prisma.client.findMany({
-          where: {
-            OR: [
-              { nomClient: { contains: q } },
-              { sigle: { contains: q } },
-              { adresse: { contains: q } },
-              { telephone: { contains: q } },
-              { activite: { contains: q } }
-            ]
-          },
-          select: {
-            id: true,
-            nomClient: true,
-            sigle: true,
-            telephone: true,
-            adresse: true
-          }
-        }),
+    const [
+      clients,
+      contacts,
+      contrats,
+      interventions,
+      requetes,
+      factures,
+      videos,
+      articles
+    ] = await Promise.all([
+      prisma.client.findMany({
+        where: {
+          OR: [
+            { nomClient: { contains: q } },
+            { sigle: { contains: q } },
+            { adresse: { contains: q } },
+            { telephone: { contains: q } },
+            { activite: { contains: q } }
+          ]
+        },
+        select: {
+          id: true,
+          nomClient: true,
+          sigle: true,
+          telephone: true,
+          adresse: true
+        }
+      }),
 
-        prisma.contact.findMany({
-          where: {
-            OR: [
-              { nom: { contains: q } },
-              { telephone: { contains: q } },
-              { email: { contains: q } },
-              { poste: { contains: q } }
-            ]
-          },
-          select: {
-            id: true,
-            nom: true,
-            email: true,
-            telephone: true,
-            clientId: true,
-            client: true
-          }
-        }),
+      prisma.contact.findMany({
+        where: {
+          OR: [
+            { nom: { contains: q } },
+            { telephone: { contains: q } },
+            { email: { contains: q } },
+            { poste: { contains: q } }
+          ]
+        },
+        select: {
+          id: true,
+          nom: true,
+          email: true,
+          telephone: true,
+          clientId: true,
+          client: true
+        }
+      }),
 
-        prisma.contrat.findMany({
-          where: {
-            OR: [{ type: { contains: q } }, { reconduction: { contains: q } }]
-          },
-          select: {
-            id: true,
-            type: true,
-            dateDebut: true,
-            dateFin: true,
-            clientId: true,
-            client: true
-          }
-        }),
+      prisma.contrat.findMany({
+        where: {
+          OR: [{ type: { contains: q } }, { reconduction: { contains: q } }]
+        },
+        select: {
+          id: true,
+          type: true,
+          dateDebut: true,
+          dateFin: true,
+          clientId: true,
+          client: true
+        }
+      }),
 
-        prisma.intervention.findMany({
-          where: {
-            OR: [
-              { numero: { contains: q } },
-              { service: { contains: q } },
-              { intervenant: { contains: q } },
-              { nature: { contains: q } },
-              { observations: { contains: q } }
-            ]
-          },
-          select: {
-            id: true,
-            numero: true,
-            service: true,
-            intervenant: true,
-            clientId: true,
-            client: true
-          }
-        }),
+      prisma.intervention.findMany({
+        where: {
+          OR: [
+            { numero: { contains: q } },
+            { service: { contains: q } },
+            { intervenant: { contains: q } },
+            { nature: { contains: q } },
+            { observations: { contains: q } }
+          ]
+        },
+        select: {
+          id: true,
+          numero: true,
+          service: true,
+          intervenant: true,
+          clientId: true,
+          client: true
+        }
+      }),
 
-        prisma.requete.findMany({
-          where: {
-            OR: [
-              { sujet: { contains: q } },
-              { description: { contains: q } },
-              { observation: { contains: q } },
-              { logiciel: { contains: q } },
-              { technicien: { contains: q } },
-              { demandeur: { contains: q } }
-            ]
-          },
-          select: {
-            id: true,
-            sujet: true,
-            type: true,
-            technicien: true,
-            demandeur: true,
-            clientId: true,
-            client: true
-          }
-        }),
+      prisma.requete.findMany({
+        where: {
+          OR: [
+            { sujet: { contains: q } },
+            { description: { contains: q } },
+            { observation: { contains: q } },
+            { logiciel: { contains: q } },
+            { technicien: { contains: q } },
+            { demandeur: { contains: q } }
+          ]
+        },
+        select: {
+          id: true,
+          sujet: true,
+          type: true,
+          technicien: true,
+          demandeur: true,
+          clientId: true,
+          client: true
+        }
+      }),
 
-        prisma.facture.findMany({
-          where: {
-            OR: [
-              { numero: { contains: q } },
-              { type: { contains: q } },
-              { modeReglement: { contains: q } },
-              { observation: { contains: q } },
-              { devise: { contains: q } }
-            ]
-          },
-          select: {
-            id: true,
-            numero: true,
-            date: true,
-            totalTTC: true,
-            clientId: true,
-            client: true
-          }
-        })
-      ]);
+      prisma.facture.findMany({
+        where: {
+          OR: [
+            { numero: { contains: q } },
+            { type: { contains: q } },
+            { modeReglement: { contains: q } },
+            { observation: { contains: q } },
+            { devise: { contains: q } }
+          ]
+        },
+        select: {
+          id: true,
+          numero: true,
+          date: true,
+          totalTTC: true,
+          clientId: true,
+          client: true
+        }
+      }),
+
+      prisma.video.findMany({
+        where: {
+          OR: [
+            { nom: { contains: q } },
+            { description: { contains: q } },
+            { detail: { contains: q } }
+          ]
+        },
+        select: {
+          id: true,
+          nom: true,
+          description: true,
+          detail: true,
+          url: true
+        }
+      }),
+
+      prisma.article.findMany({
+        where: {
+          OR: [
+            { titre: { contains: q } },
+            { description: { contains: q } },
+            { contenu: { contains: q } }
+          ]
+        },
+        select: {
+          id: true,
+          titre: true,
+          description: true,
+          contenu: true
+        }
+      })
+    ]);
 
     /*const results = [
       ...clients.map((c) => ({ type: "Client", data: c })),
@@ -144,7 +185,9 @@ export async function GET(req: Request) {
       contrats,
       interventions,
       requetes,
-      factures
+      factures,
+      videos,
+      articles
     });
   } catch (error) {
     console.error(error);

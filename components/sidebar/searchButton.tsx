@@ -21,18 +21,19 @@ import {
   EmptyTitle
 } from "@/components/ui/empty";
 import {
+  Article,
   Client,
   Contact,
   Contrat,
   Facture,
   Intervention,
-  Requete
+  Requete,
+  Video
 } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { videos } from "@/constante/videoAstuce";
 
 type ResultatType = {
   clients: Client[];
@@ -41,6 +42,8 @@ type ResultatType = {
   interventions: Intervention[];
   requetes: Requete[];
   factures: Facture[];
+  videos: Video[];
+  articles: Article[];
 } | null;
 export const SearchButton = () => {
   const [filter, setFilter] = useState("");
@@ -61,13 +64,6 @@ export const SearchButton = () => {
     const data = await res.json();
     setResults(data);
   };
-  
-  const filteredVideos = videos.filter(
-    (video) =>
-      video.nom.toLowerCase().includes(filter.toLowerCase()) ||
-      video.description.toLowerCase().includes(filter.toLowerCase()) ||
-      video.detail.toLowerCase().includes(filter.toLowerCase())
-  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -145,9 +141,7 @@ export const SearchButton = () => {
                               variant={"ghost"}
                               className="justify-start w-full"
                               onClick={() => {
-                                router.push(
-                                  `/requete/intervention/${requete.id}`
-                                );
+                                router.push(`/requete/detail/${requete.id}`);
                                 setOpen(false);
                               }}
                               type="button"
@@ -158,14 +152,14 @@ export const SearchButton = () => {
                         </div>
                       </div>
                     )}
-                    {filteredVideos.length !== 0 && (
+                    {results.videos.length !== 0 && (
                       <div className="w-full space-y-2">
                         <h3 className="font-semibold text-xl">
                           Astuces Videos
                         </h3>
                         <hr />
                         <div className="flex flex-col w-full space-y-3">
-                          {filteredVideos.map((video) => (
+                          {results.videos.map((video) => (
                             <Button
                               key={video.id}
                               variant={"ghost"}
@@ -182,9 +176,34 @@ export const SearchButton = () => {
                         </div>
                       </div>
                     )}
+                    {results.articles.length !== 0 && (
+                      <div className="w-full space-y-2">
+                        <h3 className="font-semibold text-xl">
+                          Questions frequentes
+                        </h3>
+                        <hr />
+                        <div className="flex flex-col w-full space-y-3">
+                          {results.articles.map((article) => (
+                            <Button
+                              key={article.id}
+                              variant={"ghost"}
+                              className="justify-start w-full"
+                              onClick={() => {
+                                router.push(`/support/question/${article.id}`);
+                                setOpen(false);
+                              }}
+                              type="button"
+                            >
+                              {article.titre}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {results.clients.length === 0 &&
                       results.requetes.length === 0 &&
-                      filteredVideos.length === 0 && (
+                      results.videos.length === 0 && (
                         <Empty>
                           <EmptyHeader>
                             <EmptyTitle>Pas de Resultats Trouvé</EmptyTitle>
