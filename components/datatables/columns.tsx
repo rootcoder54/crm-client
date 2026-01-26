@@ -145,16 +145,6 @@ export function buildColumns<T extends Record<string, unknown>>(
   return [
     {
       id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
