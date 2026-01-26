@@ -55,7 +55,7 @@ function Header<TData>({
             </>
           ) : (
             <>
-              <Link href={`http://localhost:3000`}>
+              <Link href={`/`}>
                 <Home className="-ml-1" />
               </Link>
               <Separator
