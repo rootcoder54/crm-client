@@ -104,12 +104,12 @@ export const UserButton = () => {
                 </Link>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <Link href={"/support"}>
+              <a href={"/support"}>
                 <DropdownMenuItem className="cursor-pointer">
                   <HelpCircle />
                   <span>Support</span>
                 </DropdownMenuItem>
-              </Link>
+              </a>
               <DropdownMenuSeparator />
               <Link href={"/logout"}>
                 <DropdownMenuItem className="cursor-pointer">
