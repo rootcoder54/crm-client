@@ -34,5 +34,23 @@ export const employes = [
     nom: "Marietou Haidara",
     telephone: "77-56-95-20",
     poste: "Technicienne"
+  },
+  {
+    id: "7",
+    nom: "Aichata Doumbia",
+    telephone: "???",
+    poste: "Technicienne"
+  },
+  {
+    id: "8",
+    nom: "Maimouna",
+    telephone: "???",
+    poste: "Assistante Technique"
+  },
+  {
+    id: "9",
+    nom: "Yacouba Haidara",
+    telephone: "???",
+    poste: "Coursier"
   }
 ];
