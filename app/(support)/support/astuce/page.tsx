@@ -119,6 +119,7 @@ const CardVideo = ({
   nom: string;
   description: string;
 }) => {
+  const texte = description.length > 100 ? description.slice(0, 100) + "..." : description;
   return (
     <Link
       href={link}
@@ -131,7 +132,7 @@ const CardVideo = ({
             <h3 className="font-semibold text-lg text-zinc-600 group-hover:text-blue-500">
               {nom}
             </h3>
-            <div className="text-neutral-400">{description}</div>
+            <div className="text-neutral-400">{texte}</div>
           </div>
         </div>
       </div>
