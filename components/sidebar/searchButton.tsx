@@ -164,13 +164,12 @@ export const SearchButton = () => {
                               key={video.id}
                               variant={"ghost"}
                               className="justify-start w-full"
-                              onClick={() => {
-                                router.push(`/support/astuce/${video.id}`);
-                                setOpen(false);
-                              }}
                               type="button"
+                              asChild
                             >
-                              {video.nom}
+                              <a href={`/support/astuce/${video.id}`}>
+                                {video.nom}
+                              </a>
                             </Button>
                           ))}
                         </div>
@@ -188,13 +187,12 @@ export const SearchButton = () => {
                               key={article.id}
                               variant={"ghost"}
                               className="justify-start w-full"
-                              onClick={() => {
-                                router.push(`/support/question/${article.id}`);
-                                setOpen(false);
-                              }}
                               type="button"
+                              asChild
                             >
-                              {article.titre}
+                              <a href={`/support/question/${article.id}`}>
+                                {article.titre}
+                              </a>
                             </Button>
                           ))}
                         </div>
