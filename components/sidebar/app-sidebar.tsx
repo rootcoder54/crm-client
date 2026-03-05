@@ -5,6 +5,7 @@ import {
   AlignLeft,
   AppWindow,
   BookDashed,
+  Copyright,
   FileArchive,
   FileChartColumn,
   FileChartPie,
@@ -58,6 +59,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/client",
         icon: UserSquareIcon,
         isActive: pathname.startsWith("/client")
+      },
+      {
+        title: "Licence",
+        url: "/licence",
+        icon: Copyright,
+        isActive: pathname.startsWith("/licence")
       },
       {
         title: "Requête",
