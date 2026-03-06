@@ -20,7 +20,7 @@ const LicencePage = () => {
         {
           label: "Nouvelle licence",
           icon: <Plus />,
-          url: "#",
+          url: "/licence/add",
           variantbtn: "secondary"
         }
       ]}
