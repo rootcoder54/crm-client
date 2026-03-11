@@ -4,14 +4,13 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import z from "zod";
+import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -38,6 +37,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Client } from "@prisma/client";
 import { fetcher } from "@/lib/fetcher";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export function AddLicence() {
   const router = useRouter();
@@ -51,6 +52,12 @@ export function AddLicence() {
     dateFin: z.date().optional(),
     clientId: z.string().optional()
   });
+  useEffect(() => {
+    if (!isLoading && clients?.length === 0) {
+      toast.error("Veuillez ajouter un client avant de générer une licence.");
+      router.push("/client");
+    }
+  }, [isLoading, clients, router]);
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -226,7 +233,7 @@ export function AddLicence() {
                 )}
               />
             </div>
-            <DialogFooter>
+            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button type="button" variant="outline" onClick={back}>
                 <Ban />
                 Annuler
@@ -235,7 +242,7 @@ export function AddLicence() {
                 <Box />
                 Generer
               </Button>
-            </DialogFooter>
+            </div>
           </DialogContent>
         </form>
       </Form>
