@@ -9,9 +9,21 @@ export async function createClient(data: {
   telephone?: string;
   activite?: string;
   numero?: string;
-  dateInscription?: Date;
+  dateInscription?: string;
 }) {
-  return prisma.client.create({ data });
+  return prisma.client.create({
+    data: {
+      nomClient: data.nomClient,
+      sigle: data.sigle,
+      adresse: data.adresse,
+      telephone: data.telephone,
+      activite: data.activite,
+      numero: data.numero,
+      dateInscription: data.dateInscription
+        ? new Date(data.dateInscription)
+        : undefined
+    }
+  });
 }
 
 export async function getClientById(id: string) {
@@ -36,7 +48,19 @@ export async function updateClient(
   id: string,
   data: Partial<Omit<Parameters<typeof createClient>[0], "nomClient">>
 ) {
-  return prisma.client.update({ where: { id }, data });
+  return prisma.client.update({
+    where: { id },
+    data: {
+      sigle: data.sigle,
+      adresse: data.adresse,
+      telephone: data.telephone,
+      activite: data.activite,
+      numero: data.numero,
+      dateInscription: data.dateInscription
+        ? new Date(data.dateInscription)
+        : undefined
+    }
+  });
 }
 
 export async function lastVisite(id: string, date: Date | null) {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Ban, CalendarIcon, SquarePen } from "lucide-react";
+import { Ban, SquarePen } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,19 +17,12 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover";
 
 import { toast } from "sonner";
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
 import HeaderPage from "../features/header-page";
 import { updateClient } from "@/services/client.service";
 import { Client } from "@prisma/client";
@@ -46,7 +39,9 @@ const EditeClient = ({ client }: { client: Client }) => {
     telephone: z.string(),
     activite: z.string(),
     numero: z.string(),
-    dateInscription: z.date()
+    dateInscription: z.string().refine((val) => !isNaN(Date.parse(val)), {
+      message: "La date doit être au format valide (YYYY-MM-DD)"
+    })
   });
 
   const form = useForm<z.infer<typeof schema>>({
@@ -58,7 +53,9 @@ const EditeClient = ({ client }: { client: Client }) => {
       telephone: client.telephone || "",
       activite: client.activite || "",
       numero: client.numero || "",
-      dateInscription: client.dateInscription || new Date()
+      dateInscription: client.dateInscription
+        ? format(new Date(client.dateInscription), "yyyy-MM-dd")
+        : ""
     }
   });
 
@@ -188,36 +185,11 @@ const EditeClient = ({ client }: { client: Client }) => {
               control={form.control}
               name="dateInscription"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem>
                   <FormLabel>Date d&apos;achat</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "yyyy-MM-dd")
-                          ) : (
-                            <span>choix une date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <FormControl>
+                    <Input placeholder="YYYY-MM-DD" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

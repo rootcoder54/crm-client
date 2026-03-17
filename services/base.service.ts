@@ -7,11 +7,22 @@ export async function createBase(data: {
   convention: string;
   poste: number;
   employe: number;
-  date: Date;
+  date: string;
   commentaire?: string;
   clientId: string;
 }) {
-  return prisma.base.create({ data });
+  return prisma.base.create({
+    data: {
+      societe: data.societe,
+      chemin: data.chemin,
+      convention: data.convention,
+      poste: data.poste,
+      employe: data.employe,
+      date: new Date(data.date),
+      commentaire: data.commentaire,
+      clientId: data.clientId
+    }
+  });
 }
 
 export async function getBaseById(id: string) {

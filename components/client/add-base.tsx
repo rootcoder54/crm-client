@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Ban, CalendarIcon, Plus } from "lucide-react";
+import { Ban, Plus } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,20 +16,13 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover";
+
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import HeaderPage from "../features/header-page";
 import { createBase } from "@/services/base.service";
-import { format } from "date-fns";
-import { Calendar } from "../ui/calendar";
-import { cn } from "@/lib/utils";
 import { Textarea } from "../ui/textarea";
 import { createLog } from "@/services/log.service";
 import { useSession } from "next-auth/react";
@@ -62,7 +55,9 @@ const AddBase = ({ clientId }: { clientId: string }) => {
           .regex(/^\d+$/, "Veuillez entrer un nombre valide")
           .transform(Number)
       ),
-    date: z.date(),
+    date: z.string().refine((val) => !isNaN(Date.parse(val)), {
+      message: "La date doit être au format valide (YYYY-MM-DD)"
+    }),
     commentaire: z.string(),
     clientId: z.string()
   });
@@ -75,7 +70,7 @@ const AddBase = ({ clientId }: { clientId: string }) => {
       convention: "",
       postet: 0,
       employet: 0,
-      date: new Date(),
+      date: "",
       commentaire: "",
       clientId: clientId
     }
@@ -212,36 +207,11 @@ const AddBase = ({ clientId }: { clientId: string }) => {
               control={form.control}
               name="date"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Date d&apos;achat</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "yyyy-MM-dd")
-                          ) : (
-                            <span>choix une date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                <FormItem>
+                  <FormLabel>Date</FormLabel>
+                  <FormControl>
+                    <Input placeholder="YYYY-MM-DD" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
