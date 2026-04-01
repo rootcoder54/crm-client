@@ -8,13 +8,18 @@ import {
   authRoutes,
   publicRoutes
 } from "./constante/routes";
+import { format } from "date-fns";
 
 const { auth } = NextAuth(authConfig);
 
 export default auth((req, ctx) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
-  console.log("Route :", nextUrl.pathname, ctx && Date());
+  console.log(
+    "Route : " + nextUrl.pathname,
+    "Date : " + ctx && format(Date(), "yyyy-MM-dd HH:mm:ss"),
+    "User : " + req.auth?.user.name
+  );
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   //const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
