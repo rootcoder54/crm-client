@@ -30,11 +30,11 @@ const Page = () => {
               </a>
               <div>
                 <a
-                  href="https://malisystem.com/download/RHPaie_15.exe"
+                  href="https://malisystem.com/download/2715.246.202603.4.exe"
                   className="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                   download
                 >
-                  Télécharger RHPaie v15 - 2715.246.202411.4
+                  Télécharger RHPaie v15 - 2715.246.202603.4
                 </a>
               </div>
             </div>
