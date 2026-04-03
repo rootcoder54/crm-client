@@ -146,21 +146,13 @@ export function DataTable<TData extends Record<string, unknown>>({
 
   useEffect(() => {
     const selectedRows = table.getSelectedRowModel().rows;
-    console.log("Selected Rows:", selectedRows);
+    //console.log("Selected Rows:", selectedRows);
     if (selectedRows.length > 0) {
       const selectedId = selectedRows[0].getValue("id") as string;
       if (onRowSelect) onRowSelect(selectedId);
     }
   }, [rowSelection, onRowSelect]);
 
-  console.log(
-    table.getRowModel().rows.map((row) => {
-      return row.getAllCells().reduce((acc, cell) => {
-        acc[cell.column.id] = cell.getValue();
-        return acc;
-      }, {} as Record<string, unknown>);
-    })
-  );
   const exportExcel = async () => {
     const data = table.getRowModel().rows.map((row) => {
       return row.getAllCells().reduce((acc, cell) => {

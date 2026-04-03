@@ -37,7 +37,7 @@ interface DataTableToolbarProps<TData> {
 function safeGetColumn<TData>(table: Table<TData>, id: string) {
   const exists = table.getAllColumns().some((c) => c.id === id);
   if (!exists) {
-    console.warn(`[Table] La colonne '${id}' n'existe pas.`);
+    //console.warn(`[Table] La colonne '${id}' n'existe pas.`);
     return null;
   }
   return table.getColumn(id);
