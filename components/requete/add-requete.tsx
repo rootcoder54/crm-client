@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { Ban, CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 
@@ -17,6 +18,18 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+  useComboboxAnchor
+} from "@/components/ui/combobox";
 import {
   Popover,
   PopoverContent,
@@ -54,6 +67,7 @@ import { LoaderOne } from "../ui/loader";
 
 const AddRequete = ({ id }: { id: string }) => {
   const router = useRouter();
+  const anchor = useComboboxAnchor();
   const [isPending, transition] = useTransition();
 
   const [requete, setRequete] = useState<Requete>({
@@ -64,6 +78,21 @@ const AddRequete = ({ id }: { id: string }) => {
     queryFn: () => fetcher(`/api/client`)
   });
 
+  const { isPending: isTechniciensPending, data: techniciens } = useQuery<
+    { technicien: string }[]
+  >({
+    queryKey: ["techniciens"],
+    queryFn: () => fetcher(`/api/requete/tech`)
+  });
+
+  const [techniciensList, setTechniciensList] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (techniciens) {
+      setTechniciensList(techniciens.map((t) => t.technicien));
+    }
+  }, [isTechniciensPending, techniciens]);
+
   const schema = z.object({
     sujet: z.string(),
     description: z.string(),
@@ -71,7 +100,7 @@ const AddRequete = ({ id }: { id: string }) => {
     observation: z.string(),
     logiciel: z.string(),
     demandeur: z.string(),
-    technicien: z.string(),
+    technicien: z.array(z.string()),
     dateDebut: z.date(),
     clientId: z.string().optional()
   });
@@ -85,7 +114,7 @@ const AddRequete = ({ id }: { id: string }) => {
       observation: "",
       logiciel: "",
       demandeur: "",
-      technicien: "",
+      technicien: [],
       dateDebut: new Date(),
       clientId: undefined
     }
@@ -93,7 +122,14 @@ const AddRequete = ({ id }: { id: string }) => {
 
   useEffect(() => {
     const sub = form.watch((values) => {
-      setRequete((prev) => ({ ...prev, ...values } as Requete));
+      setRequete(
+        (prev) =>
+          ({
+            ...prev,
+            ...values,
+            technicien: values.technicien?.join(" , ")
+          }) as Requete
+      );
     });
     console.log(requete);
     autoSaveRequete(requete).then((res) => {
@@ -350,7 +386,69 @@ const AddRequete = ({ id }: { id: string }) => {
                 <FormItem>
                   <FormLabel>Technicien</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Combobox
+                      multiple
+                      autoHighlight
+                      items={techniciensList}
+                      //defaultValue={[frameworks[0]]}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <ComboboxChips ref={anchor} className="w-full">
+                        <ComboboxValue>
+                          {(values) => (
+                            <React.Fragment>
+                              {values.map((value: string) => (
+                                <ComboboxChip key={value}>{value}</ComboboxChip>
+                              ))}
+                              <ComboboxChipsInput
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    const input = e.currentTarget.value.trim();
+
+                                    if (
+                                      input &&
+                                      techniciensList &&
+                                      !techniciensList.includes(input)
+                                    ) {
+                                      setTechniciensList((prev) => [
+                                        ...prev,
+                                        input
+                                      ]); // ⚠️ idéalement utiliser un state
+                                    }
+
+                                    if (
+                                      input &&
+                                      !field.value?.includes(input)
+                                    ) {
+                                      field.onChange([
+                                        ...(field.value || []),
+                                        input
+                                      ]);
+                                    }
+
+                                    e.currentTarget.value = "";
+                                  }
+                                }}
+                              />
+                            </React.Fragment>
+                          )}
+                        </ComboboxValue>
+                      </ComboboxChips>
+                      <ComboboxContent anchor={anchor}>
+                        <ComboboxEmpty>
+                          {anchor.current?.textContent || "No items found."}
+                        </ComboboxEmpty>
+                        <ComboboxList>
+                          {(item) => (
+                            <ComboboxItem key={item} value={item}>
+                              {item}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

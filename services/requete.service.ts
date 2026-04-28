@@ -43,6 +43,14 @@ export async function getAllRequetes() {
   });
 }
 
+export async function getRequetesTech() {
+  return prisma.requete.findMany({
+    where: { technicien: { not: null } },
+    orderBy: { createdAt: "desc" },
+    distinct: ["technicien"]
+  });
+}
+
 export async function getDraftRequetes() {
   return prisma.requete.findMany({
     where: { status: "draft" },
