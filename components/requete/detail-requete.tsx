@@ -159,7 +159,10 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
             {client && (
               <div className="flex flex-col items-start space-x-3 gap-3">
                 <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 underline">
-                  {requete.demandeur} <span className="text-xl">@</span> {client}
+                  Demandeur : {requete.demandeur}
+                </p>
+                <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 underline">
+                  Client : {client}
                 </p>
                 <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 underline">
                   Technicien :{" "}
@@ -168,11 +171,11 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
               </div>
             )}
             {requete.description ? (
-              <div className="flex flex-col items-start space-y-3 lg:w-3/4 xl:w-3/5 min-h-[100px]">
+              <div className="flex flex-col items-start space-y-3 lg:w-3/4 xl:w-3/5 min-h-[100px] bg-zinc-200 shadow dark:bg-zinc-600/50 rounded-md p-4">
                 <p>{requete.description}</p>
               </div>
             ) : (
-              <div className="flex flex-col items-start text-center space-y-3 lg:w-3/4 xl:w-3/5 min-h-[100px]">
+              <div className="flex flex-col items-start text-center space-y-3 lg:w-3/4 xl:w-3/5 min-h-[100px] bg-zinc-200 shadow dark:bg-zinc-600/50 rounded-md p-4">
                 <p>Aucune description disponible</p>
               </div>
             )}
