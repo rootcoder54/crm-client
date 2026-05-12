@@ -3,6 +3,11 @@
 import { DataTable } from "@/components/datatables";
 import HeaderPage from "@/components/features/header-page";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 import { fetcher } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
@@ -10,6 +15,7 @@ import { Client, Requete } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { FileBox, LayoutGrid, Trash } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 interface RequeteWithClient extends Requete {
@@ -67,6 +73,25 @@ export default function Home() {
               }
             ]}
             columnStyles={{
+              sujet: (value, row) => (
+                <Link
+                  href={`/requete/detail/${row.id}`}
+                  className="font-medium hover:underline"
+                >
+                  {row.sujet && row.sujet.length > 30 ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span>{row.sujet.slice(0, 30) + "..."}</span>
+                      </TooltipTrigger>
+                      <TooltipContent className="w-[560px] p-4" side="bottom">
+                        <p>{value as string}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <span>{value as string}</span>
+                  )}
+                </Link>
+              ),
               etat: (value) => (
                 <Badge
                   variant={"default"}
