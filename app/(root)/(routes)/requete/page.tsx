@@ -94,6 +94,7 @@ const PageRequete = () => {
         { title: "Listes", url: "#" }
       ]}
       titre="Liste des Requêtes"
+      onDoubleClickLink={`/requete/detail/${selectedId}`}
       action={[
         {
           label: "Nouvelle Requête",

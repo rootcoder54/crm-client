@@ -72,6 +72,7 @@ export default function Home() {
                 variantbtn: "danger"
               }
             ]}
+            onDoubleClickLink={`/requete/detail/${selectedId}`}
             columnStyles={{
               sujet: (value, row) => (
                 <Link

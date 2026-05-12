@@ -20,10 +20,7 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import {
-  Popover,
-  PopoverContent,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent } from "@/components/ui/popover";
 import React, { useEffect } from "react";
 import DataToolBar from "./toolbar";
 import { buildColumns } from "./columns";
@@ -36,10 +33,12 @@ import { RiFileExcel2Line } from "react-icons/ri";
 import { dateRangeFilter } from "./dateRangeFilter";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface DataTableProps<TData extends Record<string, unknown>> {
   data: TData[];
   onRowSelect?: (id: string) => void;
+  onDoubleClickLink?: string;
   notData?: string;
   searchId?: string;
   searchPlaceholder?: string;
@@ -86,6 +85,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   titre,
   description,
   onRowSelect,
+  onDoubleClickLink,
   notData,
   searchId,
   searchPlaceholder,
@@ -121,6 +121,8 @@ export function DataTable<TData extends Record<string, unknown>>({
       ...initialVisibility
     });
 
+  const router = useRouter();
+
   const table = useReactTable({
     data,
     columns,
@@ -155,10 +157,13 @@ export function DataTable<TData extends Record<string, unknown>>({
 
   const exportExcel = async () => {
     const data = table.getRowModel().rows.map((row) => {
-      return row.getAllCells().reduce((acc, cell) => {
-        acc[cell.column.id] = cell.getValue();
-        return acc;
-      }, {} as Record<string, unknown>);
+      return row.getAllCells().reduce(
+        (acc, cell) => {
+          acc[cell.column.id] = cell.getValue();
+          return acc;
+        },
+        {} as Record<string, unknown>
+      );
     });
     const response = await fetch("/api/export", {
       method: "POST",
@@ -269,7 +274,10 @@ export function DataTable<TData extends Record<string, unknown>>({
         <Table className="border-y w-full">
           <TableHeader className="bg-stone-600/30">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="w-full hover:bg-stone-600/10">
+              <TableRow
+                key={headerGroup.id}
+                className="w-full hover:bg-stone-600/10"
+              >
                 {headerGroup.headers.map((header, index) => {
                   return (
                     <TableHead
@@ -298,6 +306,11 @@ export function DataTable<TData extends Record<string, unknown>>({
                   onClick={() => {
                     table.setRowSelection({ [row.id]: true });
                   }}
+                  onDoubleClick={
+                    onDoubleClickLink
+                      ? () => router.push(`${onDoubleClickLink}`)
+                      : undefined
+                  }
                   onContextMenu={(event) => {
                     event.preventDefault();
                     table.setRowSelection({ [row.id]: true });
