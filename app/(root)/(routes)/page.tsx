@@ -2,7 +2,6 @@
 
 import { DataTable } from "@/components/datatables";
 import HeaderPage from "@/components/features/header-page";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -10,7 +9,6 @@ import {
 } from "@/components/ui/tooltip";
 
 import { fetcher } from "@/lib/fetcher";
-import { cn } from "@/lib/utils";
 import { Client, Requete } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -34,6 +32,7 @@ export default function Home() {
   const listes =
     mlistes?.map((requete) => ({
       ...requete,
+      date: requete.dateDebut,
       numero:
         format(requete.dateDebut || new Date(), "yyyyMMdd_") +
         requete.client?.numero +
@@ -57,6 +56,7 @@ export default function Home() {
             data={listes || []}
             dateChose="dateDebut"
             dateChoseTitle="Filter par Date"
+            titre="Requête en cours"
             selectAction={[
               {
                 label: "Details",
@@ -64,7 +64,6 @@ export default function Home() {
                 url: `/requete/detail/${selectedId}`,
                 variantbtn: "blue"
               },
-
               {
                 label: "Supprimer",
                 icon: <Trash />,
@@ -93,19 +92,7 @@ export default function Home() {
                   )}
                 </Link>
               ),
-              etat: (value) => (
-                <Badge
-                  variant={"default"}
-                  className={cn(
-                    value !== "Cloturée" && "bg-yellow-400 text-black"
-                  )}
-                >
-                  {value as string}
-                </Badge>
-              ),
-              type: (value) => (
-                <span className="uppercase">{value as string}</span>
-              )
+              date: (value) => format(new Date(value as string), "dd/MM/yyyy"),
             }}
             hideList={[
               "etat",
@@ -120,7 +107,7 @@ export default function Home() {
               "description",
               "isTacheClient",
               "status",
-              "technicien"
+              "type"
             ]}
             searchId="sujet"
             searchPlaceholder="Rechercher un sujet..."

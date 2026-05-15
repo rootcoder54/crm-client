@@ -64,15 +64,16 @@ const PageRequete = () => {
   const listes =
     requetes?.map((requete) => ({
       ...requete,
+      date: requete.dateDebut,
+      etat: requete.dateCloture ? "Cloturée" : "En cours",
+      //nomClient: requete.demandeur + "-" + requete.client?.nomClient || "N/A",
+      client: requete.client?.nomClient || "N/A",
       numero:
         format(requete.dateDebut || new Date(), "yyyyMMdd_") +
         requete.client?.numero +
         "_" +
         requete.logiciel +
-        "_#",
-      etat: requete.dateCloture ? "Cloturée" : "En cours",
-      nomClient: requete.demandeur + "-" + requete.client?.nomClient || "N/A",
-      client: requete.client?.nomClient || "N/A"
+        "_#"
     })) || [];
 
   const clientFilter = Array.from(
@@ -88,137 +89,138 @@ const PageRequete = () => {
   );
 
   return (
-    <DataTable
-      chemins={[
-        { title: "Requête", url: "/requete" },
-        { title: "Listes", url: "#" }
-      ]}
-      titre="Liste des Requêtes"
-      onDoubleClickLink={`/requete/detail/${selectedId}`}
-      action={[
-        {
-          label: "Nouvelle Requête",
-          icon: <Plus />,
-          url: "/requete/add",
-          variantbtn: "default"
-        },
-        {
-          label: "Excel",
-          icon: <RiFileExcel2Line />,
-          url: "/api/export/requete",
-          variantbtn: "green",
-          target: true
-        }
-      ]}
-      selectAction={[
-        {
-          label: "Details",
-          icon: <FileBox />,
-          url: `/requete/detail/${selectedId}`,
-          variantbtn: "default"
-        },
-        {
-          label: "Supprimer",
-          icon: <Trash />,
-          url: `/requete/delete/${selectedId}`,
-          variantbtn: "danger"
-        }
-      ]}
-      data={listes}
-      dateChose="dateDebut"
-      dateChoseTitle="Filter par Date"
-      columnStyles={{
-        sujet: (value, row) => (
-          <Link
-            href={`/requete/detail/${row.id}`}
-            className="font-medium hover:underline"
-          >
-            {row.sujet && row.sujet.length > 30 ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>{row.sujet.slice(0, 30) + "..."}</span>
-                </TooltipTrigger>
-                <TooltipContent className="w-[560px] p-4" side="bottom">
-                  <p>{value as string}</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : (
-              <span>{value as string}</span>
-            )}
-          </Link>
-        ),
-        etat: (value) => (
-          <Badge
-            variant={"default"}
-            className={cn(value !== "Cloturée" && "bg-yellow-400 text-black")}
-          >
-            {value as string}
-          </Badge>
-        ),
-        type: (value) => <span className="uppercase">{value as string}</span>
-      }}
-      hideList={[
-        "createdAt",
-        "updatedAt",
-        "dateCloture",
-        "Intervention",
-        "logiciel",
-        "observation",
-        "clientId",
-        "dateDebut",
-        "description",
-        "isTacheClient",
-        "status",
-        "demandeur",
-        "type",
-        "client"
-      ]}
-      searchId="sujet"
-      searchPlaceholder="Rechercher un sujet..."
-      popFilter={[
-        {
-          dataFilter: "logiciel",
-          icon: <LayoutGrid />,
-          options: [
-            {
-              label: "RHPaie",
-              value: "RHPaie",
-              icon: () => (
-                <Image src="/rhpaie.png" alt="p" width={20} height={20} />
-              )
-            },
-            {
-              label: "TimeSheet",
-              value: "TimeSheet",
-              icon: () => (
-                <Image src="/timesheet.png" alt="t" width={20} height={20} />
-              )
-            },
-            {
-              label: "RHData",
-              value: "RHData",
-              icon: () => (
-                <Image src="/rhdata.png" alt="d" width={20} height={20} />
-              )
-            },
-            {
-              label: "RHFacture",
-              value: "RHFacture",
-              icon: () => (
-                <Image src="/rhfacture.png" alt="f" width={20} height={20} />
-              )
-            }
-          ]
-        },
-        {
-          dataFilter: "client",
-          icon: <SquareUserRound />,
-          options: clientFilter
-        }
-      ]}
-      onRowSelect={(id) => setSelectedId(id)}
-      exportName="liste_requetes"
-    />
+    <div className="flex-1 h-full">
+      <DataTable
+        chemins={[
+          { title: "Requête", url: "/requete" },
+          { title: "Listes", url: "#" }
+        ]}
+        titre="Liste des Requêtes"
+        onDoubleClickLink={`/requete/detail/${selectedId}`}
+        action={[
+          {
+            label: "Nouvelle Requête",
+            icon: <Plus />,
+            url: "/requete/add",
+            variantbtn: "default"
+          },
+          {
+            label: "Excel",
+            icon: <RiFileExcel2Line />,
+            url: "/api/export/requete",
+            variantbtn: "green",
+            target: true
+          }
+        ]}
+        selectAction={[
+          {
+            label: "Details",
+            icon: <FileBox />,
+            url: `/requete/detail/${selectedId}`,
+            variantbtn: "default"
+          },
+          {
+            label: "Supprimer",
+            icon: <Trash />,
+            url: `/requete/delete/${selectedId}`,
+            variantbtn: "danger"
+          }
+        ]}
+        data={listes}
+        dateChose="dateDebut"
+        dateChoseTitle="Filter par Date"
+        columnStyles={{
+          sujet: (value, row) => (
+            <Link
+              href={`/requete/detail/${row.id}`}
+              className="font-medium hover:underline"
+            >
+              {row.sujet && row.sujet.length > 30 ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>{row.sujet.slice(0, 30) + "..."}</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="w-[560px] p-4" side="bottom">
+                    <p>{value as string}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <span>{value as string}</span>
+              )}
+            </Link>
+          ),
+          date: (value) => format(new Date(value as string), "dd/MM/yyyy"),
+          etat: (value) => (
+            <Badge
+              variant={"default"}
+              className={cn(value !== "Cloturée" && "bg-yellow-400 text-black")}
+            >
+              {value as string}
+            </Badge>
+          ),
+          type: (value) => <span className="uppercase">{value as string}</span>
+        }}
+        hideList={[
+          "createdAt",
+          "updatedAt",
+          "dateCloture",
+          "Intervention",
+          "logiciel",
+          "observation",
+          "clientId",
+          "dateDebut",
+          "description",
+          "isTacheClient",
+          "status",
+          "type"
+        ]}
+        searchId="sujet"
+        searchPlaceholder="Rechercher un sujet..."
+        popFilter={[
+          {
+            dataFilter: "logiciel",
+            icon: <LayoutGrid />,
+            options: [
+              {
+                label: "RHPaie",
+                value: "RHPaie",
+                icon: () => (
+                  <Image src="/rhpaie.png" alt="p" width={20} height={20} />
+                )
+              },
+              {
+                label: "TimeSheet",
+                value: "TimeSheet",
+                icon: () => (
+                  <Image src="/timesheet.png" alt="t" width={20} height={20} />
+                )
+              },
+              {
+                label: "RHData",
+                value: "RHData",
+                icon: () => (
+                  <Image src="/rhdata.png" alt="d" width={20} height={20} />
+                )
+              },
+              {
+                label: "RHFacture",
+                value: "RHFacture",
+                icon: () => (
+                  <Image src="/rhfacture.png" alt="f" width={20} height={20} />
+                )
+              }
+            ]
+          },
+          {
+            dataFilter: "client",
+            icon: <SquareUserRound />,
+            options: clientFilter
+          }
+        ]}
+        onRowSelect={(id) => setSelectedId(id)}
+        exportName="liste_requetes"
+      />
+    </div>
   );
 };
 

@@ -7,7 +7,6 @@ import {
   BookDashed,
   Copyright,
   FileArchive,
-  FileChartColumn,
   FileChartPie,
   Home,
   MessageCircleQuestion,
@@ -78,12 +77,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: BookDashed,
         isActive: pathname.startsWith("/draft"),
         badge: draftCount
-      },
-      {
-        title: "Intervention",
-        url: "/intervention",
-        icon: FileChartColumn,
-        isActive: pathname.startsWith("/intervention")
       },
       {
         title: "Facture",

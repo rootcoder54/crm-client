@@ -184,12 +184,14 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
           <div className="flex flex-col space-y-2">
             <div className="flex items-center space-x-2">
               <h3 className="text-xl md:text-2xl lg:text-3xl">Interventions</h3>
-              <Link
-                target="_blank"
-                href={"/imprime/intervention/" + interventionID}
-              >
-                <FileText />
-              </Link>
+              {items && items.length > 0 && (
+                <Link
+                  target="_blank"
+                  href={"/imprime/intervention/" + interventionID}
+                >
+                  <FileText />
+                </Link>
+              )}
             </div>
             <hr />
             {items ? (
