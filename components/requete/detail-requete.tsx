@@ -211,6 +211,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                     variantbtn: "danger"
                   }
                 ]}
+                storageKey="intervention-datatable"
               />
             ) : (
               <div className="flex items-center w-full justify-center text-center">

@@ -28,6 +28,7 @@ const ContratClient = ({
       data={contrats}
       hideList={["clientId", "createdAt", "updatedAt"]}
       notData="Aucun contrat trouvé"
+      storageKey="contrat-datatable"
     />
   );
 };

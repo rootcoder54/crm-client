@@ -43,6 +43,7 @@ const LicencePage = () => {
       notData="Aucun licence trouvé"
       //exportLien="/api/export/client"
       exportName="liste_clients"
+      storageKey="licence-datatable"
     />
   );
 };

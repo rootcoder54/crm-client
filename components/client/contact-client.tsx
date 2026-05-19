@@ -30,6 +30,7 @@ const ContactClient = ({
       searchId="nom"
       searchPlaceholder="Rechercher nom"
       notData="Aucun contact trouvé"
+      storageKey="contact-datatable"
     />
   );
 };

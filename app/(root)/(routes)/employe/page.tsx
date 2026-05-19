@@ -19,6 +19,7 @@ const PageEmploye = () => {
       notData="Aucun employé trouvé"
       hideList={["id"]}
       exportName="liste_employes"
+      storageKey="employe-datatable"
     />
   );
 };

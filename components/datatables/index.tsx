@@ -78,6 +78,7 @@ interface DataTableProps<TData extends Record<string, unknown>> {
     (value: unknown, row: TData) => React.ReactNode
   >;
   exportName?: string;
+  storageKey?: string;
 }
 
 export function DataTable<TData extends Record<string, unknown>>({
@@ -98,27 +99,61 @@ export function DataTable<TData extends Record<string, unknown>>({
   dateChose,
   dateChoseTitle,
   columnStyles,
-  exportName
+  exportName,
+  storageKey = "datatable"
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  //const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>(() => {
+    if (typeof window === "undefined") return [];
+
+    const saved = localStorage.getItem(`${storageKey}-sorting`);
+    return saved ? JSON.parse(saved) : [];
+  });
   const [open, setOpen] = React.useState(false);
   const [position, setPosition] = React.useState<{ x: number; y: number }>({
     x: 0,
     y: 0
   });
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+  /*const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
+  );*/
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    () => {
+      if (typeof window === "undefined") return [];
+
+      const saved = localStorage.getItem(`${storageKey}-filters`);
+      return saved ? JSON.parse(saved) : [];
+    }
   );
+
   const columns = buildColumns(data, columnStyles);
 
   const initialVisibility: VisibilityState = hideList
     ? hideList.reduce((acc, key) => ({ ...acc, [key]: false }), {})
     : {};
-  const [columnVisibility, setColumnVisibility] =
+  /*const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       id: false,
       ...initialVisibility
+    });*/
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>(() => {
+      if (typeof window === "undefined") {
+        return {
+          id: false,
+          ...initialVisibility
+        };
+      }
+
+      const saved = localStorage.getItem(`${storageKey}-visibility`);
+
+      return saved
+        ? JSON.parse(saved)
+        : {
+            id: false,
+            ...initialVisibility
+          };
     });
 
   const router = useRouter();
@@ -154,6 +189,24 @@ export function DataTable<TData extends Record<string, unknown>>({
       if (onRowSelect) onRowSelect(selectedId);
     }
   }, [rowSelection, onRowSelect]);
+  
+  useEffect(() => {
+    localStorage.setItem(
+      `${storageKey}-filters`,
+      JSON.stringify(columnFilters)
+    );
+  }, [columnFilters, storageKey]);
+
+  useEffect(() => {
+    localStorage.setItem(`${storageKey}-sorting`, JSON.stringify(sorting));
+  }, [sorting, storageKey]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      `${storageKey}-visibility`,
+      JSON.stringify(columnVisibility)
+    );
+  }, [columnVisibility, storageKey]);
 
   const exportExcel = async () => {
     const data = table.getRowModel().rows.map((row) => {

@@ -120,6 +120,7 @@ const PageRequete = () => {
       searchPlaceholder="Rechercher un sujet..."
       onRowSelect={(id) => setSelectedId(id)}
       exportName="liste_requetes"
+      storageKey="requete-draft-datatable"
     />
   );
 };

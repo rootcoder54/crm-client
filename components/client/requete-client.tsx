@@ -96,6 +96,7 @@ export const RequeteClient = ({ id }: { id: string }) => {
       searchId="sujet"
       searchPlaceholder="Rechercher une requête"
       onRowSelect={(id) => setSelectedId(id)}
+      storageKey="req-datatable"
     />
   );
 };

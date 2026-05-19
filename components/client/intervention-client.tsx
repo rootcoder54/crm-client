@@ -20,6 +20,7 @@ const InterventionClient = ({
       searchId="nomClient"
       searchPlaceholder="Rechercher une nom de client"
       notData="Aucun client trouvé"
+      storageKey="interve-datatable"
     />
   );
 };

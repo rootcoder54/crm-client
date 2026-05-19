@@ -39,6 +39,16 @@ const PageFacture = () => {
       </div>
     );
   }
+  const listes =
+    factures?.map((f) => ({
+      id: f.id,
+      numero: f.numero,
+      type: f.type,
+      acquittee: f.acquittee,
+      numeroOrdre: f.numeroOrdre,
+      modeReglement: f.modeReglement,
+      devise: f.devise
+    })) || [];
   return (
     <DataTable
       chemins={[
@@ -73,7 +83,7 @@ const PageFacture = () => {
           variantbtn: "danger"
         }
       ]}
-      data={factures || []}
+      data={listes || []}
       hideList={[
         "createdAt",
         "updatedAt",
@@ -87,6 +97,7 @@ const PageFacture = () => {
         "itemFactures"
       ]}
       onRowSelect={(id) => setSelectedId(id)}
+      storageKey="facture-datatable"
     />
   );
 };

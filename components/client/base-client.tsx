@@ -47,6 +47,7 @@ const BaseClient = ({
       ]}
       notData="Aucun Base trouvé"
       onRowSelect={(id) => setSelectedId(id)}
+      storageKey="base-datatable"
     />
   );
 };

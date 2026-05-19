@@ -31,7 +31,10 @@ export default function Home() {
   const mlistes = requetes?.filter((res) => !res.dateCloture);
   const listes =
     mlistes?.map((requete) => ({
-      ...requete,
+      id: requete.id,
+      sujet: requete.sujet,
+      demandeur: requete.demandeur,
+      technicien: requete.technicien,
       date: requete.dateDebut,
       numero:
         format(requete.dateDebut || new Date(), "yyyyMMdd_") +
@@ -40,7 +43,9 @@ export default function Home() {
         requete.logiciel +
         "_#",
       etat: requete.dateCloture ? "Cloturée" : "En cours",
-      client: requete.client?.nomClient || "N/A"
+      client: requete.client?.nomClient || "N/A",
+      logiciel: requete.logiciel,
+      dateDebut: requete.dateDebut
     })) || [];
   console.log(listes);
   return (
@@ -92,23 +97,9 @@ export default function Home() {
                   )}
                 </Link>
               ),
-              date: (value) => format(new Date(value as string), "dd/MM/yyyy"),
+              date: (value) => format(new Date(value as string), "dd/MM/yyyy")
             }}
-            hideList={[
-              "etat",
-              "createdAt",
-              "updatedAt",
-              "dateCloture",
-              "Intervention",
-              "logiciel",
-              "observation",
-              "clientId",
-              "dateDebut",
-              "description",
-              "isTacheClient",
-              "status",
-              "type"
-            ]}
+            hideList={["logiciel", "dateDebut"]}
             searchId="sujet"
             searchPlaceholder="Rechercher un sujet..."
             popFilter={[
@@ -124,6 +115,7 @@ export default function Home() {
               }
             ]}
             onRowSelect={(id) => setSelectedId(id)}
+            storageKey="requete-home-datatable"
           />
         </div>
       </div>

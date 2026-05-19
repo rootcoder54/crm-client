@@ -219,6 +219,7 @@ const PageRequete = () => {
         ]}
         onRowSelect={(id) => setSelectedId(id)}
         exportName="liste_requetes"
+        storageKey="requete-datatable"
       />
     </div>
   );

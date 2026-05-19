@@ -147,6 +147,7 @@ const ClientPage = () => {
       onRowSelect={(id) => setSelectedId(id)}
       //exportLien="/api/export/client"
       exportName="liste_clients"
+      storageKey="client-datatable"
     />
   );
 };

@@ -45,6 +45,13 @@ const PageFrequente = () => {
       </div>
     );
   }
+  const listes =
+    articles?.map((a) => ({
+      id: a.id,
+      titre: a.titre,
+      decription: a.description,
+      contenu: a.contenu
+    })) || [];
   return (
     <DataTable
       chemins={[
@@ -100,11 +107,12 @@ const PageFrequente = () => {
           </Link>
         )
       }}
-      data={articles || []}
+      data={listes || []}
       hideList={["createdAt", "updatedAt", "contenu"]}
       onRowSelect={(id) => setSelectedId(id)}
       searchId="titre"
       searchPlaceholder="Recherche le titre..."
+      storageKey="frequents-datatable"
     />
   );
 };
