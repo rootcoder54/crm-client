@@ -147,7 +147,12 @@ export function buildColumns<T extends Record<string, unknown>>(
       id: "select",
       cell: ({ row }) => (
         <Checkbox
-          checked={row.getIsSelected()}
+          checked={!!row.getIsSelected()}
+          onClick={(event) => {
+            event.stopPropagation();
+            
+            row.toggleSelected(true);
+          }}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
           className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"

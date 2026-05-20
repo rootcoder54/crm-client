@@ -29,7 +29,13 @@ import { VariantProps } from "class-variance-authority";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Header from "./header";
 import Link from "next/link";
-import { X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  X
+} from "lucide-react";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { dateRangeFilter } from "./dateRangeFilter";
 import { cn } from "@/lib/utils";
@@ -134,7 +140,16 @@ export function DataTable<TData extends Record<string, unknown>>({
           pageSize: 10
         };
   });
-  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  //const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>(
+    () => {
+      if (typeof window === "undefined") return {};
+
+      const saved = localStorage.getItem(`${storageKey}-row-selection`);
+
+      return saved ? JSON.parse(saved) : {};
+    }
+  );
   /*const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );*/
@@ -182,8 +197,10 @@ export function DataTable<TData extends Record<string, unknown>>({
     data,
     columns,
     onSortingChange: setSorting,
-    //enableRowSelection: true,
+    enableRowSelection: true,
+    enableMultiRowSelection: false,
     onColumnFiltersChange: setColumnFilters,
+    getRowId: (row) => String(row.id),
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
@@ -236,6 +253,13 @@ export function DataTable<TData extends Record<string, unknown>>({
       JSON.stringify(pagination)
     );
   }, [pagination, storageKey]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      `${storageKey}-row-selection`,
+      JSON.stringify(rowSelection)
+    );
+  }, [rowSelection, storageKey]);
 
   const exportExcel = async () => {
     const data = table.getRowModel().rows.map((row) => {
@@ -385,7 +409,8 @@ export function DataTable<TData extends Record<string, unknown>>({
                   key={row.id}
                   className="cursor-pointer w-full h-8"
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.preventDefault();
                     table.setRowSelection({ [row.id]: true });
                   }}
                   onDoubleClick={
@@ -434,20 +459,35 @@ export function DataTable<TData extends Record<string, unknown>>({
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+              size="sm"
+            >
+              <ChevronsLeft />
+            </Button>
+            <Button
+              variant="outline"
               size="sm"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              Précédent
+              <ChevronLeft />
             </Button>
-
             <Button
               variant="outline"
               size="sm"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              Suivant
+              <ChevronRight />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+            >
+              <ChevronsRight />
             </Button>
           </div>
         </div>
