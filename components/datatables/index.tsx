@@ -5,6 +5,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   RowSelectionState,
   SortingState,
@@ -114,6 +115,25 @@ export function DataTable<TData extends Record<string, unknown>>({
     x: 0,
     y: 0
   });
+  /*const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10
+  });*/
+  const [pagination, setPagination] = React.useState(() => {
+    if (typeof window === "undefined") {
+      return {
+        pageIndex: 0,
+        pageSize: 10
+      };
+    }
+    const saved = localStorage.getItem(`${storageKey}-pagination`);
+    return saved
+      ? JSON.parse(saved)
+      : {
+          pageIndex: 0,
+          pageSize: 10
+        };
+  });
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   /*const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -165,7 +185,8 @@ export function DataTable<TData extends Record<string, unknown>>({
     //enableRowSelection: true,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    //getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -177,7 +198,8 @@ export function DataTable<TData extends Record<string, unknown>>({
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection
+      rowSelection,
+      pagination
     }
   });
 
@@ -189,7 +211,7 @@ export function DataTable<TData extends Record<string, unknown>>({
       if (onRowSelect) onRowSelect(selectedId);
     }
   }, [rowSelection, onRowSelect]);
-  
+
   useEffect(() => {
     localStorage.setItem(
       `${storageKey}-filters`,
@@ -207,6 +229,13 @@ export function DataTable<TData extends Record<string, unknown>>({
       JSON.stringify(columnVisibility)
     );
   }, [columnVisibility, storageKey]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      `${storageKey}-pagination`,
+      JSON.stringify(pagination)
+    );
+  }, [pagination, storageKey]);
 
   const exportExcel = async () => {
     const data = table.getRowModel().rows.map((row) => {
@@ -396,6 +425,32 @@ export function DataTable<TData extends Record<string, unknown>>({
             )}
           </TableBody>
         </Table>
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="text-sm text-muted-foreground">
+            Page {table.getState().pagination.pageIndex + 1} sur{" "}
+            {table.getPageCount()}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Précédent
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Suivant
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
