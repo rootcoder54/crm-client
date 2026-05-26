@@ -51,7 +51,7 @@ function DataToolBar<TData>({
   dateChose,
   dateChoseTitle
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0;
+  const isFiltered = table.getState().columnFilters.length > 0 || table.getState().sorting.length > 0;
 
   const filtreValeur = safeGetColumn(table, searchId ?? "");
 
@@ -94,6 +94,7 @@ function DataToolBar<TData>({
                     variant="danger"
                     onClick={() => {
                       table.resetColumnFilters();
+                      table.resetSorting();
                     }}
                     className="h-8 px-2 lg:px-3"
                   >
