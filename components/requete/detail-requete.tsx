@@ -18,6 +18,7 @@ import { LoaderOne } from "../ui/loader";
 import { format } from "date-fns";
 import { getClientById } from "@/services/client.service";
 import { Badge } from "../ui/badge";
+import Writor from "../features/Writor";
 
 type Item = {
   id: string;
@@ -172,7 +173,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
             )}
             {requete.description ? (
               <div className="flex flex-col items-start space-y-3 lg:w-3/4 xl:w-3/5 min-h-[100px] bg-zinc-200 shadow dark:bg-zinc-600/50 rounded-md p-4">
-                <p>{requete.description}</p>
+                <Writor value={requete.description} />
               </div>
             ) : (
               <div className="flex flex-col items-start text-center space-y-3 lg:w-3/4 xl:w-3/5 min-h-[100px] bg-zinc-200 shadow dark:bg-zinc-600/50 rounded-md p-4">

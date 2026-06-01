@@ -64,6 +64,7 @@ import { lastVisite } from "@/services/client.service";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { LoaderOne } from "../ui/loader";
+import MyEditor from "../features/Editor";
 
 const AddRequete = ({ id }: { id: string }) => {
   const router = useRouter();
@@ -307,7 +308,7 @@ const AddRequete = ({ id }: { id: string }) => {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea {...field} className="h-[250px]" />
+                    <MyEditor value={field.value} onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
