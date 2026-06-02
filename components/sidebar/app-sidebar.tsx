@@ -10,7 +10,6 @@ import {
   FileChartPie,
   Home,
   MessageCircleQuestion,
-  Settings,
   Users,
   UserSquareIcon
 } from "lucide-react";
@@ -101,12 +100,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/frequents",
         icon: MessageCircleQuestion,
         isActive: pathname.startsWith("/frequents")
-      },
-      {
-        title: "Parametres",
-        url: "/setting",
-        icon: Settings,
-        isActive: pathname === "/setting"
       },
       {
         title: "Importations",
