@@ -16,7 +16,6 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { RiFileExcel2Line } from "react-icons/ri";
 import { LoaderOne } from "@/components/ui/loader";
 import Link from "next/link";
 import Image from "next/image";
@@ -103,13 +102,6 @@ const PageRequete = () => {
             icon: <Plus />,
             url: "/requete/add",
             variantbtn: "default"
-          },
-          {
-            label: "Excel",
-            icon: <RiFileExcel2Line />,
-            url: "/api/export/requete",
-            variantbtn: "green",
-            target: true
           }
         ]}
         selectAction={[
@@ -117,7 +109,7 @@ const PageRequete = () => {
             label: "Details",
             icon: <FileBox />,
             url: `/requete/detail/${selectedId}`,
-            variantbtn: "default"
+            variantbtn: "outline"
           },
           {
             label: "Supprimer",

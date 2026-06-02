@@ -90,44 +90,26 @@ function Header<TData>({
         )}
 
         <div className="ml-auto flex items-center gap-2">
-          {table.getFilteredSelectedRowModel().rows.length !== 0 && (
-            <div className="flex items-center gap-2">
-              {selectAction && (
-                <div className="flex items-center gap-2">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant={"default"}
-                        size={"icon"}
-                        className="size-8"
-                        onClick={deselectRows}
-                      >
-                        <X />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Déselectionné</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  {selectAction.map((act, index) => (
-                    <Button
-                      key={index}
-                      variant={act.variantbtn}
-                      asChild
-                      size="sm"
-                      className={cn(act.hide && "hidden")}
-                    >
-                      <Link href={act.url} className="dark:text-foreground">
-                        {act.icon}
-                        <span className="hidden md:flex">{act.label}</span>
-                      </Link>
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-          {table.getFilteredSelectedRowModel().rows.length === 0 && action && (
+          {selectAction &&
+            table.getFilteredSelectedRowModel().rows.length !== 0 &&
+            selectAction.length > 0 && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={"default"}
+                    size={"icon"}
+                    className="size-8"
+                    onClick={deselectRows}
+                  >
+                    <X />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Déselectionné</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          {action && (
             <div className="flex items-center gap-2">
               {action.map((act, index) => (
                 <Button
@@ -147,6 +129,29 @@ function Header<TData>({
                   </Link>
                 </Button>
               ))}
+            </div>
+          )}
+
+          {table.getFilteredSelectedRowModel().rows.length !== 0 && (
+            <div className="flex items-center gap-2">
+              {selectAction && (
+                <div className="flex items-center gap-2">
+                  {selectAction.map((act, index) => (
+                    <Button
+                      key={index}
+                      variant={act.variantbtn}
+                      asChild
+                      size="sm"
+                      className={cn(act.hide && "hidden")}
+                    >
+                      <Link href={act.url} className="dark:text-foreground">
+                        {act.icon}
+                        <span className="hidden md:flex">{act.label}</span>
+                      </Link>
+                    </Button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

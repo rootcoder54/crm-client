@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { RiFileExcel2Line } from "react-icons/ri";
 
 const ClientPage = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -77,14 +76,7 @@ const ClientPage = () => {
           label: "Nouvelle Client",
           icon: <Plus />,
           url: "/client/add",
-          variantbtn: "secondary"
-        },
-        {
-          label: "Excel",
-          icon: <RiFileExcel2Line />,
-          url: "/api/export/client",
-          variantbtn: "green",
-          target: true
+          variantbtn: "default"
         }
       ]}
       selectAction={[
