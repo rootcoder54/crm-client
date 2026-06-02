@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import HeaderPage from "../features/header-page";
 import { LoaderOne } from "../ui/loader";
+import MyEditor from "../features/Editor";
 
 const EditeRequete = ({ requete }: { requete: Requete }) => {
   const router = useRouter();
@@ -126,7 +127,7 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea {...field} className="h-[250px]" />
+                    <MyEditor value={field.value} onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
