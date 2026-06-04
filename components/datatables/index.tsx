@@ -315,7 +315,7 @@ export function DataTable<TData extends Record<string, unknown>>({
               transform: "translate(1%, 1%)"
             }}
           >
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-1">
               <>
                 {selectAction.map(
                   (actionItem, index) =>
@@ -335,8 +335,8 @@ export function DataTable<TData extends Record<string, unknown>>({
                 )}
               </>
               <Button
-                variant={"green"}
-                className="w-full justify-start text-green-600 dark:text-white"
+                variant={"ghost"}
+                className="w-full justify-start text-green-600 hover:bg-green-600/10 hover:text-green-600 dark:text-white"
                 onClick={exportExcel}
               >
                 <span className="mr-2">
@@ -345,12 +345,12 @@ export function DataTable<TData extends Record<string, unknown>>({
                 Excel
               </Button>
               <Button
-                variant={"danger"}
+                variant={"ghost"}
                 onClick={() => {
                   setOpen(false);
                   table.resetRowSelection();
                 }}
-                className="w-full justify-start"
+                className="w-full justify-start text-red-600 hover:bg-red-400/10 hover:text-red-600 dark:text-white"
               >
                 <span className="mr-2">
                   {" "}
