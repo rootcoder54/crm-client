@@ -13,6 +13,8 @@ import {
   VisibilityState
 } from "@tanstack/react-table";
 
+import { useOnClickOutside } from "usehooks-ts";
+
 import {
   Table,
   TableBody,
@@ -22,7 +24,7 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { Popover, PopoverContent } from "@/components/ui/popover";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import DataToolBar from "./toolbar";
 import { buildColumns } from "./columns";
 import { VariantProps } from "class-variance-authority";
@@ -109,6 +111,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   exportName,
   storageKey = "datatable"
 }: DataTableProps<TData>) {
+  const tableRef = useRef<HTMLTableElement>(null);
   //const [sorting, setSorting] = React.useState<SortingState>([]);
   const [sorting, setSorting] = React.useState<SortingState>(() => {
     if (typeof window === "undefined") return [];
@@ -219,6 +222,10 @@ export function DataTable<TData extends Record<string, unknown>>({
       pagination
     }
   });
+
+  useOnClickOutside(tableRef as React.RefObject<HTMLElement>, () =>
+    table.resetRowSelection()
+  );
 
   useEffect(() => {
     const selectedRows = table.getSelectedRowModel().rows;
@@ -377,7 +384,7 @@ export function DataTable<TData extends Record<string, unknown>>({
             dateChoseTitle={dateChoseTitle}
           />
         </div>
-        <Table className="border-y w-full">
+        <Table className="border-y w-full" ref={tableRef}>
           <TableHeader className="bg-stone-600/30">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
