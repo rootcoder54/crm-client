@@ -1,6 +1,6 @@
 "use client ";
 
-import { Client } from "@prisma/client";
+import { Client, Requete } from "@prisma/client";
 import HeaderPage from "../features/header-page";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -13,8 +13,16 @@ import {
   Trash2
 } from "lucide-react";
 import { format } from "date-fns";
+import { Table, TableCell, TableRow } from "../ui/table";
+import { Badge } from "../ui/badge";
 
-const DetailClient = ({ client }: { client: Client | null }) => {
+const DetailClient = ({
+  client,
+  requetes
+}: {
+  client: Client | null;
+  requetes: Requete[];
+}) => {
   if (!client) {
     return <div>Client not found</div>;
   }
@@ -45,9 +53,7 @@ const DetailClient = ({ client }: { client: Client | null }) => {
           </Link>
         </Button>
         <Button variant={"default"} asChild size="sm">
-          <Link
-            href={"/client/edite/" + client.id}
-          >
+          <Link href={"/client/edite/" + client.id}>
             <SquarePen />
             <span className="hidden sm:flex">Editer</span>
           </Link>
@@ -82,72 +88,140 @@ const DetailClient = ({ client }: { client: Client | null }) => {
       </HeaderPage>
       <div className="my-4 p-5 rounded-lg border-2 space-y-2">
         <h1 className="text-2xl font-bold">{client.nomClient}</h1>
-        {client.adresse && (
-          <>
-            <p className="text-sm text-muted-foreground">
-              <span className="font-semibold dark:text-white">Adresse</span> :{" "}
-              {client.adresse}
-            </p>
-            <hr />
-          </>
+        <Table>
+          <TableRow>
+            <TableCell>
+              {client.adresse && (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-semibold dark:text-white">
+                      Adresse
+                    </span>{" "}
+                    : {client.adresse}
+                  </p>
+                </>
+              )}
+            </TableCell>
+            <TableCell>
+              {client.sigle && (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-semibold dark:text-white">Sigle</span>{" "}
+                    : {client.sigle}
+                  </p>
+                </>
+              )}
+            </TableCell>
+            <TableCell>
+              {client.numero && (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-semibold dark:text-white">
+                      Numero
+                    </span>{" "}
+                    : {client.numero}
+                  </p>
+                </>
+              )}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              {client.telephone && (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-semibold dark:text-white">
+                      Téléphone
+                    </span>{" "}
+                    : {client.telephone}
+                  </p>
+                </>
+              )}
+            </TableCell>
+            <TableCell>
+              {client.activite && (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-semibold dark:text-white">
+                      Activité
+                    </span>{" "}
+                    : {client.activite}
+                  </p>
+                </>
+              )}
+            </TableCell>
+            <TableCell>
+              {client.dateInscription && (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-semibold dark:text-white">
+                      Date d&apos;achat
+                    </span>{" "}
+                    : {format(client.dateInscription, "dd/MM/yyyy")}
+                  </p>
+                </>
+              )}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <p className="text-sm text-muted-foreground">
+                <span className="font-semibold dark:text-white">
+                  Date de derniere visite
+                </span>{" "}
+                :{" "}
+                {client.dateLastVisite
+                  ? format(client.dateLastVisite, "dd/MM/yyyy")
+                  : "Aucune visite"}
+              </p>
+            </TableCell>
+            <TableCell></TableCell>
+            <TableCell></TableCell>
+          </TableRow>
+        </Table>
+      </div>
+      <div>
+        <h2 className="text-xl font-bold mb-4">Requêtes associées</h2>
+        {requetes.length === 0 ? (
+          <p>Aucune requête associée à ce client.</p>
+        ) : (
+          <Table>
+            <TableRow>
+              <TableCell className="font-bold">Sujet</TableCell>
+              <TableCell className="font-bold">Technicien</TableCell>
+              <TableCell className="font-bold">Date de début</TableCell>
+              <TableCell className="font-bold">Etat</TableCell>
+            </TableRow>
+            {requetes.map((requete) => (
+              <TableRow key={requete.id}>
+                <TableCell>
+                  <Link
+                    href={`/requete/detail/${requete.id}`}
+                    className="text-blue-500 hover:underline"
+                  >
+                    {requete.sujet}
+                  </Link>
+                </TableCell>
+                <TableCell>{requete.technicien}</TableCell>
+                <TableCell>
+                  {requete.dateDebut && format(requete.dateDebut, "dd/MM/yyyy")}
+                </TableCell>
+                <TableCell>
+                  {requete.dateCloture ? (
+                    <Badge>Clôturée</Badge>
+                  ) : (
+                    <Badge
+                      className="bg-yellow-500 text-black"
+                      variant={"default"}
+                    >
+                      En cours
+                    </Badge>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </Table>
         )}
-        {client.sigle && (
-          <>
-            <p className="text-sm text-muted-foreground">
-              <span className="font-semibold dark:text-white">Sigle</span> :{" "}
-              {client.sigle}
-            </p>
-            <hr />
-          </>
-        )}
-        {client.numero && (
-          <>
-            <p className="text-sm text-muted-foreground">
-              <span className="font-semibold dark:text-white">Numero</span> :{" "}
-              {client.numero}
-            </p>
-            <hr />
-          </>
-        )}
-        {client.telephone && (
-          <>
-            <p className="text-sm text-muted-foreground">
-              <span className="font-semibold dark:text-white">Téléphone</span> :{" "}
-              {client.telephone}
-            </p>
-            <hr />
-          </>
-        )}
-        {client.activite && (
-          <>
-            <p className="text-sm text-muted-foreground">
-              <span className="font-semibold dark:text-white">Activité</span> :{" "}
-              {client.activite}
-            </p>
-            <hr />
-          </>
-        )}
-        {client.dateInscription && (
-          <>
-            <p className="text-sm text-muted-foreground">
-              <span className="font-semibold dark:text-white">
-                Date d&apos;achat
-              </span>{" "}
-              : {format(client.dateInscription, "dd/MM/yyyy")}
-            </p>
-            <hr />
-          </>
-        )}
-        <p className="text-sm text-muted-foreground">
-          <span className="font-semibold dark:text-white">
-            Date de derniere visite
-          </span>{" "}
-          :{" "}
-          {client.dateLastVisite
-            ? format(client.dateLastVisite, "dd/MM/yyyy")
-            : "Aucune visite"}
-        </p>
-        <hr />
       </div>
     </div>
   );
