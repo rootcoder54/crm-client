@@ -13,7 +13,7 @@ import {
   Trash2
 } from "lucide-react";
 import { format } from "date-fns";
-import { Table, TableCell, TableRow } from "../ui/table";
+import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { Badge } from "../ui/badge";
 
 const DetailClient = ({
@@ -89,95 +89,72 @@ const DetailClient = ({
       <div className="my-4 p-5 rounded-lg border-2 space-y-2">
         <h1 className="text-2xl font-bold">{client.nomClient}</h1>
         <Table>
-          <TableRow>
-            <TableCell>
-              {client.adresse && (
-                <>
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold dark:text-white">
-                      Adresse
-                    </span>{" "}
-                    : {client.adresse}
-                  </p>
-                </>
-              )}
-            </TableCell>
-            <TableCell>
-              {client.sigle && (
-                <>
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold dark:text-white">Sigle</span>{" "}
-                    : {client.sigle}
-                  </p>
-                </>
-              )}
-            </TableCell>
-            <TableCell>
-              {client.numero && (
-                <>
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold dark:text-white">
-                      Numero
-                    </span>{" "}
-                    : {client.numero}
-                  </p>
-                </>
-              )}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>
-              {client.telephone && (
-                <>
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold dark:text-white">
-                      Téléphone
-                    </span>{" "}
-                    : {client.telephone}
-                  </p>
-                </>
-              )}
-            </TableCell>
-            <TableCell>
-              {client.activite && (
-                <>
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold dark:text-white">
-                      Activité
-                    </span>{" "}
-                    : {client.activite}
-                  </p>
-                </>
-              )}
-            </TableCell>
-            <TableCell>
-              {client.dateInscription && (
-                <>
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold dark:text-white">
-                      Date d&apos;achat
-                    </span>{" "}
-                    : {format(client.dateInscription, "dd/MM/yyyy")}
-                  </p>
-                </>
-              )}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>
-              <p className="text-sm text-muted-foreground">
-                <span className="font-semibold dark:text-white">
-                  Date de derniere visite
-                </span>{" "}
-                :{" "}
-                {client.dateLastVisite
-                  ? format(client.dateLastVisite, "dd/MM/yyyy")
-                  : "Aucune visite"}
-              </p>
-            </TableCell>
-            <TableCell></TableCell>
-            <TableCell></TableCell>
-          </TableRow>
+          <TableBody>
+            <TableRow>
+              <TableCell>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold dark:text-white">Adresse</span>{" "}
+                  : {client.adresse || "Aucune adresse renseignée"}
+                </p>
+              </TableCell>
+              <TableCell>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold dark:text-white">Sigle</span> :{" "}
+                  {client.sigle || "Aucun sigle renseigné"}
+                </p>
+              </TableCell>
+              <TableCell>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold dark:text-white">Numero</span>{" "}
+                  : {client.numero || "Aucun numéro renseigné"}
+                </p>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold dark:text-white">
+                    Téléphone
+                  </span>{" "}
+                  : {client.telephone || "Aucun N° téléphone renseigné"}
+                </p>
+              </TableCell>
+              <TableCell>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold dark:text-white">
+                    Activité
+                  </span>{" "}
+                  : {client.activite || "Aucune activité renseignée"}
+                </p>
+              </TableCell>
+              <TableCell>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold dark:text-white">
+                    Date d&apos;achat
+                  </span>{" "}
+                  :{" "}
+                  {client.dateInscription
+                    ? format(client.dateInscription, "dd/MM/yyyy")
+                    : "Aucune date d'achat renseignée"}
+                </p>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold dark:text-white">
+                    Date de derniere visite
+                  </span>{" "}
+                  :{" "}
+                  {client.dateLastVisite
+                    ? format(client.dateLastVisite, "dd/MM/yyyy")
+                    : "Aucune visite"}
+                </p>
+              </TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableBody>
         </Table>
       </div>
       <div>
