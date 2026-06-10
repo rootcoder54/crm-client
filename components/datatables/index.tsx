@@ -112,6 +112,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   storageKey = "datatable"
 }: DataTableProps<TData>) {
   const tableRef = useRef<HTMLTableElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   //const [sorting, setSorting] = React.useState<SortingState>([]);
   const [sorting, setSorting] = React.useState<SortingState>(() => {
     if (typeof window === "undefined") return [];
@@ -223,9 +224,12 @@ export function DataTable<TData extends Record<string, unknown>>({
     }
   });
 
-  useOnClickOutside(tableRef as React.RefObject<HTMLElement>, () =>
-    table.resetRowSelection()
-  );
+  useOnClickOutside(tableRef as React.RefObject<HTMLElement>, (event) => {
+    if (headerRef.current && headerRef.current.contains(event.target as Node)) {
+      return;
+    }
+    table.resetRowSelection();
+  });
 
   useEffect(() => {
     const selectedRows = table.getSelectedRowModel().rows;
@@ -302,14 +306,17 @@ export function DataTable<TData extends Record<string, unknown>>({
 
   return (
     <div className="w-full pb-5">
-      {isHeader && (
-        <Header
-          table={table}
-          chemins={chemins}
-          action={action}
-          selectAction={selectAction}
-        />
-      )}
+      <div className="w-full" ref={headerRef}>
+        {isHeader && (
+          <Header
+            table={table}
+            chemins={chemins}
+            action={action}
+            selectAction={selectAction}
+          />
+        )}
+      </div>
+
       {selectAction && (
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverContent
