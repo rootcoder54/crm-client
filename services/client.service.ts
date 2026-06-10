@@ -41,7 +41,11 @@ export async function getClientById(id: string) {
 }
 
 export async function getAllClients() {
-  return prisma.client.findMany();
+  return prisma.client.findMany({
+    include: {
+      Requete: true
+    }
+  });
 }
 
 export async function updateClient(

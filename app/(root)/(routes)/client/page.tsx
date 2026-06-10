@@ -122,7 +122,8 @@ const ClientPage = () => {
         "sigle",
         "dateInscription",
         "dateNewVisite",
-        "dateLastVisite"
+        "dateLastVisite",
+        "requete"
       ]}
       popFilter={[
         {
