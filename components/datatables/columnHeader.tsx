@@ -59,7 +59,7 @@ export function ColumnHeader<TData, TValue>({
       new Map(
         (allValues ?? []).map((value) => [value, { label: value, value }])
       ).values()
-    ) as { label: string; value: string }[];
+    ) as { label: string | undefined; value: string }[];
   }, [table, column.id]);
 
   const facets = column?.getFacetedUniqueValues();
@@ -158,7 +158,7 @@ export function ColumnHeader<TData, TValue>({
                     >
                       <Check />
                     </div>
-                    <span>{option.label}</span>
+                    <span>{option.label ? option.label : "vide"}</span>
                     {facets?.get(option.value) && (
                       <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
                         {facets.get(option.value)}
@@ -170,11 +170,16 @@ export function ColumnHeader<TData, TValue>({
             </CommandGroup>
           </CommandList>
         </Command>
-        {selectedValues.size > 0 && (
+        {(selectedValues.size > 0 ||
+          column.getIsSorted() === "asc" ||
+          column.getIsSorted() === "desc") && (
           <>
             <Separator className="mt-2" />
             <Button
-              onClick={() => column?.setFilterValue(undefined)}
+              onClick={() => {
+                column?.setFilterValue(undefined);
+                column?.clearSorting();
+              }}
               className="w-full mt-2"
               variant={"secondary"}
             >
