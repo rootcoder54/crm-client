@@ -20,8 +20,9 @@ export async function GET() {
           requete.logiciel +
           "_#"
       })) || [];
+      const listeE = listes?.filter((res) => !res.dateCloture);
 
-    return NextResponse.json(listes);
+    return NextResponse.json(listeE);
   } catch (error) {
     return new NextResponse(`Internal Error :${error}`, { status: 500 });
   }

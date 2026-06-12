@@ -9,15 +9,19 @@ import {
 } from "@/components/ui/tooltip";
 
 import { fetcher } from "@/lib/fetcher";
-import { Client, Requete } from "@prisma/client";
+import { Requete } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { FileBox, LayoutGrid, Trash } from "lucide-react";
+import { FileBox, Plus, Trash } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 interface RequeteWithClient extends Requete {
-  client?: Client | null;
+  [key: string]: unknown;
+  client: string;
+  date: Date | null;
+  etat: string;
+  numero: string;
 }
 
 export default function Home() {
@@ -25,29 +29,9 @@ export default function Home() {
 
   const { data: requetes } = useQuery<RequeteWithClient[]>({
     queryKey: ["requete"],
-    queryFn: () => fetcher(`/api/requete`)
+    queryFn: () => fetcher(`/api/requete/encours`)
   });
-
-  const mlistes = requetes?.filter((res) => !res.dateCloture);
-  const listes =
-    mlistes?.map((requete) => ({
-      id: requete.id,
-      sujet: requete.sujet,
-      demandeur: requete.demandeur,
-      technicien: requete.technicien,
-      date: requete.dateDebut,
-      numero:
-        format(requete.dateDebut || new Date(), "yyyyMMdd_") +
-        requete.client?.numero +
-        "_" +
-        requete.logiciel +
-        "_#",
-      etat: requete.dateCloture ? "Cloturée" : "En cours",
-      client: requete.client?.nomClient || "N/A",
-      logiciel: requete.logiciel,
-      dateDebut: requete.dateDebut
-    })) || [];
-  console.log(listes);
+  
   return (
     <div>
       <HeaderPage chemins={[{ title: "Home", url: "/" }]}></HeaderPage>
@@ -58,16 +42,26 @@ export default function Home() {
         <div className="flex flex-row items-center justify-center gap-4">
           <DataTable
             isHeader={false}
-            data={listes || []}
-            dateChose="dateDebut"
-            dateChoseTitle="Filter par Date"
-            titre="Requête en cours"
+            chemins={[
+              { title: "Requête", url: "/requete" },
+              { title: "Listes", url: "#" }
+            ]}
+            titre="Liste des Requêtes"
+            onDoubleClickLink={`/requete/detail/${selectedId}`}
+            action={[
+              {
+                label: "Nouvelle Requête",
+                icon: <Plus />,
+                url: "/requete/add",
+                variantbtn: "default"
+              }
+            ]}
             selectAction={[
               {
                 label: "Details",
                 icon: <FileBox />,
                 url: `/requete/detail/${selectedId}`,
-                variantbtn: "blue"
+                variantbtn: "outline"
               },
               {
                 label: "Supprimer",
@@ -76,7 +70,9 @@ export default function Home() {
                 variantbtn: "danger"
               }
             ]}
-            onDoubleClickLink={`/requete/detail/${selectedId}`}
+            data={requetes || []}
+            dateChose="dateDebut"
+            dateChoseTitle="Filter par Date"
             columnStyles={{
               sujet: (value, row) => (
                 <Link
@@ -97,25 +93,31 @@ export default function Home() {
                   )}
                 </Link>
               ),
-              date: (value) => format(new Date(value as string), "dd/MM/yyyy")
+              date: (value) => format(new Date(value as string), "dd/MM/yyyy"),
+              type: (value) => (
+                <span className="uppercase">{value as string}</span>
+              )
             }}
-            hideList={["logiciel", "dateDebut"]}
+            hideList={[
+              "createdAt",
+              "updatedAt",
+              "dateCloture",
+              "Intervention",
+              "logiciel",
+              "observation",
+              "clientId",
+              "dateDebut",
+              "description",
+              "isTacheClient",
+              "status",
+              "type",
+              "etat"
+            ]}
             searchId="sujet"
             searchPlaceholder="Rechercher un sujet..."
-            popFilter={[
-              {
-                dataFilter: "logiciel",
-                icon: <LayoutGrid />,
-                options: [
-                  { label: "RHPaie", value: "RHPaie" },
-                  { label: "TimeSheet", value: "TimeSheet" },
-                  { label: "RHData", value: "RHData" },
-                  { label: "RHFacture", value: "RHfacture" }
-                ]
-              }
-            ]}
             onRowSelect={(id) => setSelectedId(id)}
-            storageKey="requete-home-datatable"
+            exportName="liste_requetes"
+            storageKey="requete-datatable"
           />
         </div>
       </div>

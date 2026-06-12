@@ -1,11 +1,10 @@
 "use client";
-import { Client, Requete } from "@prisma/client";
+import {  Requete } from "@prisma/client";
 import {
   AlertCircleIcon,
   FileBox,
   LayoutGrid,
   Plus,
-  SquareUserRound,
   Trash
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -26,7 +25,11 @@ import {
 } from "@/components/ui/tooltip";
 
 interface RequeteWithClient extends Requete {
-  client?: Client | null;
+  [key: string]: unknown;
+  client: string;
+  date: Date | null;
+  etat: string;
+  numero: string;
 }
 
 const PageRequete = () => {
@@ -60,32 +63,7 @@ const PageRequete = () => {
       </div>
     );
   }
-  const listes =
-    requetes?.map((requete) => ({
-      ...requete,
-      date: requete.dateDebut,
-      etat: requete.dateCloture ? "Cloturée" : "En cours",
-      //nomClient: requete.demandeur + "-" + requete.client?.nomClient || "N/A",
-      client: requete.client?.nomClient || "N/A",
-      numero:
-        format(requete.dateDebut || new Date(), "yyyyMMdd_") +
-        requete.client?.numero +
-        "_" +
-        requete.logiciel +
-        "_#"
-    })) || [];
 
-  const clientFilter = Array.from(
-    new Map(
-      (requetes ?? []).map((requete) => [
-        requete.client?.nomClient || "N/A",
-        {
-          label: requete.client?.nomClient || "N/A",
-          value: requete.client?.nomClient || "N/A"
-        }
-      ])
-    ).values()
-  );
 
   return (
     <div className="flex-1 h-full">
@@ -118,7 +96,7 @@ const PageRequete = () => {
             variantbtn: "danger"
           }
         ]}
-        data={listes}
+        data={requetes}
         dateChose="dateDebut"
         dateChoseTitle="Filter par Date"
         columnStyles={{
@@ -202,11 +180,6 @@ const PageRequete = () => {
                 )
               }
             ]
-          },
-          {
-            dataFilter: "client",
-            icon: <SquareUserRound />,
-            options: clientFilter
           }
         ]}
         onRowSelect={(id) => setSelectedId(id)}
