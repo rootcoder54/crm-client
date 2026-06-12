@@ -98,21 +98,6 @@ export default function Home() {
                 <span className="uppercase">{value as string}</span>
               )
             }}
-            hideList={[
-              "createdAt",
-              "updatedAt",
-              "dateCloture",
-              "Intervention",
-              "logiciel",
-              "observation",
-              "clientId",
-              "dateDebut",
-              "description",
-              "isTacheClient",
-              "status",
-              "type",
-              "etat"
-            ]}
             searchId="sujet"
             searchPlaceholder="Rechercher un sujet..."
             onRowSelect={(id) => setSelectedId(id)}

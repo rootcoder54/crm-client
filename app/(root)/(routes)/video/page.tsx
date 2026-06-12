@@ -45,13 +45,7 @@ const PageVideoAstuce = () => {
       </div>
     );
   }
-  const listes =
-      videos?.map((v) => ({
-        id: v.id,
-        nom: v.nom,
-        description: v.description,
-        url: v.url,
-      })) || [];
+
   return (
     <DataTable
       chemins={[
@@ -107,7 +101,7 @@ const PageVideoAstuce = () => {
           </Link>
         )
       }}
-      data={listes || []}
+      data={videos || []}
       hideList={["createdAt", "updatedAt", "detail", "url"]}
       onRowSelect={(id) => setSelectedId(id)}
       searchId="nom"
