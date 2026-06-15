@@ -1,6 +1,10 @@
 import { prisma } from "@/lib/db";
 
-export async function createUserRole(data: { name: string; accessLevel: number; userId: string }) {
+export async function createUserRole(data: {
+  name: string;
+  accessLevel: number;
+  userId: string;
+}) {
   return prisma.userRole.create({ data });
 }
 
@@ -8,11 +12,22 @@ export async function getUserRoleById(id: string) {
   return prisma.userRole.findUnique({ where: { id } });
 }
 
+export async function getUserRolesByUserId(userId: string) {
+  return prisma.userRole.findMany({ where: { userId } });
+}
+
+export async function getUserRoleByName(userId: string, name: string) {
+  return prisma.userRole.findMany({ where: { name, userId } });
+}
+
 export async function getAllUserRoles() {
   return prisma.userRole.findMany();
 }
 
-export async function updateUserRole(id: string, data: Partial<{ name: string; accessLevel: number }>) {
+export async function updateUserRole(
+  id: string,
+  data: Partial<{ name: string; accessLevel: number }>
+) {
   return prisma.userRole.update({ where: { id }, data });
 }
 

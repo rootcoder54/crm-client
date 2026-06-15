@@ -1,5 +1,5 @@
 "use client";
-import {  Requete } from "@prisma/client";
+import { Requete, UserRole } from "@prisma/client";
 import {
   AlertCircleIcon,
   FileBox,
@@ -11,7 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DataTable } from "@/components/datatables";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -23,6 +23,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from "@/components/ui/tooltip";
+import { useSession } from "next-auth/react";
 
 interface RequeteWithClient extends Requete {
   [key: string]: unknown;
@@ -33,7 +34,10 @@ interface RequeteWithClient extends Requete {
 }
 
 const PageRequete = () => {
+  const { data: session } = useSession();
   const [selectedId, setSelectedId] = useState<string>("");
+  const [deleteControle, setDeleteControle] = useState<boolean>(false);
+
   const {
     isError,
     isPending,
@@ -42,6 +46,19 @@ const PageRequete = () => {
     queryKey: ["requete"],
     queryFn: () => fetcher(`/api/requete`)
   });
+
+  const { data: roles } = useQuery<UserRole[]>({
+    queryKey: ["role", session?.user?.id, "requete_delete"],
+    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_delete`)
+  });
+
+  useEffect(() => {
+    if (roles && roles.length > 0) {
+      const hasDeleteRole = roles.some((role) => role.name === "requete_delete" && role.accessLevel === 0);
+      setDeleteControle(hasDeleteRole);
+    }
+  }, [roles]);
+  console.log("roles de l'utilisateur",deleteControle);
 
   if (isPending) {
     return (
@@ -63,7 +80,6 @@ const PageRequete = () => {
       </div>
     );
   }
-
 
   return (
     <div className="flex-1 h-full">
@@ -93,7 +109,8 @@ const PageRequete = () => {
             label: "Supprimer",
             icon: <Trash />,
             url: `/requete/delete/${selectedId}`,
-            variantbtn: "danger"
+            variantbtn: "danger",
+            hide: deleteControle,
           }
         ]}
         data={requetes}
