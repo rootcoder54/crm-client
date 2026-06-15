@@ -7,6 +7,7 @@ import Link from "next/link";
 import {
   CalendarCheck2,
   FileText,
+  Menu,
   PlusCircle,
   SquarePen,
   Trash2
@@ -22,6 +23,7 @@ import Writor from "../features/Writor";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 type Item = {
   id: string;
@@ -125,36 +127,85 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
           { title: "Detail", url: "/requete/detail/" + requete.id }
         ]}
       >
-        {requete.etat !== "CLOTURER" && (
-          <Button asChild hidden={interventionControle}>
-            <Link href={`/requete/intervention/${requete.id}/add`}>
-              <PlusCircle />
-              Intervention
+        <div className="flex md:hidden">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Menu />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-40">
+              <div className="flex flex-col space-y-2 items-start">
+                {requete.etat !== "CLOTURER" && (
+                  <Button
+                    asChild
+                    variant={"ghost"}
+                    hidden={interventionControle}
+                  >
+                    <Link href={`/requete/intervention/${requete.id}/add`}>
+                      <PlusCircle />
+                      Intervention
+                    </Link>
+                  </Button>
+                )}
+                {requete.etat !== "CLOTURER" && (
+                  <Button asChild variant={"ghost"} hidden={editeControle}>
+                    <Link href={`/requete/edite/${requete.id}`}>
+                      <SquarePen />
+                      Editer
+                    </Link>
+                  </Button>
+                )}
+                {requete.etat !== "CLOTURER" && (
+                  <Button asChild variant={"ghost"} hidden={clotureControle}>
+                    <Link href={`/requete/cloture/${requete.id}`}>
+                      <CalendarCheck2 />
+                      Clôture
+                    </Link>
+                  </Button>
+                )}
+                <Button asChild variant={"danger"} hidden={deleteControle}>
+                  <Link href={`/requete/delete/${requete.id}`}>
+                    <Trash2 />
+                    Supprimer
+                  </Link>
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="hidden md:flex flex-row items-center space-x-2">
+          {requete.etat !== "CLOTURER" && (
+            <Button asChild hidden={interventionControle}>
+              <Link href={`/requete/intervention/${requete.id}/add`}>
+                <PlusCircle />
+                Intervention
+              </Link>
+            </Button>
+          )}
+          {requete.etat !== "CLOTURER" && (
+            <Button asChild variant={"outline"} hidden={editeControle}>
+              <Link href={`/requete/edite/${requete.id}`}>
+                <SquarePen />
+                Editer
+              </Link>
+            </Button>
+          )}
+          {requete.etat !== "CLOTURER" && (
+            <Button asChild hidden={clotureControle}>
+              <Link href={`/requete/cloture/${requete.id}`}>
+                <CalendarCheck2 />
+                Clôture
+              </Link>
+            </Button>
+          )}
+          <Button asChild variant={"danger"} hidden={deleteControle}>
+            <Link href={`/requete/delete/${requete.id}`}>
+              <Trash2 />
+              Supprimer
             </Link>
           </Button>
-        )}
-        {requete.etat !== "CLOTURER" && (
-          <Button asChild variant={"outline"} hidden={editeControle}>
-            <Link href={`/requete/edite/${requete.id}`}>
-              <SquarePen />
-              Editer
-            </Link>
-          </Button>
-        )}
-        {requete.etat !== "CLOTURER" && (
-          <Button asChild hidden={clotureControle}>
-            <Link href={`/requete/cloture/${requete.id}`}>
-              <CalendarCheck2 />
-              Clôture
-            </Link>
-          </Button>
-        )}
-        <Button asChild variant={"danger"} hidden={deleteControle}>
-          <Link href={`/requete/delete/${requete.id}`}>
-            <Trash2 />
-            Supprimer
-          </Link>
-        </Button>
+        </div>
       </HeaderPage>
       <div className="p-4">
         <div className="flex flex-col space-y-3">
@@ -238,11 +289,11 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
               </div>
             )}
             {requete.description ? (
-              <div className="flex flex-col items-start space-y-3 lg:w-3/4 xl:w-3/5 min-h-[100px] bg-zinc-200 shadow dark:bg-zinc-600/50 rounded-md p-4">
+              <div className="flex flex-col items-start space-y-3 min-h-[100px] bg-zinc-200 shadow dark:bg-zinc-600/50 rounded-md p-4">
                 <Writor value={requete.description} />
               </div>
             ) : (
-              <div className="flex flex-col items-start text-center space-y-3 lg:w-3/4 xl:w-3/5 min-h-[100px] bg-zinc-200 shadow dark:bg-zinc-600/50 rounded-md p-4">
+              <div className="flex flex-col items-start text-center space-y-3 min-h-[100px] bg-zinc-200 shadow dark:bg-zinc-600/50 rounded-md p-4">
                 <p>Aucune description disponible</p>
               </div>
             )}
