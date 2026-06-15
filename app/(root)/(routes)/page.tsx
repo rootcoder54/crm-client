@@ -28,7 +28,7 @@ export default function Home() {
   const [selectedId, setSelectedId] = useState<string>("");
 
   const { data: requetes } = useQuery<RequeteWithClient[]>({
-    queryKey: ["requete"],
+    queryKey: ["requete", "encours"],
     queryFn: () => fetcher(`/api/requete/encours`)
   });
   
