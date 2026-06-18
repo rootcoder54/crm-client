@@ -24,6 +24,7 @@ import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type Item = {
   id: string;
@@ -231,9 +232,22 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                 Observation :
               </p>
               <p className="text-sm">
-                {requete.observation
-                  ? requete.observation
-                  : "Aucune observation"}
+                {requete.observation ? (
+                  requete.observation.length > 30 ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span>{requete.observation.substring(0, 30)}...</span>
+                      </TooltipTrigger>
+                      <TooltipContent className="w-[560px] p-4" side="bottom">
+                        <p>{requete.observation}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    requete.observation
+                  )
+                ) : (
+                  "Aucune observation"
+                )}
               </p>
             </div>
           </div>
