@@ -102,7 +102,7 @@ export default function Home() {
             searchPlaceholder="Rechercher un sujet..."
             onRowSelect={(id) => setSelectedId(id)}
             exportName="liste_requetes"
-            storageKey="requete-datatable"
+            storageKey="requete-encours-datatable"
           />
         </div>
       </div>
