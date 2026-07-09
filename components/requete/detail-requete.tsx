@@ -227,29 +227,6 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                 <p className="text-sm">{requete.logiciel}</p>
               </div>
             )}
-            <div className="flex flex-row items-center space-x-2">
-              <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Observation :
-              </p>
-              <p className="text-sm">
-                {requete.observation ? (
-                  requete.observation.length > 30 ? (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span>{requete.observation.substring(0, 30)}...</span>
-                      </TooltipTrigger>
-                      <TooltipContent className="w-[560px] p-4" side="bottom">
-                        <p>{requete.observation}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    requete.observation
-                  )
-                ) : (
-                  "Aucune observation"
-                )}
-              </p>
-            </div>
           </div>
           <hr />
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
@@ -300,14 +277,33 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                   Technicien :{" "}
                   {requete.technicien ? requete.technicien : "Non assigné"}
                 </p>
+                <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 underline">
+                  Observation :{" "}
+                  {requete.observation ? (
+                    requete.observation.length > 30 ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span>{requete.observation.substring(0, 30)}...</span>
+                        </TooltipTrigger>
+                        <TooltipContent className="w-[350px] md:w-[560px] p-4 text-sm md:text-base" side="bottom">
+                          <p>{requete.observation}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      requete.observation
+                    )
+                  ) : (
+                    "Aucune observation"
+                  )}
+                </p>
               </div>
             )}
             {requete.description ? (
-              <div className="flex flex-col items-start space-y-3 min-h-[100px] bg-zinc-200 shadow dark:bg-zinc-600/50 rounded-md p-4">
+              <div className="flex flex-col items-start space-y-3 min-h-[100px] bg-sidebar shadow dark:bg-zinc-600/50 rounded-md border p-4">
                 <Writor value={requete.description} />
               </div>
             ) : (
-              <div className="flex flex-col items-start text-center space-y-3 min-h-[100px] bg-zinc-200 shadow dark:bg-zinc-600/50 rounded-md p-4">
+              <div className="flex flex-col items-start text-center space-y-3 min-h-[100px] bg-sidebar shadow dark:bg-zinc-600/50 rounded-md border p-4">
                 <p>Aucune description disponible</p>
               </div>
             )}
