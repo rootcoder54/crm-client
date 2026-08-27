@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AlertCircleIcon, FileBox, Plus, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 import { LoaderOne } from "@/components/ui/loader";
+import { format } from "date-fns";
 
 const PageFacture = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -15,7 +16,7 @@ const PageFacture = () => {
     isError,
     isPending,
     data: factures
-  } = useQuery<Facture[]>({
+  } = useQuery<(Facture & { client: { nomClient: string } })[]>({
     queryKey: ["facture"],
     queryFn: () => fetcher(`/api/facture`)
   });
@@ -44,8 +45,9 @@ const PageFacture = () => {
       id: f.id,
       numero: f.numero,
       type: f.type,
+      date: f.date,
+      client: f.client?.nomClient || f.clientId,
       acquittee: f.acquittee,
-      numeroOrdre: f.numeroOrdre,
       modeReglement: f.modeReglement,
       devise: f.devise
     })) || [];
@@ -83,19 +85,14 @@ const PageFacture = () => {
           variantbtn: "danger"
         }
       ]}
+      columnStyles={{
+        date: (value) => format(new Date(value as string), "dd/MM/yyyy")
+      }}
       data={listes || []}
-      hideList={[
-        "createdAt",
-        "updatedAt",
-        "clientId",
-        "date",
-        "remise",
-        "observation",
-        "totalTTC",
-        "totalHT",
-        "totalTVA",
-        "itemFactures"
-      ]}
+      dateChose="date"
+      dateChoseTitle="Filter par Date"
+      searchId="numero"
+      searchPlaceholder="Rechercher un sujet..."
       onRowSelect={(id) => setSelectedId(id)}
       storageKey="facture-datatable"
     />

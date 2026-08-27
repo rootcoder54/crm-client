@@ -34,17 +34,22 @@ export async function getFacturesByClient(clientId: string) {
 }
 
 export async function getAllFactures() {
-  return prisma.facture.findMany({ include: { itemFactures: true } });
+  return prisma.facture.findMany({
+    include: { itemFactures: true, client: true }
+  });
 }
 
 export const maxorder = async () => {
-  const maxOrder = await prisma.facture.aggregate({
-    _max: {
+  const dernier = await prisma.facture.findFirst({
+    orderBy: {
+      numeroOrdre: "desc"
+    },
+    select: {
       numeroOrdre: true
     }
   });
 
-  return maxOrder._max.numeroOrdre || 1;
+  return dernier?.numeroOrdre ?? 0;
 };
 
 export async function updateFacture(

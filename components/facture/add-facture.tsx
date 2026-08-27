@@ -60,7 +60,7 @@ const FactureSchema = z.object({
   remise: z.number().optional(),
   totalTTC: z.number(),
   totalTVA: z.number(),
-  clientId: z.string(),
+  clientId: z.string().min(1, { message: "Le client est requis" }),
   numeroOrdre: z.number().optional()
 });
 
@@ -78,7 +78,8 @@ export const AddFacturation = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       const res = await maxorder(); // si c’est une server action valide
-      setorder(res);
+      setorder(res + 1);
+      console.log("max order:", res);
     };
 
     fetchOrder();
@@ -99,11 +100,12 @@ export const AddFacturation = () => {
       totalTTC: 0,
       totalTVA: 0,
       clientId: "",
-      numeroOrdre: order || 1
+      numeroOrdre: order
     }
   });
 
   function onSubmit(values: z.infer<typeof FactureSchema>) {
+    console.log("Form values:", values);
     startTransition(() => {
       createFacture(values).then(() => {
         toast.success("Facture ajoutée avec succès");
@@ -140,12 +142,88 @@ export const AddFacturation = () => {
           <div className="space-y-4 px-5">
             <FormField
               control={form.control}
+              name="clientId"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Client</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? clientList?.find(
+                                (client) => client.id === field.value
+                              )?.nomClient
+                            : "Selectionner le client"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      {isLoading ? (
+                        <LoaderOne />
+                      ) : (
+                        <Command>
+                          <CommandInput placeholder="Recherche client..." />
+                          <CommandList>
+                            <CommandEmpty>Pas de client.</CommandEmpty>
+                            <CommandGroup>
+                              {clientList?.map((client) => (
+                                <CommandItem
+                                  value={client.nomClient}
+                                  key={client.id}
+                                  onSelect={() => {
+                                    form.setValue("clientId", client.id);
+                                    form.setValue(
+                                      "numero",
+                                      new Date().getFullYear().toString() +
+                                        "/" +
+                                        (order || 1)
+                                          .toString()
+                                          .padStart(4, "0") +
+                                        "/" +
+                                        client.numero
+                                    );
+                                    form.setValue("numeroOrdre", order ?? 0);
+                                  }}
+                                >
+                                  {client.nomClient}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      client.id === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="numero"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ID de la fiche</FormLabel>
+                  <FormLabel>Numero Facture</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -198,7 +276,14 @@ export const AddFacturation = () => {
                 <FormItem>
                   <FormLabel>N° Ordre</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      {...field}
+                      value={order ?? ""}
+                      onChange={() => {
+                        form.setValue("numeroOrdre", order ?? 0);
+                      }}
+                      disabled
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -282,71 +367,6 @@ export const AddFacturation = () => {
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="clientId"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Client</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? clientList?.find(
-                                (client) => client.id === field.value
-                              )?.nomClient
-                            : "Selectionner le client"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
-                      {isLoading ? (
-                        <LoaderOne />
-                      ) : (
-                        <Command>
-                          <CommandInput placeholder="Recherche client..." />
-                          <CommandList>
-                            <CommandEmpty>Pas de client.</CommandEmpty>
-                            <CommandGroup>
-                              {clientList?.map((client) => (
-                                <CommandItem
-                                  value={client.nomClient}
-                                  key={client.id}
-                                  onSelect={() => {
-                                    form.setValue("clientId", client.id);
-                                  }}
-                                >
-                                  {client.nomClient}
-                                  <Check
-                                    className={cn(
-                                      "ml-auto",
-                                      client.id === field.value
-                                        ? "opacity-100"
-                                        : "opacity-0"
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      )}
-                    </PopoverContent>
-                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
