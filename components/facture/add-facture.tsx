@@ -43,7 +43,6 @@ import {
 } from "@/components/ui/command";
 import { Client } from "@prisma/client";
 import { createFacture, maxorder } from "@/services/facture.service";
-import { toast } from "sonner";
 import HeaderPage from "../features/header-page";
 import Link from "next/link";
 import { LoaderOne } from "../ui/loader";
@@ -107,9 +106,10 @@ export const AddFacturation = () => {
   function onSubmit(values: z.infer<typeof FactureSchema>) {
     console.log("Form values:", values);
     startTransition(() => {
-      createFacture(values).then(() => {
-        toast.success("Facture ajoutée avec succès");
-        route.push("/facture");
+      createFacture(values).then((facture) => {
+        //toast.success("Facture ajoutée avec succès");
+        console.log("Facture created:", facture);
+        route.push("/facture/add/item/" + facture.id);
       });
     });
   }
