@@ -35,7 +35,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Client } from "@prisma/client";
 import { fetcher } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronsUpDown, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { maxorder } from "@/services/facture.service";
 import { Calendar } from "@/components/ui/calendar";
@@ -141,6 +141,18 @@ export function FactureForm() {
     setopenView(false);
   };
 
+  const handleReset = () => {
+    // Reset all form fields to their initial state
+    setnumero("");
+    setDate(new Date());
+    setclientId(null);
+    setType("FACTURE");
+    setDevise("CFA");
+    setmodeReglement("Espèce");
+    setObservation("");
+    setItemFacture([]);
+  };
+
   useEffect(() => {
     const fetchOrder = async () => {
       const res = await maxorder(); // si c’est une server action valide
@@ -165,6 +177,10 @@ export function FactureForm() {
         <Button variant={"outline"} onClick={handerViewFacture}>
           <Printer />
           Aperçu
+        </Button>
+        <Button variant={"blue"} onClick={handleReset}>
+          <RotateCcw />
+          Reset
         </Button>
         <Button variant={"danger"}>
           <Ban />
