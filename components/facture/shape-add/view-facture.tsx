@@ -50,7 +50,7 @@ export function FactureView({ facture, open = false, close }: FactureViewProps) 
           <DialogTitle>Facture Numero {facture.numero}</DialogTitle>
           <DialogDescription />
         </DialogHeader>
-        <ScrollArea className="rounded-md border border-2 p-10 min-w-[calc(100%-25rem)] min-h-[calc(100%-205rem)] max-w-screen max-h-screen">
+        <ScrollArea className="rounded-md border-2 p-10 min-w-[calc(100%-25rem)] min-h-[calc(100%-205rem)] max-w-screen max-h-screen">
           <div className="flex flex-col h-full w-full text-xl">
             <Image
               src="/factureheader.png"

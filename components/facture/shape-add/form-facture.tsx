@@ -87,6 +87,63 @@ export function FactureForm() {
   const [observation, setObservation] = useState<string>("");
   const [itemFacture, setItemFacture] = useState<Item[]>([]);
 
+  const STORAGE_KEY = "facture-form-draft";
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    setHydrated(true);
+    if (!saved) return;
+
+    try {
+      const data = JSON.parse(saved);
+      //setorder(data.order);
+      setnumero(data.numero ?? "");
+      setDate(data.date ? new Date(data.date) : new Date());
+      setclientId(data.clientId ?? null);
+      setType(data.type ?? "FACTURE");
+      setDevise(data.devise ?? "CFA");
+      setmodeReglement(data.modeReglement ?? "Espèce");
+      setObservation(data.observation ?? "");
+      setItemFacture(data.itemFacture ?? []);
+    } catch (error) {
+      console.error("Erreur lors du chargement du brouillon :", error);
+      setHydrated(true);
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+
+    const data = {
+      //order,
+      numero,
+      date: date.toISOString(),
+      clientId,
+      type,
+      devise,
+      modeReglement,
+      observation,
+      itemFacture
+    };
+    console.log(data);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }, [
+    //order,
+    hydrated,
+    numero,
+    date,
+    clientId,
+    type,
+    devise,
+    modeReglement,
+    observation,
+    itemFacture
+  ]);
+
   const addFactureItemBtn = () => {
     if (!clientId) {
       toast.warning("Veuillez sélectionner un client d'abord.");
@@ -130,12 +187,12 @@ export function FactureForm() {
     setopenView(false);
   };
 
-  const handlerCancel = () =>{
-    router.back()
-  }
+  const handlerCancel = () => {
+    router.back();
+  };
 
   const handleReset = () => {
-    // Reset all form fields to their initial state
+    //setorder(undefined);
     setnumero("");
     setDate(new Date());
     setclientId(null);
@@ -144,6 +201,8 @@ export function FactureForm() {
     setmodeReglement("Espèce");
     setObservation("");
     setItemFacture([]);
+
+    localStorage.removeItem(STORAGE_KEY);
   };
 
   const handleSave = () => {
@@ -190,14 +249,13 @@ export function FactureForm() {
             total: item.total,
             factureId: facture.id
           };
-          createItemFacture(donnee).then((it) => {
-            console.log(it);
-          });
+          return createItemFacture(donnee);
         });
 
         Promise.all(promises).then(() => {
-          toast.success(`Facture enregistrés avec succès`);
-          router.push(`/facture`);
+          localStorage.removeItem(STORAGE_KEY);
+          toast.success("Facture enregistrée avec succès");
+          router.push("/facture");
         });
       });
     });
@@ -522,9 +580,9 @@ export function FactureForm() {
                 <span>Type de Facture</span>
                 <Combobox
                   items={["FACTURE", "PROFORMA"]}
-                  defaultValue={"FACTURE"}
+                  defaultValue={type}
                 >
-                  <ComboboxInput />
+                  <ComboboxInput value={type} />
                   <ComboboxContent>
                     <ComboboxEmpty>No items found.</ComboboxEmpty>
                     <ComboboxList>
@@ -543,8 +601,8 @@ export function FactureForm() {
               </div>
               <div className="flex flex-col gap-2">
                 <span>Devise</span>
-                <Combobox items={["CFA", "EURO", "USD"]} defaultValue={"CFA"}>
-                  <ComboboxInput />
+                <Combobox items={["CFA", "EURO", "USD"]} defaultValue={devise}>
+                  <ComboboxInput value={devise} />
                   <ComboboxContent>
                     <ComboboxEmpty>No items found.</ComboboxEmpty>
                     <ComboboxList>
@@ -565,9 +623,9 @@ export function FactureForm() {
                 <span>Mode de Reglement</span>
                 <Combobox
                   items={["Espèce", "Virement", "Cheque"]}
-                  defaultValue={"Espèce"}
+                  defaultValue={modeReglement}
                 >
-                  <ComboboxInput />
+                  <ComboboxInput value={modeReglement} />
                   <ComboboxContent>
                     <ComboboxEmpty>No items found.</ComboboxEmpty>
                     <ComboboxList>

@@ -5,10 +5,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { fetcher } from "@/lib/fetcher";
 import { Facture } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import { AlertCircleIcon, FileBox, Plus, SquarePen, Trash } from "lucide-react";
+import { AlertCircleIcon, FileBox, Plus, Trash } from "lucide-react";
 import { useState } from "react";
 import { LoaderOne } from "@/components/ui/loader";
 import { format } from "date-fns";
+import Link from "next/link";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const PageFacture = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -17,7 +19,7 @@ const PageFacture = () => {
     isPending,
     data: factures
   } = useQuery<(Facture & { client: { nomClient: string } })[]>({
-    queryKey: ["facture"],
+    queryKey: ["factures"],
     queryFn: () => fetcher(`/api/facture`)
   });
   if (isPending) {
@@ -69,14 +71,8 @@ const PageFacture = () => {
         {
           label: "Details",
           icon: <FileBox />,
-          url: `#`,
+          url: `/facture/details/${selectedId}`,
           variantbtn: "blue"
-        },
-        {
-          label: "Editer",
-          icon: <SquarePen />,
-          url: `#`,
-          variantbtn: "outline"
         },
         {
           label: "Supprimer",
@@ -86,6 +82,25 @@ const PageFacture = () => {
         }
       ]}
       columnStyles={{
+        numero: (value , row) => (
+          <Link
+            href={`/facture/details/${row.id}`}
+            className="font-medium hover:underline"
+          >
+            {row.numero && row.numero.length > 30 ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>{row.numero.slice(0, 30) + "..."}</span>
+                </TooltipTrigger>
+                <TooltipContent className="w-[560px] p-4" side="bottom">
+                  <p>{value as string}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <span>{value as string}</span>
+            )}
+          </Link>
+        ),
         date: (value) => format(new Date(value as string), "dd/MM/yyyy")
       }}
       data={listes || []}
