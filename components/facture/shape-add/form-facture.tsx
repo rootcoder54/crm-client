@@ -36,8 +36,8 @@ import { Client } from "@prisma/client";
 import { fetcher } from "@/lib/fetcher";
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown, Plus, RotateCcw, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { maxorder } from "@/services/facture.service";
+import { useEffect, useState, useTransition } from "react";
+import { createFacture, maxorder } from "@/services/facture.service";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,6 +46,15 @@ import { toast } from "sonner";
 import HeaderPage from "@/components/features/header-page";
 import { Ban, Printer, Save } from "lucide-react";
 import { FactureView } from "./view-facture";
+import { createItemFacture } from "@/services/itemFacture.service";
+import { useRouter } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 
 type Item = {
   reference: string;
@@ -57,29 +66,9 @@ type Item = {
   total: number;
 };
 
-interface FactureViewProps {
-  facture: {
-    numero: string;
-    date: string;
-    client: string;
-    clientId: string;
-    items: {
-      reference: string;
-      description: string;
-      quantity: number;
-      unitPrice: number;
-      remise: number;
-      tva: number;
-      total: number;
-    }[];
-    totalHT: number;
-    totalRemise: number;
-    totalTVA: number;
-    totalTTC: number;
-  };
-}
-
 export function FactureForm() {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const { data: clientList, isLoading } = useQuery<Client[]>({
     queryKey: ["clients"],
     queryFn: () => fetcher(`/api/client`)
@@ -141,6 +130,10 @@ export function FactureForm() {
     setopenView(false);
   };
 
+  const handlerCancel = () =>{
+    router.back()
+  }
+
   const handleReset = () => {
     // Reset all form fields to their initial state
     setnumero("");
@@ -153,6 +146,63 @@ export function FactureForm() {
     setItemFacture([]);
   };
 
+  const handleSave = () => {
+    if (!numero || !date || !clientId || itemFacture.length === 0) {
+      toast.warning(
+        "Veuillez remplir tous les champs obligatoires avant d'enregistrer."
+      );
+      return;
+    }
+    startTransition(() => {
+      const totalHT = itemFacture.reduce(
+        (acc, item) => acc + item.unitPrice * item.quantity,
+        0
+      );
+      const totalTTC = itemFacture.reduce((acc, item) => acc + item.total, 0);
+      const totalTVA = itemFacture.reduce(
+        (acc, item) =>
+          acc + (item.unitPrice * item.quantity * (item.tva || 0)) / 100,
+        0
+      );
+      createFacture({
+        numero,
+        date,
+        type,
+        acquittee: false,
+        numeroOrdre: order,
+        modeReglement,
+        devise,
+        observation,
+        clientId,
+        totalHT,
+        totalTVA,
+        totalTTC
+      }).then((facture) => {
+        //toast.success("Facture ajoutée avec succès");
+        const promises = itemFacture.map((item) => {
+          const donnee = {
+            reference: item.reference,
+            libelle: item.description,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            remise: item.remise,
+            tva: item.tva,
+            total: item.total,
+            factureId: facture.id
+          };
+          createItemFacture(donnee).then((it) => {
+            console.log(it);
+          });
+        });
+
+        Promise.all(promises).then(() => {
+          toast.success(`Facture enregistrés avec succès`);
+          router.push(`/facture`);
+        });
+      });
+    });
+  };
+
   useEffect(() => {
     const fetchOrder = async () => {
       const res = await maxorder(); // si c’est une server action valide
@@ -162,15 +212,29 @@ export function FactureForm() {
     fetchOrder();
   }, []);
 
+  if (isPending) {
+    return (
+      <AlertDialog open={true}>
+        <AlertDialogTrigger />
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle />
+            <LoaderOne />
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full w-full">
       <HeaderPage
         chemins={[
           { title: "Facture", url: "/facture" },
-          { title: "Test", url: "#" }
+          { title: "Ajouter une facture", url: "#" }
         ]}
       >
-        <Button>
+        <Button onClick={handleSave}>
           <Save />
           Enregistrer
         </Button>
@@ -182,7 +246,7 @@ export function FactureForm() {
           <RotateCcw />
           Reset
         </Button>
-        <Button variant={"danger"}>
+        <Button variant={"danger"} onClick={handlerCancel}>
           <Ban />
           Annuler
         </Button>

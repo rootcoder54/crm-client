@@ -1,7 +1,7 @@
-import { AddFacturation } from "@/components/facture/add-facture";
+import { FactureForm } from "@/components/facture/shape-add/form-facture";
 
-const AddFacturePage = async () => {
-  return <AddFacturation />;
+const AddFacturePage = () => {
+  return <FactureForm />;
 };
 
 export default AddFacturePage;
