@@ -63,7 +63,7 @@ interface DataTableProps<TData extends Record<string, unknown>> {
     variantbtn: VariantProps<typeof buttonVariants>["variant"];
     hide?: boolean;
     target?: boolean;
-  }[];
+  }[] | React.ReactNode[];
   selectAction?: {
     label: string;
     icon?: React.ReactNode;
@@ -140,9 +140,9 @@ export function DataTable<TData extends Record<string, unknown>>({
     return saved
       ? JSON.parse(saved)
       : {
-          pageIndex: 0,
-          pageSize: 10
-        };
+        pageIndex: 0,
+        pageSize: 10
+      };
   });
   //const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>(
@@ -190,9 +190,9 @@ export function DataTable<TData extends Record<string, unknown>>({
       return saved
         ? JSON.parse(saved)
         : {
-            id: false,
-            ...initialVisibility
-          };
+          id: false,
+          ...initialVisibility
+        };
     });
 
   const router = useRouter();
@@ -407,9 +407,9 @@ export function DataTable<TData extends Record<string, unknown>>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}

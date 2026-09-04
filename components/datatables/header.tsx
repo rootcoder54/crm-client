@@ -20,7 +20,7 @@ interface headerprops<TData> {
     variantbtn: VariantProps<typeof buttonVariants>["variant"];
     hide?: boolean;
     target?: boolean;
-  }[];
+  }[] | React.ReactNode[];
   selectAction?: {
     label: string;
     icon?: React.ReactNode;
@@ -112,22 +112,29 @@ function Header<TData>({
           {action && (
             <div className="flex items-center gap-2">
               {action.map((act, index) => (
-                <Button
-                  key={index}
-                  variant={act.variantbtn}
-                  asChild
-                  size="sm"
-                  className={cn(act.hide && "hidden")}
-                >
-                  <Link
-                    href={act.url}
-                    target={act.target ? "_blank" : "_self"}
-                    className="dark:text-foreground"
+                typeof act === "object" &&
+                  act !== null &&
+                  "label" in act &&
+                  "url" in act ? (
+                  <Button
+                    key={index}
+                    variant={act.variantbtn}
+                    asChild
+                    size="sm"
+                    className={cn(act.hide && "hidden")}
                   >
-                    {act.icon}
-                    <span className="hidden sm:flex">{act.label}</span>
-                  </Link>
-                </Button>
+                    <Link
+                      href={act.url}
+                      target={act.target ? "_blank" : "_self"}
+                      className="dark:text-foreground"
+                    >
+                      {act.icon}
+                      <span className="hidden sm:flex">{act.label}</span>
+                    </Link>
+                  </Button>
+                ) : (
+                  act
+                )
               ))}
             </div>
           )}

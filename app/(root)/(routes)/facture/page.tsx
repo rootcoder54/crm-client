@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { fetcher } from "@/lib/fetcher";
 import { Facture } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import { AlertCircleIcon, FileBox, Plus, Trash } from "lucide-react";
+import { AlertCircleIcon, ArchiveIcon, FileBox, MailCheckIcon, MoreHorizontalIcon, Plus, Trash } from "lucide-react";
 import { useState } from "react";
 import { LoaderOne } from "@/components/ui/loader";
 import { format } from "date-fns";
@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/tooltip";
 import HeaderPage from "@/components/features/header-page";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const PageFacture = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -62,32 +64,38 @@ const PageFacture = () => {
 
   return (
     <div>
-      <HeaderPage
-        chemins={[
-          { title: "Factures", url: "/facture" },
-          { title: "Listes", url: "#" }
-        ]}
-      >
-        <Button asChild variant={"secondary"}>
-          <Link href={"/facture/add"}>
-            <Plus />
-            Nouvelle Facture
-          </Link>
-        </Button>
-        {selectedId && <span>selectId : {selectedId}</span>}
-      </HeaderPage>
       <DataTable
         chemins={[
           { title: "Factures", url: "/facture" },
           { title: "Listes", url: "#" }
         ]}
         action={[
-          {
-            label: "Nouvelle Facture",
-            icon: <Plus />,
-            url: "/facture/add",
-            variantbtn: "secondary"
-          }
+          <ButtonGroup>
+            <Button variant="outline" asChild>
+              <Link href={"/facture/add"} >
+              <Plus />
+                Nouvelle Facture
+              </Link>
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button variant="outline" className="rounded-l-none" size="icon" aria-label="More Options"><MoreHorizontalIcon /></Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <MailCheckIcon />
+                    Achat de logiciel
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <ArchiveIcon />
+                    Mise à jour
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </ButtonGroup>
         ]}
         selectAction={[
           {
