@@ -10,7 +10,13 @@ import { useState } from "react";
 import { LoaderOne } from "@/components/ui/loader";
 import { format } from "date-fns";
 import Link from "next/link";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
+import HeaderPage from "@/components/features/header-page";
+import { Button } from "@/components/ui/button";
 
 const PageFacture = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -53,64 +59,81 @@ const PageFacture = () => {
       modeReglement: f.modeReglement,
       devise: f.devise
     })) || [];
+
   return (
-    <DataTable
-      chemins={[
-        { title: "Factures", url: "/facture" },
-        { title: "Listes", url: "#" }
-      ]}
-      action={[
-        {
-          label: "Nouvelle Facture",
-          icon: <Plus />,
-          url: "/facture/add",
-          variantbtn: "secondary"
-        }
-      ]}
-      selectAction={[
-        {
-          label: "Details",
-          icon: <FileBox />,
-          url: `/facture/details/${selectedId}`,
-          variantbtn: "blue"
-        },
-        {
-          label: "Supprimer",
-          icon: <Trash />,
-          url: `/facture/delete/${selectedId}`,
-          variantbtn: "danger"
-        }
-      ]}
-      columnStyles={{
-        numero: (value , row) => (
-          <Link
-            href={`/facture/details/${row.id}`}
-            className="font-medium hover:underline"
-          >
-            {row.numero && row.numero.length > 30 ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>{row.numero.slice(0, 30) + "..."}</span>
-                </TooltipTrigger>
-                <TooltipContent className="w-[560px] p-4" side="bottom">
-                  <p>{value as string}</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : (
-              <span>{value as string}</span>
-            )}
+    <div>
+      <HeaderPage
+        chemins={[
+          { title: "Factures", url: "/facture" },
+          { title: "Listes", url: "#" }
+        ]}
+      >
+        <Button asChild variant={"secondary"}>
+          <Link href={"/facture/add"}>
+            <Plus />
+            Nouvelle Facture
           </Link>
-        ),
-        date: (value) => format(new Date(value as string), "dd/MM/yyyy")
-      }}
-      data={listes || []}
-      dateChose="date"
-      dateChoseTitle="Filter par Date"
-      searchId="numero"
-      searchPlaceholder="Rechercher un sujet..."
-      onRowSelect={(id) => setSelectedId(id)}
-      storageKey="facture-datatable"
-    />
+        </Button>
+        {selectedId && <span>selectId : {selectedId}</span>}
+      </HeaderPage>
+      <DataTable
+        chemins={[
+          { title: "Factures", url: "/facture" },
+          { title: "Listes", url: "#" }
+        ]}
+        action={[
+          {
+            label: "Nouvelle Facture",
+            icon: <Plus />,
+            url: "/facture/add",
+            variantbtn: "secondary"
+          }
+        ]}
+        selectAction={[
+          {
+            label: "Details",
+            icon: <FileBox />,
+            url: `/facture/details/${selectedId}`,
+            variantbtn: "blue"
+          },
+          {
+            label: "Supprimer",
+            icon: <Trash />,
+            url: `/facture/delete/${selectedId}`,
+            variantbtn: "danger"
+          }
+        ]}
+        columnStyles={{
+          numero: (value, row) => (
+            <Link
+              href={`/facture/details/${row.id}`}
+              className="font-medium hover:underline"
+            >
+              {row.numero && row.numero.length > 30 ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>{row.numero.slice(0, 30) + "..."}</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="w-[560px] p-4" side="bottom">
+                    <p>{value as string}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <span>{value as string}</span>
+              )}
+            </Link>
+          ),
+          date: (value) => format(new Date(value as string), "dd/MM/yyyy")
+        }}
+        data={listes || []}
+        dateChose="date"
+        dateChoseTitle="Filter par Date"
+        searchId="numero"
+        searchPlaceholder="Rechercher un sujet..."
+        onRowSelect={(id) => setSelectedId(id)}
+        storageKey="facture-datatable"
+      />
+    </div>
   );
 };
 
