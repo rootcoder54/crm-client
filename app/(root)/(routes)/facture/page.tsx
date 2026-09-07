@@ -15,7 +15,6 @@ import {
   TooltipContent,
   TooltipTrigger
 } from "@/components/ui/tooltip";
-import HeaderPage from "@/components/features/header-page";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -70,7 +69,7 @@ const PageFacture = () => {
           { title: "Listes", url: "#" }
         ]}
         action={[
-          <ButtonGroup>
+          <ButtonGroup key={"bouttongroupe"}>
             <Button variant="outline" asChild>
               <Link href={"/facture/add"} >
               <Plus />
