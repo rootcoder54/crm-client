@@ -85,13 +85,11 @@ const AuthRegister = () => {
 
   function onSubmit(values: z.input<typeof schema>) {
     transition(() => {
-      console.log(values);
       getUserByUserName(values.username).then((existingUser) => {
         if (existingUser) {
           setusernameError("Le nom d'utilisateur existe déjà.");
         } else {
           bcrypt.hash(values.password, 10).then((hashedPassword) => {
-            console.log("Hashed Password:", hashedPassword);
             const data = {
               name: values.name,
               username: values.username,

@@ -646,7 +646,7 @@ export function FactureForm() {
                 <span>Ordre</span>
                 <Input
                   type="number"
-                  value={order}
+                  value={order ?? 0}
                   onChange={(e) => setorder(Number(e.target.value))}
                   className="bg-zinc-100 text-black"
                   disabled

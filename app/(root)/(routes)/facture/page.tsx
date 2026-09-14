@@ -5,7 +5,15 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { fetcher } from "@/lib/fetcher";
 import { Facture } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import { AlertCircleIcon, ArchiveIcon, FileBox, MailCheckIcon, MoreHorizontalIcon, Plus, Trash } from "lucide-react";
+import {
+  AlertCircleIcon,
+  ArchiveIcon,
+  FileBox,
+  MailCheckIcon,
+  MoreHorizontalIcon,
+  Plus,
+  Trash
+} from "lucide-react";
 import { useState } from "react";
 import { LoaderOne } from "@/components/ui/loader";
 import { format } from "date-fns";
@@ -17,7 +25,13 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 const PageFacture = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -71,14 +85,21 @@ const PageFacture = () => {
         action={[
           <ButtonGroup key={"bouttongroupe"}>
             <Button variant="outline" asChild>
-              <Link href={"/facture/add"} >
-              <Plus />
+              <Link href={"/facture/add"}>
+                <Plus />
                 Nouvelle Facture
               </Link>
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger>
-                <Button variant="outline" className="rounded-l-none" size="icon" aria-label="More Options"><MoreHorizontalIcon /></Button>
+                <Button
+                  variant="outline"
+                  className="rounded-l-none"
+                  size="icon"
+                  type="button"
+                >
+                  <MoreHorizontalIcon />
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuGroup>
@@ -91,7 +112,6 @@ const PageFacture = () => {
                     Mise à jour
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-
               </DropdownMenuContent>
             </DropdownMenu>
           </ButtonGroup>
