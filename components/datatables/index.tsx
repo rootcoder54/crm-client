@@ -43,6 +43,7 @@ import { dateRangeFilter } from "./dateRangeFilter";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface DataTableProps<TData extends Record<string, unknown>> {
   data: TData[];
@@ -56,14 +57,16 @@ interface DataTableProps<TData extends Record<string, unknown>> {
   isHeader?: boolean;
   titre?: string;
   description?: string;
-  action?: {
-    label: string;
-    icon?: React.ReactNode;
-    url: string;
-    variantbtn: VariantProps<typeof buttonVariants>["variant"];
-    hide?: boolean;
-    target?: boolean;
-  }[] | React.ReactNode[];
+  action?:
+    | {
+        label: string;
+        icon?: React.ReactNode;
+        url: string;
+        variantbtn: VariantProps<typeof buttonVariants>["variant"];
+        hide?: boolean;
+        target?: boolean;
+      }[]
+    | React.ReactNode[];
   selectAction?: {
     label: string;
     icon?: React.ReactNode;
@@ -140,9 +143,9 @@ export function DataTable<TData extends Record<string, unknown>>({
     return saved
       ? JSON.parse(saved)
       : {
-        pageIndex: 0,
-        pageSize: 10
-      };
+          pageIndex: 0,
+          pageSize: 10
+        };
   });
   //const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>(
@@ -190,9 +193,9 @@ export function DataTable<TData extends Record<string, unknown>>({
       return saved
         ? JSON.parse(saved)
         : {
-          id: false,
-          ...initialVisibility
-        };
+            id: false,
+            ...initialVisibility
+          };
     });
 
   const router = useRouter();
@@ -407,9 +410,9 @@ export function DataTable<TData extends Record<string, unknown>>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   );
                 })}
@@ -456,9 +459,18 @@ export function DataTable<TData extends Record<string, unknown>>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center justify-content-center"
                 >
-                  {notData ? notData : "Pas de resultat"}
+                  <Image
+                    src="/empty.png"
+                    alt="Pas de Resultat"
+                    width={400}
+                    height={400}
+                    className="mx-auto"
+                  />
+                  <span className="text-lg font-bold">
+                    {notData ? notData : "Pas de resultat"}
+                  </span>
                 </TableCell>
               </TableRow>
             )}
