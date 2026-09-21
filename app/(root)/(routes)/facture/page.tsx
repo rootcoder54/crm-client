@@ -23,7 +23,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
   DropdownMenu,
@@ -32,6 +32,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 const PageFacture = () => {
   const [selectedId, setSelectedId] = useState<string>("");
@@ -91,23 +92,22 @@ const PageFacture = () => {
               </Link>
             </Button>
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Button
-                  variant="outline"
-                  className="rounded-l-none"
-                  size="icon"
-                  type="button"
-                >
-                  <MoreHorizontalIcon />
-                </Button>
+              <DropdownMenuTrigger
+                type="button"
+                className={cn(
+                  buttonVariants({ variant: "outline", size : "icon" }),
+                  "rounded-l-none focus-visible:ring-0 focus-visible:border-inherit"
+                )}
+              >
+                <MoreHorizontalIcon />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <MailCheckIcon />
                     Achat de logiciel
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <ArchiveIcon />
                     Mise à jour
                   </DropdownMenuItem>
