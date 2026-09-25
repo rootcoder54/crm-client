@@ -91,6 +91,8 @@ interface DataTableProps<TData extends Record<string, unknown>> {
   >;
   exportName?: string;
   storageKey?: string;
+  emptyImg?: string;
+  headerEmpty?: { nom: string }[];
 }
 
 export function DataTable<TData extends Record<string, unknown>>({
@@ -112,7 +114,9 @@ export function DataTable<TData extends Record<string, unknown>>({
   dateChoseTitle,
   columnStyles,
   exportName,
-  storageKey = "datatable"
+  storageKey = "datatable",
+  emptyImg,
+  headerEmpty
 }: DataTableProps<TData>) {
   const tableRef = useRef<HTMLTableElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -401,21 +405,33 @@ export function DataTable<TData extends Record<string, unknown>>({
                 key={headerGroup.id}
                 className="w-full hover:bg-stone-600/10"
               >
-                {headerGroup.headers.map((header, index) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className={cn(index !== 0 && "border-r")}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.length > 1
+                  ? headerGroup.headers.map((header, index) => {
+                      return (
+                        <TableHead
+                          key={header.id}
+                          className={cn(index !== 0 && "border-r")}
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      );
+                    })
+                  : headerEmpty &&
+                    headerEmpty.map((header, index) => {
+                      return (
+                        <TableHead
+                          key={index}
+                          className={cn("border-r")}
+                        >
+                          <span>{header.nom}</span>
+                        </TableHead>
+                      );
+                    })}
               </TableRow>
             ))}
           </TableHeader>
@@ -430,11 +446,12 @@ export function DataTable<TData extends Record<string, unknown>>({
                     event.preventDefault();
                     table.setRowSelection({ [row.id]: true });
                   }}
-                  onDoubleClick={
-                    onDoubleClickLink
-                      ? () => router.push(`${onDoubleClickLink}`)
-                      : undefined
-                  }
+                  onDoubleClick={(event) => {
+                    event.preventDefault();
+                    if (onDoubleClickLink) {
+                      router.push(`${onDoubleClickLink}`);
+                    }
+                  }}
                   onContextMenu={(event) => {
                     event.preventDefault();
                     table.setRowSelection({ [row.id]: true });
@@ -458,11 +475,11 @@ export function DataTable<TData extends Record<string, unknown>>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={columns.length ===1 ? headerEmpty?.length : columns.length}
                   className="h-24 text-center justify-content-center"
                 >
                   <Image
-                    src="/empty.png"
+                    src={emptyImg ? `/empty/${emptyImg}` : "/empty.png"}
                     alt="Pas de Resultat"
                     width={400}
                     height={400}

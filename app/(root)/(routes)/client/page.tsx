@@ -132,6 +132,7 @@ const ClientPage = () => {
           options: dataFiltered
         }
       ]}
+      onDoubleClickLink={"/client/detail/" + selectedId}
       dateChose="dateLastVisite"
       dateChoseTitle="Filter derniere requete"
       searchId="nomClient"

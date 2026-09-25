@@ -83,6 +83,14 @@ const PageFacture = () => {
           { title: "Factures", url: "/facture" },
           { title: "Listes", url: "#" }
         ]}
+        headerEmpty={[
+          {nom:"Numero"},
+          {nom:"Type"},
+          {nom:"Client"},
+          {nom:"Acquittee"},
+          {nom:"ModeReglement"},
+          {nom:"Devise"},
+        ]}
         action={[
           <ButtonGroup key={"bouttongroupe"}>
             <Button variant="outline" asChild>
