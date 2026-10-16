@@ -1,28 +1,19 @@
 "use client";
 import { useState } from "react";
-
-export function EnquiryForm({quote=false}:{quote?:boolean}) {
- const [prepared,setPrepared]=useState(false);
- const [error,setError]=useState("");
- function submit(event:React.FormEvent<HTMLFormElement>) {
+import { ArrowUpRight, CheckCircle2, Mail } from "lucide-react";
+import Image from "next/image";
+import { products } from "@/content/marketing";
+export function EnquiryForm({quote=false,initialProduct}:{quote?:boolean;initialProduct?:string}){
+ const [prepared,setPrepared]=useState(false);const [error,setError]=useState("");
+ function submit(event:React.FormEvent<HTMLFormElement>){
   event.preventDefault();const data=new FormData(event.currentTarget);
-  if(quote && data.getAll("Logiciels").length===0){setError("Sélectionnez au moins un logiciel pour votre devis.");return;}
-  setError("");
-  const lines=Array.from(data.entries()).map(([k,v])=>`${k} : ${String(v)}`);
+  if(quote&&data.getAll("Logiciels").length===0){setError("Sélectionnez au moins un logiciel pour votre devis.");event.currentTarget.querySelector<HTMLInputElement>('input[name="Logiciels"]')?.focus();return}
+  setError("");const lines=Array.from(data.entries()).map(([k,v])=>`${k} : ${String(v)}`);
   const subject=quote?`Demande de devis — ${data.get("Société")}`:`Contact — ${data.get("Objet")}`;
-  window.location.href=`mailto:email@malisystem.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
-  setPrepared(true);
+  window.location.href=`mailto:email@malisystem.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;setPrepared(true);
  }
  return <form className="ms-form" onSubmit={submit}>
-  {quote && <><fieldset><legend>1. Vos logiciels</legend>{["RHPaie","TimeSheet","RHData","RHFacture"].map(x=><label className="ms-checkbox" key={x}><input type="checkbox" name="Logiciels" value={x}/>{x}</label>)}<small>Précisez vos besoins dans le commentaire si vous souhaitez être conseillé.</small></fieldset>
-  <fieldset><legend>2. Votre configuration</legend><div className="ms-field-grid"><label>Nombre de salariés<input name="Salariés" type="number" min="10" max="1000000" required defaultValue={10}/></label><label>Postes utilisateurs<input name="Postes" type="number" min="1" max="10000" required defaultValue={1}/></label></div><label>Personnes à former<input name="Personnes à former" type="number" min="0" max="10000" required defaultValue={1}/></label><label>Installation<select name="Installation"><option>Monoposte</option><option>Réseau local</option><option>Client / serveur</option><option>À définir avec votre équipe</option></select></label><label>Convention de salaire<input name="Convention" placeholder="Mines, commerce, BTP…" required maxLength={200}/></label></fieldset></>}
-  <div className="ms-field-grid"><label>Votre nom<input name="Nom" required autoComplete="name" maxLength={150}/></label><label>Société<input name="Société" required autoComplete="organization" maxLength={200}/></label></div>
-  <div className="ms-field-grid"><label>Email<input name="Email" type="email" required autoComplete="email" maxLength={254}/></label><label>Téléphone<input name="Téléphone" type="tel" required={quote} autoComplete="tel" maxLength={40}/></label></div>
-  {quote?<label>Adresse<input name="Adresse" required autoComplete="street-address" maxLength={400}/></label>:<label>Objet<input name="Objet" required maxLength={200}/></label>}
-  <label>{quote?"Commentaire / questions":"Votre message"}<textarea name="Message" required={!quote} maxLength={5000}/></label>
-  <small>Le bouton ouvre votre logiciel de messagerie avec les informations saisies. Vous pourrez vérifier puis envoyer votre demande à email@malisystem.com.</small>
-  {error&&<p role="alert">{error}</p>}
-  <button type="submit" className="ms-button">Préparer {quote?"ma demande de devis":"mon message"} ↗</button>
-  {prepared&&<p role="status">Votre email est préparé. Envoyez-le depuis votre messagerie. Si elle ne s’ouvre pas, contactez email@malisystem.com ou le +223 66 22 40 57.</p>}
+ {quote&&<><fieldset className="ms-software-fields" aria-describedby={error?"ms-product-error":undefined}><legend><span>01</span> Choisissez vos logiciels *</legend><div className="ms-software-choices">{products.map(p=><label key={p.slug}><input type="checkbox" name="Logiciels" value={p.name} defaultChecked={initialProduct===p.name}/><Image src={p.image} alt="" width={30} height={30}/><span><strong>{p.name}</strong><small>{p.category}</small></span></label>)}</div>{error&&<p className="ms-form-error" id="ms-product-error" role="alert">{error}</p>}</fieldset><fieldset><legend><span>02</span> Votre configuration</legend><div className="ms-field-grid"><label>Nombre de salariés *<input name="Salariés" type="number" min="10" max="1000000" required defaultValue={10}/></label><label>Postes utilisateurs *<input name="Postes" type="number" min="1" max="10000" required defaultValue={1}/></label></div><div className="ms-field-grid"><label>Personnes à former *<input name="Personnes à former" type="number" min="0" max="10000" required defaultValue={1}/></label><label>Mode d’installation<select name="Installation"><option>Monoposte</option><option>Réseau local</option><option>Client / serveur</option><option>À définir avec votre équipe</option></select></label></div><label>Convention de salaire *<input name="Convention" placeholder="Ex. : mines, commerce, BTP…" required maxLength={200}/></label></fieldset></>}
+ <fieldset><legend>{quote?<><span>03</span> Vos coordonnées</>:"Vos coordonnées"}</legend><div className="ms-field-grid"><label>Votre nom *<input name="Nom" placeholder="Nom et prénom" required autoComplete="name" maxLength={150}/></label><label>Société *<input name="Société" placeholder="Nom de votre entreprise" required autoComplete="organization" maxLength={200}/></label></div><div className="ms-field-grid"><label>Email *<input name="Email" type="email" placeholder="vous@entreprise.com" required autoComplete="email" maxLength={254}/></label><label>Téléphone{quote?" *":""}<input name="Téléphone" placeholder="+223 …" type="tel" required={quote} autoComplete="tel" maxLength={40}/></label></div>{quote?<label>Adresse *<input name="Adresse" placeholder="Ville, quartier, adresse" required autoComplete="street-address" maxLength={400}/></label>:<label>Objet *<input name="Objet" placeholder="Comment pouvons-nous vous aider ?" required maxLength={200}/></label>}<label>{quote?"Vos précisions ou questions":"Votre message *"}<textarea name="Message" placeholder={quote?"Décrivez les particularités de votre organisation…":"Parlez-nous de votre besoin…"} required={!quote} maxLength={5000}/></label></fieldset><div className="ms-email-notice"><Mail size={20}/><p>Votre messagerie s’ouvrira avec la demande préparée. Vous pourrez la vérifier, puis l’envoyer à <strong>email@malisystem.com</strong>.</p></div><button type="submit" className="ms-button">Préparer {quote?"ma demande de devis":"mon message"}<ArrowUpRight size={19}/></button>{prepared&&<p className="ms-form-success" role="status"><CheckCircle2 size={21}/><span>La demande est préparée pour votre messagerie. Si elle ne s’ouvre pas, écrivez à email@malisystem.com ou appelez le +223 66 22 40 57.</span></p>}
  </form>;
 }
