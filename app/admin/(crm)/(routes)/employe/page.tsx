@@ -1,0 +1,27 @@
+"use client";
+
+import { DataTable } from "@/components/datatables";
+import { employes } from "@/constante/employe";
+
+const PageEmploye = () => {
+  return (
+    <DataTable
+      chemins={[
+        { title: "Employés", url: "/admin/employe" },
+        { title: "Listes", url: "#" }
+      ]}
+      titre="Employes"
+      action={[]}
+      selectAction={[]}
+      data={employes}
+      searchId="nom"
+      searchPlaceholder="Rechercher un nom d'employé..."
+      notData="Aucun employé trouvé"
+      hideList={["id"]}
+      exportName="liste_employes"
+      storageKey="employe-datatable"
+    />
+  );
+};
+
+export default PageEmploye;

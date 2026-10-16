@@ -109,7 +109,7 @@ export const AddFacturation = () => {
       createFacture(values).then((facture) => {
         //toast.success("Facture ajoutée avec succès");
         console.log("Facture created:", facture);
-        route.push("/facture/add/item/" + facture.id);
+        route.push("/admin/facture/add/item/" + facture.id);
       });
     });
   }
@@ -128,14 +128,14 @@ export const AddFacturation = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <HeaderPage
             chemins={[
-              { title: "Factures", url: "/facture" },
+              { title: "Factures", url: "/admin/facture" },
               { title: "Nouvelle Facture", url: "#" }
             ]}
           >
             <Button type="submit" variant={"blue"}>
               Suivant
             </Button>
-            <Link href={"/facture"}>
+            <Link href={"/admin/facture"}>
               <Button variant={"destructive"}>Annuler</Button>
             </Link>
           </HeaderPage>

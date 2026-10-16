@@ -17,14 +17,14 @@ const InterventionRequete = ({
   return (
     <DataTable
       chemins={[
-        { title: "Requête", url: "/requete" },
+        { title: "Requête", url: "/admin/requete" },
         { title: "Interventions", url: "#" }
       ]}
       action={[
         {
           label: "Nouvelle Intervention",
           icon: <Plus />,
-          url: `/requete/intervention/${requete.id}/add`,
+          url: `/admin/requete/intervention/${requete.id}/add`,
           variantbtn: "blue",
           hide: requete.etat === "CLOTURER"
         }
@@ -33,7 +33,7 @@ const InterventionRequete = ({
         {
           label: "Supprimer",
           icon: <Trash />,
-          url: `/requete/intervention/${requete.id}/delete/${selectedId}`,
+          url: `/admin/requete/intervention/${requete.id}/delete/${selectedId}`,
           variantbtn: "danger",
           hide: requete.etat === "CLOTURER"
         }

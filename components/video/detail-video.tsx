@@ -10,16 +10,16 @@ const DetailVideo = ({ video }: { video: Video }) => {
     <div>
       <HeaderPage
         chemins={[
-          { title: "Videos", url: "/video" },
+          { title: "Videos", url: "/admin/video" },
           { title: "Details Video", url: "#" }
         ]}
       >
-        <Link href={`/video/edite/${video.id}`}>
+        <Link href={`/admin/video/edite/${video.id}`}>
           <Button variant={"outline"}>
             <SquarePen /> Editer
           </Button>
         </Link>
-        <Link href={`/video/delete/${video.id}`}>
+        <Link href={`/admin/video/delete/${video.id}`}>
           <Button variant={"danger"}>
             <Trash2 /> Supprimer
           </Button>

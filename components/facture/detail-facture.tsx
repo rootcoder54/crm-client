@@ -70,7 +70,7 @@ export const DetailFacture = ({ idFacture }: { idFacture: string }) => {
     <div>
       <HeaderPage
         chemins={[
-          { title: "Factures", url: "/facture" },
+          { title: "Factures", url: "/admin/facture" },
           { title: "Facture N° " + facture.numero, url: "#" }
         ]}
       >

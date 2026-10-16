@@ -41,15 +41,15 @@ export const RequeteClient = ({ id }: { id: string }) => {
   return (
     <DataTable
       chemins={[
-        { title: "Client", url: "/client" },
-        { title: "Details", url: "/client/detail/" + id },
+        { title: "Client", url: "/admin/client" },
+        { title: "Details", url: "/admin/client/detail/" + id },
         { title: "Listes", url: "#" }
       ]}
       action={[
         {
           label: "Nouvelle Requête",
           icon: <Plus />,
-          url: "/requete/add",
+          url: "/admin/requete/add",
           variantbtn: "secondary"
         }
       ]}
@@ -57,26 +57,26 @@ export const RequeteClient = ({ id }: { id: string }) => {
         {
           label: "Interventions",
           icon: <FileArchive />,
-          url: `/requete/intervention/${selectedId}`,
+          url: `/admin/requete/intervention/${selectedId}`,
           variantbtn: "blue"
         },
         {
           label: "Clôture",
           icon: <CalendarCheck2 />,
-          url: `/requete/cloture/${selectedId}`,
+          url: `/admin/requete/cloture/${selectedId}`,
           variantbtn: "gray",
           hide: isCloture
         },
         {
           label: "Editer",
           icon: <SquarePen />,
-          url: `/requete/edite/${selectedId}`,
+          url: `/admin/requete/edite/${selectedId}`,
           variantbtn: "outline"
         },
         {
           label: "Supprimer",
           icon: <Trash />,
-          url: `/requete/delete/${selectedId}`,
+          url: `/admin/requete/delete/${selectedId}`,
           variantbtn: "danger"
         }
       ]}

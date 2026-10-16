@@ -30,13 +30,13 @@ const DetailClient = ({
     <div>
       <HeaderPage
         chemins={[
-          { title: "Clients", url: "/client" },
+          { title: "Clients", url: "/admin/client" },
           { title: client.nomClient, url: "#" }
         ]}
       >
         <Button variant={"gray"} asChild size="sm">
           <Link
-            href={"/client/requete/" + client.id}
+            href={"/admin/client/requete/" + client.id}
             className="dark:text-foreground"
           >
             <FileArchive />
@@ -45,7 +45,7 @@ const DetailClient = ({
         </Button>
         <Button variant={"outline"} asChild size="sm">
           <Link
-            href={"/client/contact/" + client.id}
+            href={"/admin/client/contact/" + client.id}
             className="dark:text-foreground"
           >
             <Phone />
@@ -53,14 +53,14 @@ const DetailClient = ({
           </Link>
         </Button>
         <Button variant={"default"} asChild size="sm">
-          <Link href={"/client/edite/" + client.id}>
+          <Link href={"/admin/client/edite/" + client.id}>
             <SquarePen />
             <span className="hidden sm:flex">Editer</span>
           </Link>
         </Button>
         <Button variant={"outline"} asChild size="sm">
           <Link
-            href={"/client/base/" + client.id}
+            href={"/admin/client/base/" + client.id}
             className="dark:text-foreground"
           >
             <FileArchiveIcon />
@@ -69,7 +69,7 @@ const DetailClient = ({
         </Button>
         <Button variant={"destructive"} asChild size="sm">
           <Link
-            href={"/client/delete/" + client.id}
+            href={"/admin/client/delete/" + client.id}
             className="dark:text-foreground"
           >
             <Trash2 />
@@ -78,7 +78,7 @@ const DetailClient = ({
         </Button>
         <Button variant={"blue"} asChild size="sm">
           <Link
-            href={"/client/contrat/" + client.id}
+            href={"/admin/client/contrat/" + client.id}
             className="dark:text-foreground"
           >
             <File />
@@ -173,7 +173,7 @@ const DetailClient = ({
               <TableRow key={requete.id}>
                 <TableCell>
                   <Link
-                    href={`/requete/detail/${requete.id}`}
+                    href={`/admin/requete/detail/${requete.id}`}
                     className="text-blue-500 hover:underline"
                   >
                     {requete.sujet}

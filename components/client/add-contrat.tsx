@@ -72,7 +72,7 @@ const AddContrat = ({ clientId }: { clientId: string }) => {
             userId: session?.user.id ?? ""
           }).then(() => {
             toast.success("Contrat ajouté avec succès");
-            router.push("/client/contrat/" + clientId);
+            router.push("/admin/client/contrat/" + clientId);
           });
         })
         .catch((erreur) => {
@@ -94,7 +94,7 @@ const AddContrat = ({ clientId }: { clientId: string }) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Clients", url: "/client" },
+              { title: "Clients", url: "/admin/client" },
               { title: "Nouveau Contrat", url: "#" }
             ]}
           >
@@ -103,7 +103,7 @@ const AddContrat = ({ clientId }: { clientId: string }) => {
                 <Plus />
                 Ajouter
               </Button>
-              <Link href={"/client/contrat/" + clientId}>
+              <Link href={"/admin/client/contrat/" + clientId}>
                 <Button type="button" variant={"destructive"}>
                   <Ban />
                   Annuler

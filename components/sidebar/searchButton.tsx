@@ -118,7 +118,7 @@ export const SearchButton = () => {
                               variant={"ghost"}
                               className="justify-start w-full"
                               onClick={() => {
-                                router.push(`/client/detail/${client.id}`);
+                                router.push(`/admin/client/detail/${client.id}`);
                                 setOpen(false);
                               }}
                             >
@@ -141,7 +141,7 @@ export const SearchButton = () => {
                               variant={"ghost"}
                               className="justify-start w-full"
                               onClick={() => {
-                                router.push(`/requete/detail/${requete.id}`);
+                                router.push(`/admin/requete/detail/${requete.id}`);
                                 setOpen(false);
                               }}
                               type="button"

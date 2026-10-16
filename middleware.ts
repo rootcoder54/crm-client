@@ -1,52 +1,40 @@
 import authConfig from "@/auth.config";
 import NextAuth from "next-auth";
-
 import {
   DEFAULT_LOGIN_REDIRECT,
   DEFAULT_LOGOUT_REDIRECT,
   apiAuthPrefix,
   authRoutes,
-  publicRoutes
+  isPublicRoute,
+  matchesRoute
 } from "./constante/routes";
-import { format } from "date-fns";
 
 const { auth } = NextAuth(authConfig);
 
-export default auth((req, ctx) => {
+export default auth((req) => {
   const { nextUrl } = req;
+  const pathname = nextUrl.pathname;
   const isLoggedIn = !!req.auth;
-  console.log(
-    "Route : " + nextUrl.pathname,
-    "Date : " + ctx && format(Date(), "yyyy-MM-dd HH:mm:ss"),
-    "User : " + req.auth?.user.name
-  );
 
-  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  //const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-  const isPublicRoute = publicRoutes.some((prefix) =>
-    nextUrl.pathname.startsWith(prefix)
-  );
-  const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  if (matchesRoute(pathname, apiAuthPrefix)) return;
 
-  if (isApiAuthRoute) {
-    return;
-  }
-
-  if (isAuthRoute) {
-    if (isLoggedIn) {
+  if (authRoutes.includes(pathname)) {
+    if (isLoggedIn && pathname === DEFAULT_LOGOUT_REDIRECT) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
     return;
   }
 
-  if (!isLoggedIn && !isPublicRoute) {
+  if (!isLoggedIn && !isPublicRoute(pathname, req.method)) {
+    if (matchesRoute(pathname, "/api")) {
+      return Response.json({ error: "Non authentifié" }, { status: 401 });
+    }
     return Response.redirect(new URL(DEFAULT_LOGOUT_REDIRECT, nextUrl));
   }
-
-  return;
 });
 
-// Optionally, don't invoke Middleware on some paths
+// Protect every admin path (including IDs containing dots) and every API.
+// Public pages and static files do not need a session lookup.
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"]
+  matcher: ["/admin/:path*", "/api/:path*"]
 };

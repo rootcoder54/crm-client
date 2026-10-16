@@ -55,7 +55,7 @@ function Header<TData>({
             </>
           ) : (
             <>
-              <Link href={`/`}>
+              <Link href={`/admin`}>
                 <Home className="-ml-1" />
               </Link>
               <Separator

@@ -36,7 +36,7 @@ const DeleteIntervention = ({
       deleteItemIntervention(item.id).then((data) => {
         console.log(data);
         toast.info(`Item a été supprimé`);
-        router.push(`/requete/detail/${intervention.requeteId}`);
+        router.push(`/admin/requete/detail/${intervention.requeteId}`);
       });
     });
   };

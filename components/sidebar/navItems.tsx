@@ -32,7 +32,7 @@ export function NavItems({
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton variant={"seconde"} asChild>
-            <Link href={"/requete/add"} className="flex items-center gap-x-1">
+            <Link href={"/admin/requete/add"} className="flex items-center gap-x-1">
               <AlignLeft />
               <span>Nouvelle requête</span>
             </Link>

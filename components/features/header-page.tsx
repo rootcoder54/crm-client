@@ -27,7 +27,7 @@ function HeaderPage({ chemins, children }: headerprops) {
             </>
           ) : (
             <>
-              <Link href={`/`}>
+              <Link href={`/admin`}>
                 <Home className="-ml-1" />
               </Link>
               <Separator

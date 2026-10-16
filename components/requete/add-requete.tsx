@@ -146,7 +146,7 @@ const AddRequete = ({ id }: { id: string }) => {
           lastVisite(data.clientId, data.dateDebut).then((result) => {
             console.log(result);
             toast.success(`Requête ${data.sujet} enregistrer avec succes`);
-            router.push("/requete/detail/" + data.id);
+            router.push("/admin/requete/detail/" + data.id);
           });
         }
       });
@@ -166,7 +166,7 @@ const AddRequete = ({ id }: { id: string }) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Requête", url: "/requete" },
+              { title: "Requête", url: "/admin/requete" },
               { title: "Nouvelle Requête", url: "#" }
             ]}
           >
@@ -175,7 +175,7 @@ const AddRequete = ({ id }: { id: string }) => {
                 <Check />
                 Valider
               </Button>
-              <Link href={"/requete"}>
+              <Link href={"/admin/requete"}>
                 <Button variant={"destructive"}>
                   <Ban />
                   Annuler

@@ -15,13 +15,13 @@ const ContactClient = ({
         {
           label: "Nouveau Contact",
           icon: <Plus />,
-          url: `/client/contact/${clientId}/add`,
+          url: `/admin/client/contact/${clientId}/add`,
           variantbtn: "secondary"
         }
       ]}
       chemins={[
-        { title: "Clients", url: "/client" },
-        { title: "Details", url: `/client/detail/${clientId}` },
+        { title: "Clients", url: "/admin/client" },
+        { title: "Details", url: `/admin/client/detail/${clientId}` },
         { title: "Contacts", url: "#" }
       ]}
       selectAction={[]}
