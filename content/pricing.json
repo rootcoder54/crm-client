@@ -1,0 +1,170 @@
+[
+  {
+    "name": "RHPaie",
+    "slug": "rhpaie",
+    "rows": [
+      {
+        "employees": "01-49 salariés",
+        "purchase": "500 000 FCFA",
+        "update": "200 000 FCFA",
+        "support": "40 000 FCFA"
+      },
+      {
+        "employees": "50-100 salariés",
+        "purchase": "1 300 000 FCFA",
+        "update": "650 000 FCFA",
+        "support": "60 000 FCFA"
+      },
+      {
+        "employees": "101-500 salariés",
+        "purchase": "2 000 (par salarié)",
+        "update": "400 (par salarié)",
+        "support": "220 (par salarié)"
+      },
+      {
+        "employees": "501-1000 salariés",
+        "purchase": "1 400 (par salarié)",
+        "update": "200 (par salarié)",
+        "support": "160 (par salarié)"
+      },
+      {
+        "employees": "1001-5000 salariés",
+        "purchase": "1 000 (par salarié)",
+        "update": "150 (par salarié)",
+        "support": "110 (par salarié)"
+      },
+      {
+        "employees": "plus 5000 salariés(illimité)",
+        "purchase": "4 000 000 FCFA",
+        "update": "700 000 FCFA",
+        "support": "350 000 FCFA"
+      }
+    ]
+  },
+  {
+    "name": "TimeSheet",
+    "slug": "timesheet",
+    "rows": [
+      {
+        "employees": "01-49 salariés",
+        "purchase": "300 000 FCFA",
+        "update": "75 000 FCFA",
+        "support": "10 000 FCFA"
+      },
+      {
+        "employees": "50-100 salariés",
+        "purchase": "1 100 000 FCFA",
+        "update": "400 000 FCFA",
+        "support": "35 000 FCFA"
+      },
+      {
+        "employees": "101-500 salariés",
+        "purchase": "500 (par salarié)",
+        "update": "150 (par salarié)",
+        "support": "80 (par salarié)"
+      },
+      {
+        "employees": "501-1000 salariés",
+        "purchase": "500 (par salarié)",
+        "update": "50 (par salarié)",
+        "support": "60 (par salarié)"
+      },
+      {
+        "employees": "1001-5000 salariés",
+        "purchase": "400 (par salarié)",
+        "update": "30 (par salarié)",
+        "support": "30 (par salarié)"
+      },
+      {
+        "employees": "plus 5000 salariés(illimité)",
+        "purchase": "700 000 FCFA",
+        "update": "250 000 FCFA",
+        "support": "300 000 FCFA"
+      }
+    ]
+  },
+  {
+    "name": "RHData",
+    "slug": "rhdata",
+    "rows": [
+      {
+        "employees": "01-49 salariés",
+        "purchase": "300 000 FCFA",
+        "update": "70 000 FCFA",
+        "support": "15 000 FCFA"
+      },
+      {
+        "employees": "50-100 salariés",
+        "purchase": "1 000 000 FCFA",
+        "update": "500 000 FCFA",
+        "support": "30 000 FCFA"
+      },
+      {
+        "employees": "101-500 salariés",
+        "purchase": "1 000 (par salarié)",
+        "update": "200 (par salarié)",
+        "support": "80 (par salarié)"
+      },
+      {
+        "employees": "501-1000 salariés",
+        "purchase": "1 000 (par salarié)",
+        "update": "50 (par salarié)",
+        "support": "60 (par salarié)"
+      },
+      {
+        "employees": "1001-5000 salariés",
+        "purchase": "400 (par salarié)",
+        "update": "40 (par salarié)",
+        "support": "30 (par salarié)"
+      },
+      {
+        "employees": "plus 5000 salariés(illimité)",
+        "purchase": "800 000 FCFA",
+        "update": "300 000 FCFA",
+        "support": "300 000 FCFA"
+      }
+    ]
+  },
+  {
+    "name": "RHFacture",
+    "slug": "rhfacture",
+    "rows": [
+      {
+        "employees": "01-49 salariés",
+        "purchase": "150 000 FCFA",
+        "update": "50 000 FCFA",
+        "support": "5 000 FCFA"
+      },
+      {
+        "employees": "50-100 salariés",
+        "purchase": "450 000 FCFA",
+        "update": "200 000 FCFA",
+        "support": "10 000 FCFA"
+      },
+      {
+        "employees": "101-500 salariés",
+        "purchase": "300 (par salarié)",
+        "update": "50 (par salarié)",
+        "support": "60 (par salarié)"
+      },
+      {
+        "employees": "501-1000 salariés",
+        "purchase": "200 (par salarié)",
+        "update": "20 (par salarié)",
+        "support": "30 (par salarié)"
+      },
+      {
+        "employees": "1001-5000 salariés",
+        "purchase": "150 (par salarié)",
+        "update": "15 (par salarié)",
+        "support": "15 (par salarié)"
+      },
+      {
+        "employees": "plus 5000 salariés(illimité)",
+        "purchase": "400 000 FCFA",
+        "update": "100 000 FCFA",
+        "support": "100 000 FCFA"
+      }
+    ]
+  }
+]

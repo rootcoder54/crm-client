@@ -1,18 +1,21 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight, ChevronDown, Menu, X, Phone, ArrowRight } from "lucide-react";
+import { products } from "@/content/marketing";
 
-export function SiteHeader() {
-  return <>
-    <div className="ms-contactbar"><div className="ms-container"><a href="mailto:email@malisystem.com">email@malisystem.com</a><a href="tel:+22366224057">+223 66 22 40 57</a><span>Génie logiciel · Depuis 2006</span></div></div>
-    <header className="ms-header"><div className="ms-container ms-header-inner">
-      <Link href="/" className="ms-brand" aria-label="Mali System, accueil"><Image src="/msys.png" alt="" width={48} height={44} /><span>MALI<span>SYSTEM</span><small>Performance & qualité</small></span></Link>
-      <nav aria-label="Navigation principale" className="ms-nav">
-        <Link href="/">Accueil</Link>
-        <details><summary>Logiciels</summary><div>{["RHPaie", "TimeSheet", "RHData", "RHFacture"].map(name => <Link key={name} href={`/logiciels/${name.toLowerCase()}`}>{name}</Link>)}</div></details>
-        <details><summary>Tarifs</summary><div><Link href="/tarifs/logiciels">Logiciels</Link><Link href="/tarifs/formation">Formations</Link></div></details>
-        <details><summary>Nouveautés</summary><div>{[15,14,13,12,11].map(v => <Link key={v} href={`/nouveautes/${v}`}>RHPaie {v}</Link>)}<Link href="/difference">Comparer les versions</Link></div></details>
-        <Link href="/contact">Contact</Link><Link href="/support">Assistance</Link><Link href="/admin" className="ms-admin-link">Administration</Link>
-      </nav><Link href="/devis" className="ms-button ms-header-cta">Demander un devis ↗</Link>
-    </div></header>
-  </>;
+const groups=[
+ {name:"Nos logiciels",key:"logiciels",links:products.map(p=>({title:p.name,text:p.category,href:`/logiciels/${p.slug}`,image:p.image}))},
+ {name:"Tarifs",key:"tarifs",links:[{title:"Logiciels",text:"Achat, mise à jour et assistance",href:"/tarifs/logiciels"},{title:"Formations",text:"Développer votre autonomie",href:"/tarifs/formation"}]},
+ {name:"Ressources",key:"ressources",links:[{title:"Nouveautés RHPaie 15",text:"Les évolutions de votre logiciel",href:"/nouveautes/15"},{title:"Comparer les versions",text:"De RHPaie 11 à RHPaie 15",href:"/difference"},{title:"Centre d’aide",text:"Astuces et questions fréquentes",href:"/support"},{title:"Formation en ligne",text:"Avancer à votre rythme",href:"/formation"},{title:"Téléchargements",text:"Retrouver les logiciels",href:"/telechargement"}]}
+];
+export function SiteHeader(){
+ const pathname=usePathname();const [mobile,setMobile]=useState(false);const [open,setOpen]=useState<string|null>(null);const header=useRef<HTMLElement>(null);
+ useEffect(()=>{function outside(event:PointerEvent){if(!header.current?.contains(event.target as Node)){setOpen(null);setMobile(false)}}function escape(event:KeyboardEvent){if(event.key==="Escape"){if(open){header.current?.querySelector<HTMLButtonElement>(`[data-menu="${open}"]`)?.focus()}else if(mobile){header.current?.querySelector<HTMLButtonElement>(".ms-menu-toggle")?.focus()}setOpen(null);setMobile(false)}}document.addEventListener("pointerdown",outside);document.addEventListener("keydown",escape);return()=>{document.removeEventListener("pointerdown",outside);document.removeEventListener("keydown",escape)}},[open,mobile]);
+ function close(){setMobile(false);setOpen(null)}
+ return <><div className="ms-announcement"><div className="ms-container"><span><span className="ms-live-dot"/> Votre partenaire paie & RH depuis 2006</span><Link href="/nouveautes/15">Découvrez RHPaie 15 <ArrowRight size={15}/></Link></div></div><header className="ms-header" ref={header}><div className="ms-container ms-header-inner"><Link href="/" onClick={close} className="ms-brand" aria-label="Mali System, accueil"><Image src="/msys.png" alt="" width={46} height={44}/><span>MALI<span>SYSTEM</span><small>Génie logiciel</small></span></Link><button type="button" className="ms-menu-toggle" aria-expanded={mobile} aria-controls="ms-main-nav" aria-label={mobile?"Fermer le menu":"Ouvrir le menu"} onClick={()=>{setMobile(!mobile);setOpen(null)}}>{mobile?<X/>:<Menu/>}</button><nav id="ms-main-nav" aria-label="Navigation principale" className={`ms-nav ${mobile?"is-open":""}`}>
+ {groups.map(group=><div className="ms-nav-group" key={group.key} onMouseLeave={()=>{if(window.matchMedia("(min-width: 1101px)").matches)setOpen(null)}} onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node))setOpen(null)}}><button type="button" data-menu={group.key} aria-expanded={open===group.key} aria-controls={`ms-menu-${group.key}`} onClick={()=>setOpen(open===group.key?null:group.key)} className={pathname.startsWith(`/${group.key}`)?"is-current":""}>{group.name}<ChevronDown size={15}/></button><div id={`ms-menu-${group.key}`} className={`ms-dropdown ${group.key==="logiciels"?"ms-dropdown-products":""}`} hidden={open!==group.key}><span className="ms-dropdown-label">{group.name}</span>{group.links.map(link=><Link href={link.href} key={link.href} onClick={close}>{"image" in link&&<Image src={link.image as string} alt="" width={34} height={34}/>}<span><strong>{link.title}</strong><small>{link.text}</small></span><ArrowUpRight size={16}/></Link>)}</div></div>)}
+ <Link href="/a-propos" aria-current={pathname==="/a-propos"?"page":undefined} onClick={close}>Notre entreprise</Link><Link href="/contact" aria-current={pathname==="/contact"?"page":undefined} onClick={close}>Contact</Link><Link href="/devis" className="ms-button ms-nav-cta" onClick={close}>Demander un devis <ArrowUpRight size={17}/></Link><a href="tel:+22366224057" className="ms-mobile-phone"><Phone size={16}/> +223 66 22 40 57</a></nav></div></header></>;
 }
