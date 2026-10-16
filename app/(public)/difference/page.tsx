@@ -1,0 +1,7 @@
+import pages from "@/content/public-pages.json";
+export const metadata={title:"Comparaison des versions de RHPaie"};
+function version(value:string|string[]|undefined,fallback:number){const n=Number(value);return Number.isInteger(n)&&n>=11&&n<=15?n:fallback;}
+export default async function DifferencePage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
+ const q=await searchParams;const start=version(q.debut,13),end=version(q.fin,14);const versions=[11,12,13,14,15].filter(v=>v>start&&v<=end);
+ return <section className="ms-container ms-document"><span className="ms-eyebrow">LES ÉVOLUTIONS DE VOTRE LOGICIEL</span><h1>Comparez les versions de RHPaie.</h1><p>Consultez les nouveautés publiées entre votre version de départ et la version souhaitée.</p><form className="ms-compare-form" action="/difference"><label>Version de départ<select name="debut" defaultValue={start}>{[11,12,13,14,15].map(v=><option key={v} value={v}>RHPaie {v}</option>)}</select></label><label>Version d’arrivée<select name="fin" defaultValue={end}>{[11,12,13,14,15].map(v=><option key={v} value={v}>RHPaie {v}</option>)}</select></label><button className="ms-button" type="submit">Comparer</button></form>{end<=start?<p role="status">Choisissez une version d’arrivée supérieure à la version de départ.</p>:versions.map(v=><section key={v} className="ms-compare-version"><div className="ms-imported-content" dangerouslySetInnerHTML={{__html:pages[`nouveautes/${v}` as keyof typeof pages].html}}/></section>)}</section>;
+}

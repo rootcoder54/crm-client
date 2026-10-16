@@ -87,7 +87,7 @@ export const AddFactureItem = ({ factureId }: { factureId: string }) => {
 
       Promise.all(promises).then(() => {
         toast.success(`Items de facture enregistrés avec succès`);
-        router.push(`/facture`);
+        router.push(`/admin/facture`);
       });
     });
   };
@@ -101,7 +101,7 @@ export const AddFactureItem = ({ factureId }: { factureId: string }) => {
       <form>
         <HeaderPage
           chemins={[
-            { title: "Factures", url: "/facture" },
+            { title: "Factures", url: "/admin/facture" },
             { title: "Nouvelle Facture", url: "#" }
           ]}
         >

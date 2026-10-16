@@ -62,7 +62,7 @@ const AddContact = ({ clientId }: { clientId: string }) => {
             userId: session?.user.id ?? ""
           }).then(() => {
             toast.success("Contact ajouté avec succès");
-            router.push("/client/contact/" + clientId);
+            router.push("/admin/client/contact/" + clientId);
           });
         })
         .catch((erreur) => {
@@ -84,7 +84,7 @@ const AddContact = ({ clientId }: { clientId: string }) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Clients", url: "/client" },
+              { title: "Clients", url: "/admin/client" },
               { title: "Nouveau Contact", url: "#" }
             ]}
           >
@@ -93,7 +93,7 @@ const AddContact = ({ clientId }: { clientId: string }) => {
                 <Plus />
                 Ajouter
               </Button>
-              <Link href={"/client/contact/" + clientId}>
+              <Link href={"/admin/client/contact/" + clientId}>
                 <Button variant={"destructive"}>
                   <Ban />
                   Annuler

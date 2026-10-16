@@ -1,0 +1,128 @@
+"use client";
+import { Client, Requete } from "@prisma/client";
+import { AlertCircleIcon, FileBox } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { fetcher } from "@/lib/fetcher";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { DataTable } from "@/components/datatables";
+import { useState } from "react";
+import { LoaderOne } from "@/components/ui/loader";
+import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
+
+interface RequeteWithClient extends Requete {
+  client?: Client | null;
+}
+
+const PageRequete = () => {
+  const [selectedId, setSelectedId] = useState<string>("");
+  const {
+    isError,
+    isPending,
+    data: requetes
+  } = useQuery<RequeteWithClient[]>({
+    queryKey: ["requeteDraft"],
+    queryFn: () => fetcher(`/api/requete/draft`)
+  });
+
+  if (isPending) {
+    return (
+      <div className="min-h-screen flex items-center w-full justify-center text-center">
+        <LoaderOne />
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div className="m-4">
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle> Erreur de donnée </AlertTitle>
+          <AlertDescription>
+            <p>Une erreur est survenue lors du chargement des requêtes.</p>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+  const listes =
+    requetes.map((requete) => ({
+      ...requete,
+      client: requete.client?.nomClient || "Pas de client"
+    })) || [];
+
+  return (
+    <DataTable
+      chemins={[
+        { title: "Requête", url: "/admin/requete" },
+        { title: "Requête Brouillon", url: "/admin/draft" }
+      ]}
+      titre="Liste des Requêtes Brouillons"
+      selectAction={[
+        {
+          label: "Voir",
+          icon: <FileBox />,
+          url: `/admin/draft/${selectedId}`,
+          variantbtn: "blue"
+        },
+        {
+          label: "Supprimer",
+          icon: <AlertCircleIcon />,
+          url: `/admin/draft/${selectedId}/delete`,
+          variantbtn: "danger"
+        }
+      ]}
+      data={listes}
+      dateChose="dateDebut"
+      dateChoseTitle="Filter par Date"
+      columnStyles={{
+        sujet: (value, row) => (
+          <Link
+            href={`/admin/draft/${row.id}`}
+            className="font-medium hover:underline"
+          >
+            {row.sujet && row.sujet.length > 30 ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>{row.sujet.slice(0, 30) + "..."}</span>
+                </TooltipTrigger>
+                <TooltipContent className="w-[560px] p-4" side="bottom">
+                  <p>{value as string}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <span>{value as string}</span>
+            )}
+          </Link>
+        ),
+        type: (value) => <span className="uppercase">{value as string}</span>
+      }}
+      hideList={[
+        "createdAt",
+        "updatedAt",
+        "dateCloture",
+        "Intervention",
+        "logiciel",
+        "observation",
+        "clientId",
+        "dateDebut",
+        "description",
+        "isTacheClient",
+        "etat",
+        "status",
+        "technicien"
+      ]}
+      searchId="sujet"
+      searchPlaceholder="Rechercher un sujet..."
+      onRowSelect={(id) => setSelectedId(id)}
+      exportName="liste_requetes"
+      storageKey="requete-draft-datatable"
+    />
+  );
+};
+
+export default PageRequete;

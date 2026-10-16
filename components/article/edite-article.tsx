@@ -52,7 +52,7 @@ const EditeArticle = ({ article }: { article: Article }) => {
     transition(() => {
       updateArticle(article.id, values).then((data) => {
         toast.success(`Article ${data.titre} modifié avec succes`);
-        router.push("/frequents/details/" + data.id);
+        router.push("/admin/frequents/details/" + data.id);
       });
     });
   }
@@ -70,7 +70,7 @@ const EditeArticle = ({ article }: { article: Article }) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Question Frequentes", url: "/frequents" },
+              { title: "Question Frequentes", url: "/admin/frequents" },
               { title: "Modifier Article", url: "#" }
             ]}
           >

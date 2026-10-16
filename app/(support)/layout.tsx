@@ -1,19 +1,6 @@
-"use client";
-import { useTheme } from "next-themes";
-import Navbar from "./_components/Navbar";
-import { useEffect } from "react";
-
-const SupportLayout = ({ children }: { children: React.ReactNode }) => {
-  const { setTheme } = useTheme();
-  useEffect(() => {
-    setTheme("light");
-  }, []);
-  return (
-    <div className="min-h-screen flex flex-col items-center gap-y-4">
-      <Navbar />
-      {children}
-    </div>
-  );
-};
-
-export default SupportLayout;
+import { SiteHeader } from "@/components/marketing/site-header";
+import { SiteFooter } from "@/components/marketing/site-footer";
+import "@/styles/marketing.css";
+export default function SupportLayout({children}:{children:React.ReactNode}) {
+ return <div className="ms-site"><a className="ms-skip" href="#contenu">Aller au contenu</a><SiteHeader/><main id="contenu" className="min-h-screen flex flex-col items-center gap-y-4">{children}</main><SiteFooter/></div>;
+}

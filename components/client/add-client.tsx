@@ -68,7 +68,7 @@ const AddClient = () => {
             userId: session?.user.id ?? ""
           }).then(() => {
             toast.success("Client ajouté avec succès");
-            router.push("/client");
+            router.push("/admin/client");
           });
         })
         .catch(() => {
@@ -90,7 +90,7 @@ const AddClient = () => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Clients", url: "/client" },
+              { title: "Clients", url: "/admin/client" },
               { title: "Nouveau Client", url: "#" }
             ]}
           >
@@ -99,7 +99,7 @@ const AddClient = () => {
                 <Plus />
                 Ajouter Client
               </Button>
-              <Link href={"/client"}>
+              <Link href={"/admin/client"}>
                 <Button variant={"destructive"}>
                   <Ban />
                   Annuler

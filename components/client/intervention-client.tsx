@@ -11,8 +11,8 @@ const InterventionClient = ({
   return (
     <DataTable
       chemins={[
-        { title: "Clients", url: "/client" },
-        { title: "Details", url: `/client/detail/${clientId}` },
+        { title: "Clients", url: "/admin/client" },
+        { title: "Details", url: `/admin/client/detail/${clientId}` },
         { title: "Interventions", url: "#" }
       ]}
       data={items}

@@ -98,7 +98,7 @@ const AuthRegister = () => {
             };
             createUser(data).then((result) => {
               toast.success("Utilisateur créé avec succès !");
-              router.push("/register/" + result.id);
+              router.push("/admin/register/" + result.id);
             });
           });
         }

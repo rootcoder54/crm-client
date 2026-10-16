@@ -54,7 +54,7 @@ const EditeVideo = ({ video }: { video: Video }) => {
     transition(() => {
       updateVideo(video.id, values).then((data) => {
         toast.success(`Video ${data.nom} modifié avec succes`);
-        router.push("/video/details/" + data.id);
+        router.push("/admin/video/details/" + data.id);
       });
     });
   }
@@ -72,7 +72,7 @@ const EditeVideo = ({ video }: { video: Video }) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Videos", url: "/video" },
+              { title: "Videos", url: "/admin/video" },
               { title: "Editer Video", url: "#" }
             ]}
           >

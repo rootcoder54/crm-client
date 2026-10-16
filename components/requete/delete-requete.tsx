@@ -29,7 +29,7 @@ const DeleteRequete = ({ requete }: { requete: Requete }) => {
     transition(() => {
       deleteRequete(requete.id).then((data) => {
         toast.info(`Requête ${data.sujet} a été supprimé`);
-        router.push("/requete");
+        router.push("/admin/requete");
       });
     });
   };

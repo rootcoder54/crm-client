@@ -108,7 +108,7 @@ const DraftRequete = ({ requeteDraft }: { requeteDraft: Requete }) => {
           lastVisite(data.clientId, data.dateDebut).then((result) => {
             console.log(result);
             toast.success(`Requête ${data.sujet} enregistrer avec succes`);
-            router.push("/requete/detail/" + data.id);
+            router.push("/admin/requete/detail/" + data.id);
           });
         }
       });
@@ -128,7 +128,7 @@ const DraftRequete = ({ requeteDraft }: { requeteDraft: Requete }) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Requête Brouillon", url: "/draft" },
+              { title: "Requête Brouillon", url: "/admin/draft" },
               { title: "Brouillon", url: "#" }
             ]}
           >
@@ -137,7 +137,7 @@ const DraftRequete = ({ requeteDraft }: { requeteDraft: Requete }) => {
                 <Check />
                 Valider
               </Button>
-              <Link href={"/draft"}>
+              <Link href={"/admin/draft"}>
                 <Button variant={"destructive"}>
                   <Ban />
                   Annuler

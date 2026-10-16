@@ -5,6 +5,7 @@ import { getUserById } from "./action/user/user";
 import { prisma } from "./lib/db";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
+  pages: { signIn: "/admin/login", error: "/admin/login" },
   trustHost: true,  // Permet de faire confiance aux hôtes configurés.
   callbacks: {
     async signIn({ user }) {
