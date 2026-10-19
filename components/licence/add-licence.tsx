@@ -55,7 +55,7 @@ export function AddLicence() {
   useEffect(() => {
     if (!isLoading && clients?.length === 0) {
       toast.error("Veuillez ajouter un client avant de générer une licence.");
-      router.push("/admin/client");
+      router.push("/client");
     }
   }, [isLoading, clients, router]);
 

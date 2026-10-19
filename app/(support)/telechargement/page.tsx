@@ -21,7 +21,7 @@ const Page = () => {
                 Logiciel de paie et gestion du personnel
               </p>
               <a
-                href="/logiciels/rhpaie"
+                href="https://malisystem.com/logiciels/rhpaie"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 hover:underline"

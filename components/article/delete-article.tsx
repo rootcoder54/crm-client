@@ -29,7 +29,7 @@ const DeleteArticle = ({ article }: { article: Article }) => {
     transition(() => {
       deleteArticle(article.id).then((data) => {
         toast.info(`Article ${data.titre} a été supprimé`);
-        router.push("/admin/frequents");
+        router.push("/frequents");
       });
     });
   };

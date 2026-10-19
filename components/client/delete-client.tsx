@@ -37,7 +37,7 @@ const DeleteClient = ({ client }: { client: Client }) => {
           userId: session?.user.id ?? ""
         }).then(() => {
           toast.info(`Client ${data.nomClient} a été supprimé`);
-          router.push("/admin/client");
+          router.push("/client");
         });
       });
     });

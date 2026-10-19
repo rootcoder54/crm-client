@@ -51,7 +51,7 @@ const AddArticle = () => {
     transition(() => {
       createArticle(values).then((data) => {
         toast.success(`Article ${data.titre} enregistrer avec succes`);
-        router.push("/admin/frequents/details/" + data.id);
+        router.push("/frequents/details/" + data.id);
       });
     });
   }
@@ -69,7 +69,7 @@ const AddArticle = () => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Question Frequentes", url: "/admin/frequents" },
+              { title: "Question Frequentes", url: "/frequents" },
               { title: "Nouvelle Article", url: "#" }
             ]}
           >

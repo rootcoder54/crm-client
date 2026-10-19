@@ -29,7 +29,7 @@ const DeleteFacture = ({ facture }: { facture: Facture }) => {
     transition(() => {
       deleteFacture(facture.id).then((data) => {
         toast.info(`Facture N° ${data.numero} a été supprimé`);
-        router.push("/admin/facture");
+        router.push("/facture");
       });
     });
   };

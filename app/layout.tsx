@@ -12,8 +12,9 @@ const font = localFont({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Mali System — Génie logiciel", template: "%s | Mali System" },
-  description: "Solutions RHPaie, TimeSheet, RHData et RHFacture pour la gestion de la paie et des ressources humaines.",
+  title: { default: "Administration | Mali System", template: "%s | Administration Mali System" },
+  robots: { index: false, follow: false },
+  description: "Gestion des clients, requêtes, interventions et factures Mali System.",
   icons: {
     icon: "/favicon.ico"
   }

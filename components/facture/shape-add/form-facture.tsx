@@ -255,7 +255,7 @@ export function FactureForm() {
         Promise.all(promises).then(() => {
           localStorage.removeItem(STORAGE_KEY);
           toast.success("Facture enregistrée avec succès");
-          router.push("/admin/facture");
+          router.push("/facture");
         });
       });
     });
@@ -288,7 +288,7 @@ export function FactureForm() {
     <div className="flex flex-col h-full w-full">
       <HeaderPage
         chemins={[
-          { title: "Facture", url: "/admin/facture" },
+          { title: "Facture", url: "/facture" },
           { title: "Ajouter une facture", url: "#" }
         ]}
       >

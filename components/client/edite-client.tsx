@@ -64,7 +64,7 @@ const EditeClient = ({ client }: { client: Client }) => {
       updateClient(client.id, values)
         .then(() => {
           toast.success("Client edité avec succès");
-          router.push("/admin/client/detail/" + client.id);
+          router.push("/client/detail/" + client.id);
         })
         .catch(() => {
           toast.error("Une erreur est survenue");
@@ -85,7 +85,7 @@ const EditeClient = ({ client }: { client: Client }) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Clients", url: "/admin/client" },
+              { title: "Clients", url: "/client" },
               { title: "Editer Client", url: "#" }
             ]}
           >
@@ -94,7 +94,7 @@ const EditeClient = ({ client }: { client: Client }) => {
                 <SquarePen />
                 Editer Client
               </Button>
-              <Link href={"/admin/client/detail/" + client.id}>
+              <Link href={"/client/detail/" + client.id}>
                 <Button variant={"destructive"}>
                   <Ban />
                   Annuler

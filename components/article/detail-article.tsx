@@ -10,16 +10,16 @@ const DetailArticle = ({ article }: { article: Article }) => {
     <div>
       <HeaderPage
         chemins={[
-          { title: "Question Frequentes", url: "/admin/frequents" },
+          { title: "Question Frequentes", url: "/frequents" },
           { title: "Details Article", url: "#" }
         ]}
       >
-        <Link href={`/admin/frequents/edite/${article.id}`}>
+        <Link href={`/frequents/edite/${article.id}`}>
           <Button variant={"outline"}>
             <SquarePen /> Editer
           </Button>
         </Link>
-        <Link href={`/admin/frequents/delete/${article.id}`}>
+        <Link href={`/frequents/delete/${article.id}`}>
           <Button variant={"danger"}>
             <Trash /> Supprimer
           </Button>

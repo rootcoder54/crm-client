@@ -96,7 +96,7 @@ export const AddIntervention = ({
           })
           .then(() => {
             toast.success(`Intervention enregistrer avec succès`);
-            router.push(`/admin/requete/detail/${requete.id}`);
+            router.push(`/requete/detail/${requete.id}`);
           });
       } else {
         Promise.all(
@@ -114,7 +114,7 @@ export const AddIntervention = ({
           })
         ).then(() => {
           toast.success(`Intervention enregistrer avec succès`);
-          router.push(`/admin/requete/detail/${requete.id}`);
+          router.push(`/requete/detail/${requete.id}`);
         });
       }
     });

@@ -15,13 +15,13 @@ const ContratClient = ({
         {
           label: "Nouveau Contrat",
           icon: <Plus />,
-          url: `/admin/client/contrat/${clientId}/add`,
+          url: `/client/contrat/${clientId}/add`,
           variantbtn: "secondary"
         }
       ]}
       chemins={[
-        { title: "Clients", url: "/admin/client" },
-        { title: "Details", url: `/admin/client/detail/${clientId}` },
+        { title: "Clients", url: "/client" },
+        { title: "Details", url: `/client/detail/${clientId}` },
         { title: "Contrats", url: "#" }
       ]}
       selectAction={[]}

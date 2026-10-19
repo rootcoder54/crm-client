@@ -97,7 +97,7 @@ const AddBase = ({ clientId }: { clientId: string }) => {
             userId: session?.user.id ?? ""
           }).then(() => {
             toast.success("Base ajouté avec succès");
-            router.push("/admin/client/base/" + clientId);
+            router.push("/client/base/" + clientId);
           });
         })
         .catch((erreur) => {
@@ -119,8 +119,8 @@ const AddBase = ({ clientId }: { clientId: string }) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Clients", url: "/admin/client" },
-              { title: "Bases", url: "/admin/client/base/" + clientId },
+              { title: "Clients", url: "/client" },
+              { title: "Bases", url: "/client/base/" + clientId },
               { title: "Nouveau Base", url: "#" }
             ]}
           >
@@ -129,7 +129,7 @@ const AddBase = ({ clientId }: { clientId: string }) => {
                 <Plus />
                 Ajouter
               </Button>
-              <Link href={"/admin/client/base/" + clientId}>
+              <Link href={"/client/base/" + clientId}>
                 <Button variant={"destructive"}>
                   <Ban />
                   Annuler

@@ -33,8 +33,8 @@ export default auth((req) => {
   }
 });
 
-// Protect every admin path (including IDs containing dots) and every API.
-// Public pages and static files do not need a session lookup.
+// Protect root-level CRM pages, print routes and APIs, including dotted IDs.
+// Only Next.js internal assets bypass this check; public logos use an exact allowlist.
 export const config = {
-  matcher: ["/admin/:path*", "/api/:path*"]
+  matcher: ["/((?!_next/static|_next/image|_next/webpack-hmr).*)"]
 };

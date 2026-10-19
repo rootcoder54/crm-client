@@ -53,7 +53,7 @@ const AddVideo = () => {
     transition(() => {
       createVideo(values).then((data) => {
         toast.success(`Video ${data.nom} enregistrer avec succes`);
-        router.push("/admin/video/details/" + data.id);
+        router.push("/video/details/" + data.id);
       });
     });
   }
@@ -71,7 +71,7 @@ const AddVideo = () => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Videos", url: "/admin/video" },
+              { title: "Videos", url: "/video" },
               { title: "Nouvelle Video", url: "#" }
             ]}
           >
