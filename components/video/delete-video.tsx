@@ -29,7 +29,7 @@ const DeleteVideo = ({ video }: { video: Video }) => {
     transition(() => {
       deleteVideo(video.id).then((data) => {
         toast.info(`Video ${data.nom} a été supprimé`);
-        router.push("/admin/video");
+        router.push("/video");
       });
     });
   };

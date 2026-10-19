@@ -37,7 +37,7 @@ const DeleteBase = ({ base }: { base: Base }) => {
           userId: session?.user.id ?? ""
         }).then(() => {
           toast.info(`Base ${data.societe} a été supprimé`);
-          router.push("/admin/client/base" + `/${data.clientId}`);
+          router.push("/client/base" + `/${data.clientId}`);
           router.refresh();
         });
       });

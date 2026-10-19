@@ -70,19 +70,19 @@ export const UserButton = () => {
               <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <Link href={"/admin/register/" + session.user.id}>
+                <Link href={"/register/" + session.user.id}>
                   <DropdownMenuItem className="cursor-pointer">
                     <User />
                     <span>Profile</span>
                   </DropdownMenuItem>
                 </Link>
-                <Link href={"/admin/userlog"}>
+                <Link href={"/userlog"}>
                   <DropdownMenuItem className="cursor-pointer">
                     <BookUser />
                     <span>User Log</span>
                   </DropdownMenuItem>
                 </Link>
-                <Link href={"/admin/setting"}>
+                <Link href={"/setting"}>
                   <DropdownMenuItem className="cursor-pointer">
                     <Settings />
                     <span>Parametres</span>
@@ -95,7 +95,7 @@ export const UserButton = () => {
                   <Users />
                   <span>Mes Taches</span>
                 </DropdownMenuItem>
-                <Link href={"/admin/register"}>
+                <Link href={"/register"}>
                   <DropdownMenuItem>
                     <UserPlus />
                     <span>New User</span>
@@ -111,7 +111,7 @@ export const UserButton = () => {
                 </DropdownMenuItem>
               </a>
               <DropdownMenuSeparator />
-              <Link href={"/admin/logout"}>
+              <Link href={"/logout"}>
                 <DropdownMenuItem className="cursor-pointer">
                   <LogOut />
                   <span>Deconnexion</span>

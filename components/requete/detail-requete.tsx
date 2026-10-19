@@ -124,8 +124,8 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
     <div>
       <HeaderPage
         chemins={[
-          { title: "Requête", url: "/admin/requete" },
-          { title: "Detail", url: "/admin/requete/detail/" + requete.id }
+          { title: "Requête", url: "/requete" },
+          { title: "Detail", url: "/requete/detail/" + requete.id }
         ]}
       >
         <div className="flex md:hidden">
@@ -143,7 +143,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                     variant={"ghost"}
                     hidden={interventionControle}
                   >
-                    <Link href={`/admin/requete/intervention/${requete.id}/add`}>
+                    <Link href={`/requete/intervention/${requete.id}/add`}>
                       <PlusCircle />
                       Intervention
                     </Link>
@@ -151,7 +151,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                 )}
                 {requete.etat !== "CLOTURER" && (
                   <Button asChild variant={"ghost"} hidden={editeControle}>
-                    <Link href={`/admin/requete/edite/${requete.id}`}>
+                    <Link href={`/requete/edite/${requete.id}`}>
                       <SquarePen />
                       Editer
                     </Link>
@@ -159,14 +159,14 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                 )}
                 {requete.etat !== "CLOTURER" && (
                   <Button asChild variant={"ghost"} hidden={clotureControle}>
-                    <Link href={`/admin/requete/cloture/${requete.id}`}>
+                    <Link href={`/requete/cloture/${requete.id}`}>
                       <CalendarCheck2 />
                       Clôture
                     </Link>
                   </Button>
                 )}
                 <Button asChild variant={"danger"} hidden={deleteControle}>
-                  <Link href={`/admin/requete/delete/${requete.id}`}>
+                  <Link href={`/requete/delete/${requete.id}`}>
                     <Trash2 />
                     Supprimer
                   </Link>
@@ -178,7 +178,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
         <div className="hidden md:flex flex-row items-center space-x-2">
           {requete.etat !== "CLOTURER" && (
             <Button asChild hidden={interventionControle}>
-              <Link href={`/admin/requete/intervention/${requete.id}/add`}>
+              <Link href={`/requete/intervention/${requete.id}/add`}>
                 <PlusCircle />
                 Intervention
               </Link>
@@ -186,7 +186,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
           )}
           {requete.etat !== "CLOTURER" && (
             <Button asChild variant={"outline"} hidden={editeControle}>
-              <Link href={`/admin/requete/edite/${requete.id}`}>
+              <Link href={`/requete/edite/${requete.id}`}>
                 <SquarePen />
                 Editer
               </Link>
@@ -194,14 +194,14 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
           )}
           {requete.etat !== "CLOTURER" && (
             <Button asChild hidden={clotureControle}>
-              <Link href={`/admin/requete/cloture/${requete.id}`}>
+              <Link href={`/requete/cloture/${requete.id}`}>
                 <CalendarCheck2 />
                 Clôture
               </Link>
             </Button>
           )}
           <Button asChild variant={"danger"} hidden={deleteControle}>
-            <Link href={`/admin/requete/delete/${requete.id}`}>
+            <Link href={`/requete/delete/${requete.id}`}>
               <Trash2 />
               Supprimer
             </Link>
@@ -315,7 +315,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
               {items && items.length > 0 && (
                 <Link
                   target="_blank"
-                  href={"/admin/imprime/intervention/" + interventionID}
+                  href={"/imprime/intervention/" + interventionID}
                 >
                   <FileText />
                 </Link>
@@ -335,7 +335,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                   {
                     label: "Supprimer",
                     icon: <Trash2 />,
-                    url: `/admin/requete/intervention/${requete.id}/delete/${selectedId}`,
+                    url: `/requete/intervention/${requete.id}/delete/${selectedId}`,
                     variantbtn: "danger"
                   }
                 ]}

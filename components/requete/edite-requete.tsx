@@ -64,7 +64,7 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
     transition(() =>
       updateRequete(requete.id, values).then((data) => {
         toast.success(`Requete ${data.sujet} a été modifié avec succes`);
-        router.push("/admin/requete/detail/" + requete.id);
+        router.push("/requete/detail/" + requete.id);
       })
     );
   }
@@ -87,7 +87,7 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
-              { title: "Requête", url: "/admin/requete" },
+              { title: "Requête", url: "/requete" },
               { title: "Modifier", url: "#" }
             ]}
           >

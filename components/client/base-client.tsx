@@ -19,20 +19,20 @@ const BaseClient = ({
         {
           label: "Nouvelle Base",
           icon: <Plus />,
-          url: `/admin/client/base/${clientId}/add`,
+          url: `/client/base/${clientId}/add`,
           variantbtn: "secondary"
         }
       ]}
       chemins={[
-        { title: "Clients", url: "/admin/client" },
-        { title: "Details", url: `/admin/client/detail/${clientId}` },
+        { title: "Clients", url: "/client" },
+        { title: "Details", url: `/client/detail/${clientId}` },
         { title: "Bases", url: "#" }
       ]}
       selectAction={[
         {
           label: "Supprimer",
           icon: <Trash2 />,
-          url: `/admin/client/base/${clientId}/delete/${selectedId}`,
+          url: `/client/base/${clientId}/delete/${selectedId}`,
           variantbtn: "danger"
         }
       ]}

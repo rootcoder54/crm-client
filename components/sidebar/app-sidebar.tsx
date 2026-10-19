@@ -42,70 +42,70 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     navMain: [
       {
         title: "Accueil",
-        url: "/admin",
+        url: "/",
         icon: Home,
-        isActive: pathname === "/admin"
+        isActive: pathname === "/"
       },
       {
         title: "Employé",
-        url: "/admin/employe",
+        url: "/employe",
         icon: Users,
-        isActive: pathname === "/admin/employe"
+        isActive: pathname === "/employe"
       },
       {
         title: "Client",
-        url: "/admin/client",
+        url: "/client",
         icon: UserSquareIcon,
-        isActive: pathname.startsWith("/admin/client")
+        isActive: pathname.startsWith("/client")
       },
       {
         title: "Licence",
-        url: "/admin/licence",
+        url: "/licence",
         icon: Copyright,
-        isActive: pathname.startsWith("/admin/licence")
+        isActive: pathname.startsWith("/licence")
       },
       {
         title: "Requête",
-        url: "/admin/requete",
+        url: "/requete",
         icon: AlignLeft,
-        isActive: pathname.startsWith("/admin/requete")
+        isActive: pathname.startsWith("/requete")
       },
       {
         title: "Requête Brouillon",
-        url: "/admin/draft",
+        url: "/draft",
         icon: BookDashed,
-        isActive: pathname.startsWith("/admin/draft"),
+        isActive: pathname.startsWith("/draft"),
         badge: draftCount
       },
       {
         title: "Facture",
-        url: "/admin/facture",
+        url: "/facture",
         icon: FileChartPie,
-        isActive: pathname.startsWith("/admin/facture")
+        isActive: pathname.startsWith("/facture")
       },
       {
         title: "Video Astuce",
-        url: "/admin/video",
+        url: "/video",
         icon: FileChartPie,
-        isActive: pathname.startsWith("/admin/video")
+        isActive: pathname.startsWith("/video")
       },
       {
         title: "Formation User",
-        url: "/admin/formationuser",
+        url: "/formationuser",
         icon: FileArchive,
-        isActive: pathname === "/admin/formationuser"
+        isActive: pathname === "/formationuser"
       },
       {
         title: "Questions Frequents",
-        url: "/admin/frequents",
+        url: "/frequents",
         icon: MessageCircleQuestion,
-        isActive: pathname.startsWith("/admin/frequents")
+        isActive: pathname.startsWith("/frequents")
       },
       {
         title: "Importations",
-        url: "/admin/importation",
+        url: "/importation",
         icon: AppWindow,
-        isActive: pathname === "/admin/importation"
+        isActive: pathname === "/importation"
       }
     ]
   };
