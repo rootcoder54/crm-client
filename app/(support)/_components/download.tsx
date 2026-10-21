@@ -4,17 +4,17 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function DownloadTab() {
   return (
-    <div className="flex flex-col container px-5 md:px-8 lg:px-20 mx-auto my-3">
+    <div className="ms-download-tabs">
       <Tabs defaultValue="detail">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="detail">Details</TabsTrigger>
-          <TabsTrigger value="version">Autre Version</TabsTrigger>
+          <TabsTrigger value="detail">Présentation</TabsTrigger>
+          <TabsTrigger value="version">Autres versions</TabsTrigger>
         </TabsList>
         <TabsContent value="detail">
           <Detail />
@@ -102,7 +102,8 @@ const Detail = () => {
           trouve :
         </li>
         <li className="mb-2">
-          1- TimeSheet (pour la gestion des pointages et heures supplémentaires){" "}
+          1- TimeSheet (pour la gestion des pointages et heures
+          supplémentaires){" "}
         </li>
         <li className="mb-2">
           2- RHData (gestion globale des ressources humaines){" "}

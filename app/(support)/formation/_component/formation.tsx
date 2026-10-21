@@ -2,7 +2,7 @@ import { formations } from "@/constante/formation";
 
 export const ListFormation = () => {
   return (
-    <div className="flex flex-col">
+    <div className="ms-container ms-section" id="programme">
       {formations.map((formation, index) => (
         <Chapitre
           key={index}
@@ -18,7 +18,7 @@ export const ListFormation = () => {
 const Chapitre = ({
   id,
   titre,
-  lesson
+  lesson,
 }: {
   id: number;
   titre: string;
@@ -30,13 +30,13 @@ const Chapitre = ({
   }[];
 }) => {
   return (
-    <div className="flex flex-col mt-8 space-y-4">
-      <h2 className="text-xl text-neutral-700 font-bold underline">
+    <div className="ms-chapter">
+      <h2 className="ms-chapter-title">
         Chapitre {id} : {titre}
       </h2>
       {lesson.map((value, index) => (
-        <div key={index} className="border-b flex justify-between items-center">
-          <div className="flex items-center gap-x-1 cursor-pointer">
+        <div key={index} className="ms-lesson">
+          <div className="flex items-center gap-x-2">
             <span>{index + 1}</span>
             <span>-</span>
             <span>{value.titre}</span>

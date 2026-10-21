@@ -1,23 +1,14 @@
-
-const HeroFormation = () => {
-
+import SupportHero from "./SupportHero";
+export default function HeroFormation() {
   return (
-    <div className="flex flex-col items-center gap-y-6 py-20">
-      <span className="sm:text-lg md:text-xl lg:text-3xl font-extrabold">
-        Le seul cours dont vous avez besoin !
-      </span>
-      <span className="sm:text-lg md:text-xl lg:text-3xl font-extrabold">
-        
-      </span>
-      <div className="w-[320px] md:w-[420px] lg:w-[855px]">
-        <span className="text-lg">
-          Vous commencerez par découvrir ce qu&apos;est RHPaie et comment l&apos;utiliser
-          pour : calculer les bulletins de salaires , suivi des congés , gerer
-          le pointage , generer les ordres de virement ....
-        </span>
-      </div>
-    </div>
+    <SupportHero
+      eyebrow="Formation en ligne · RHPaie"
+      title="Prenez en main votre paie. À votre rythme."
+      description="Des premières étapes aux bulletins de salaire, apprenez à gérer vos congés, votre pointage et vos ordres de virement."
+    >
+      <a href="#programme" className="ms-button">
+        Explorer le programme ↓
+      </a>
+    </SupportHero>
   );
-};
-
-export default HeroFormation;
+}

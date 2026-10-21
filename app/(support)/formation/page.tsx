@@ -11,7 +11,7 @@ import {
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
-  DrawerTitle
+  DrawerTitle,
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
@@ -21,7 +21,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { formationLogin } from "../_components/loginFormation";
@@ -33,14 +33,14 @@ const FormationPage = () => {
 
   const formSchema = z.object({
     nom: z.string().min(1, {
-      message: "Le nom est obligatoire"
+      message: "Le nom est obligatoire",
     }),
     email: z.string().email({
-      message: "Email est obligatoire"
+      message: "Email est obligatoire",
     }),
     profession: z.string().min(1, {
-      message: "La profession est obligatoire"
-    })
+      message: "La profession est obligatoire",
+    }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,8 +48,8 @@ const FormationPage = () => {
     defaultValues: {
       nom: "",
       email: "",
-      profession: ""
-    }
+      profession: "",
+    },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -58,11 +58,7 @@ const FormationPage = () => {
     Cookies.set("usernom", values.nom, { expires: 300 });
     Cookies.set("userprofession", values.profession, { expires: 300 });
     setEtat(false);
-    await formationLogin(
-      values.nom,
-      values.email,
-      values.profession
-    )
+    await formationLogin(values.nom, values.email, values.profession)
       .then((result) => {
         console.log(result, "resultat"); // "La promesse est résolue !"
       })
@@ -75,19 +71,19 @@ const FormationPage = () => {
     if (!userEmail) {
       setEtat(true);
     }
-  }, [etat,userEmail]);
+  }, [etat, userEmail]);
 
   return (
     <div>
       <HeroFormation />
       <ListFormation />
       <Drawer open={etat}>
-        <DrawerContent>
-          <div className="mx-auto w-full max-w-sm py-8">
+        <DrawerContent className="ms-support ms-registration">
+          <div className="mx-auto w-full max-w-md px-6 py-8">
             <DrawerHeader>
               <DrawerTitle>Inscription</DrawerTitle>
               <DrawerDescription>
-                Inscrivez pour voir la formation de RHPaie
+                Inscrivez-vous pour accéder à la formation RHPaie.
               </DrawerDescription>
             </DrawerHeader>
             <Form {...form}>
@@ -100,7 +96,7 @@ const FormationPage = () => {
                   name="nom"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nom complete</FormLabel>
+                      <FormLabel>Nom complet</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -132,14 +128,17 @@ const FormationPage = () => {
                     <FormItem>
                       <FormLabel>Profession et entreprise</FormLabel>
                       <FormControl>
-                        <Input placeholder="Developpeur chez MaliSystem" {...field} />
+                        <Input
+                          placeholder="Developpeur chez MaliSystem"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">
-                  Inscrire
+                <Button type="submit" className="ms-button w-full">
+                  S’inscrire
                 </Button>
               </form>
             </Form>

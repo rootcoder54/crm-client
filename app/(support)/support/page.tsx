@@ -1,89 +1,101 @@
-"use client";
-
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle
-} from "@/components/ui/item";
-import Image from "next/image";
 import Link from "next/link";
-
-const listes = [
+import {
+  ArrowUpRight,
+  BookOpen,
+  CircleHelp,
+  PlayCircle,
+  FileText,
+  Clock,
+} from "lucide-react";
+import SupportHero from "../_components/SupportHero";
+const resources = [
   {
-    titre: "Manuel d'utilisation de RHPaie",
-    description: "Notre manuel pour vous aider à utiliser notre logiciel",
-    image: "/rhpaie.png",
-    lien: "https://malisystem.com/manual/RHPaie/index.html",
-    blank: true
-  },
-  {
-    titre: "Manuel d'utilisation de TimeSheet",
-    description: "Notre manuel pour vous aider aavec votre pointage",
-    image: "/timesheet.png",
-    lien: "https://malisystem.com/manual/TMS/index.html",
-    blank: true
-  },
-  {
-    titre: "Manuel de calcul des taxes",
-    description: "Les formules de calcul des taxes ITS AMO INPS ...",
-    image: "/taxe.png",
-    lien: "https://malisystem.com/assets/docs/taxe.pdf",
-    blank: true
-  },
-  {
-    titre: "Les Videos pratiques",
+    title: "Manuel RHPaie",
     description:
-      "Pleines d'informations utiles pour vous aider à utiliser votre plateforme",
-    image: "/astuce.png",
-    lien: "/support/astuce",
-    blank: false
+      "Retrouvez les étapes pour gérer votre paie, vos congés et vos déclarations.",
+    href: "https://malisystem.com/manual/RHPaie/index.html",
+    icon: BookOpen,
+    tag: "Documentation",
   },
   {
-    titre: "Vos questions fréquentes",
+    title: "Manuel TimeSheet",
     description:
-      "Les thématiques qui reviennent le plus souvent dans vos interrogations",
-    image: "/question.png",
-    lien: "/support/question",
-    blank: false
-  }
+      "Prenez en main le pointage et le suivi des heures de vos équipes.",
+    href: "https://malisystem.com/manual/TMS/index.html",
+    icon: Clock,
+    tag: "Documentation",
+  },
+  {
+    title: "Calcul des taxes",
+    description:
+      "Consultez le guide de calcul des taxes et des retenues sur salaire.",
+    href: "https://malisystem.com/assets/docs/taxe.pdf",
+    icon: FileText,
+    tag: "Guide PDF",
+  },
+  {
+    title: "Vidéos pratiques",
+    description:
+      "Suivez nos démonstrations pour avancer, une manipulation à la fois.",
+    href: "/support/astuce",
+    icon: PlayCircle,
+    tag: "Tutoriels",
+  },
+  {
+    title: "Questions fréquentes",
+    description:
+      "Trouvez des réponses aux questions que vous rencontrez au quotidien.",
+    href: "/support/question",
+    icon: CircleHelp,
+    tag: "Réponses utiles",
+  },
 ];
-
-const Page = () => {
-
+export default function SupportPage() {
   return (
-    <div>
-      <div className="flex flex-col py-6 px-8 gap-y-9 container">
-        <h2 className="text-3xl text-zinc-700 font-bold">
-          Notre bibliothèque de support pour vous aider à mieux utiliser nos
-          solutions
-        </h2>
-      </div>
-      <div className="flex flex-col gap-y-6 container px-8 pb-8">
-        {listes.map((item, index) => (
-          <Link
-            key={index}
-            href={item.lien}
-            target={item.blank ? "_blank" : ""}
-            className="group"
-          >
-            <Item variant="outline" className="hover:bg-blue-400/10 group-hover:border-blue-400">
-              <ItemMedia variant="image">
-                <Image src={item.image} alt="logo" width={30} height={30} />
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle className="text-lg group-hover:text-blue-500">
-                  {item.titre}
-                </ItemTitle>
-                <ItemDescription>{item.description}</ItemDescription>
-              </ItemContent>
-            </Item>
-          </Link>
-        ))}
-      </div>
-    </div>
+    <>
+      <SupportHero
+        eyebrow="À vos côtés, au quotidien"
+        title="Les bonnes ressources. Au bon moment."
+        description="Un guide, une réponse, une démonstration : tout pour tirer le meilleur de vos solutions Malisystem."
+      />
+      <section className="ms-container ms-section">
+        <div className="ms-section-heading">
+          <div className="ms-eyebrow">Centre d’aide</div>
+          <h2>Comment pouvons-nous vous aider ?</h2>
+        </div>
+        <div className="ms-resource-grid">
+          {resources.map(({ icon: Icon, ...r }) => (
+            <Link
+              key={r.href}
+              href={r.href}
+              className="ms-card"
+              {...(r.href.startsWith("https")
+                ? { target: "_blank", rel: "noopener noreferrer" }
+                : {})}
+            >
+              <span className="ms-card-icon">
+                <Icon size={26} />
+              </span>
+              <span className="ms-card-tag">{r.tag}</span>
+              <h3>{r.title}</h3>
+              <p>{r.description}</p>
+              <span className="ms-card-link">
+                Consulter{" "}
+                {r.href.startsWith("https") ? <ArrowUpRight size={18} /> : "→"}
+              </span>
+            </Link>
+          ))}
+        </div>
+        <div className="ms-contact-panel">
+          <div>
+            <h2>Besoin d’un accompagnement ?</h2>
+            <p>Notre équipe vous aide à trouver la bonne solution.</p>
+          </div>
+          <a href="https://malisystem.com/contact.php" className="ms-button">
+            Parlons-en →
+          </a>
+        </div>
+      </section>
+    </>
   );
-};
-
-export default Page;
+}

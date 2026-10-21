@@ -1,110 +1,72 @@
-import { buttonVariants } from "@/components/ui/button";
-import Image from "next/image";
+"use client";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover";
-import { BadgeInfo, ClipboardList, Download, Menu } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-const Navbar = () => {
-  const pathname = usePathname();
-  const menus = [
-    {
-      name: "Formation",
-      href: "/formation",
-      isSelect: pathname.startsWith("/formation"),
-      icon: <ClipboardList />
-    },
-    {
-      name: "Telechargement",
-      href: "/telechargement",
-      isSelect: pathname.startsWith("/telechargement"),
-      icon: <Download />
-    },
-    {
-      name: "Support",
-      href: "/support",
-      isSelect: pathname.startsWith("/support"),
-      icon: <BadgeInfo />
-    }
-  ];
+import { useState } from "react";
+import { Menu, X, ArrowUpRight } from "lucide-react";
+const links = [
+  { href: "/formation", label: "Formation" },
+  { href: "/telechargement", label: "Téléchargements" },
+  { href: "/support", label: "Centre d’aide" },
+];
+export default function Navbar() {
+  const path = usePathname();
+  const [open, setOpen] = useState(false);
   return (
-    <div className="sticky top-0 z-50 w-full bg-background/70 backdrop-blur-sm flex justify-center items-center py-0">
-      <div className="flex justify-between items-center w-full md:w-3/4 px-3 border-b-2 py-2">
-        <div className="flex items-center gap-x-3">
-          <Link
-            href="https://malisystem.com/"
-            className="flex items-center gap-1"
-          >
-            <Image
-              src={"/msys.png"}
-              alt="logo"
-              width={54}
-              height={45}
-              className="dark:invert"
-            />
-            <div className="hidden lg:flex lg:flex-col xl:flex-row lg:items-center">
-              <span className="font-bold text-2xl">MALI</span>
-              <span className="font-bold text-yellow-500 text-2xl">SYSTEM</span>
-            </div>
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-x-1">
-          <div className="hidden lg:flex items-center gap-x-1">
-            {menus.map((menu, index) => (
-              <Link
-                key={index}
-                href={menu.href}
-                className={cn(
-                  buttonVariants({ variant: menu.isSelect ? "blue" : "ghost" })
-                )}
-              >
-                {menu.icon}
-                {menu.name}
-              </Link>
-            ))}
-          </div>
-          <div className="lg:hidden flex">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">
-                  <Menu />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[250px]">
-                <div className="flex flex-col gap-y-2">
-                  {menus.map((menu, index) => (
-                    <Link
-                      key={index}
-                      href={menu.href}
-                      className={cn(
-                        buttonVariants({
-                          variant: menu.isSelect ? "blue" : "ghost"
-                        }),
-                        "justify-start"
-                      )}
-                    >
-                      {menu.icon}
-                      {menu.name}
-                    </Link>
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-          <Link href="/" className={buttonVariants({ variant: "gray" })}>
-            Admin
-          </Link>
+    <>
+      <div className="ms-announcement">
+        <div className="ms-container">
+          <span>Votre partenaire paie & RH depuis 2006</span>
+          <a href="https://malisystem.com/RHP15_Nouveautes.php">
+            Découvrez RHPaie 15 →
+          </a>
         </div>
       </div>
-    </div>
+      <header className="ms-header">
+        <div className="ms-container ms-header-inner">
+          <a href="https://malisystem.com" className="ms-brand">
+            <Image src="/msys.png" alt="" width={40} height={40} />
+            <span>
+              MALI<span>SYSTEM</span>
+              <small>Génie logiciel</small>
+            </span>
+          </a>
+          <button
+            className="ms-menu-toggle"
+            aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={open}
+            aria-controls="support-navigation"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <X /> : <Menu />}
+          </button>
+          <nav
+            id="support-navigation"
+            className={`ms-nav ${open ? "is-open" : ""}`}
+            aria-label="Navigation principale"
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setOpen(false);
+            }}
+          >
+            <a href="https://malisystem.com">
+              Notre site <ArrowUpRight size={14} />
+            </a>
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={path.startsWith(link.href) ? "page" : undefined}
+                onClick={() => setOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <a href="https://malisystem.com/contact.php" className="ms-button">
+              Nous contacter <ArrowUpRight size={16} />
+            </a>
+          </nav>
+        </div>
+      </header>
+    </>
   );
-};
-
-export default Navbar;
+}
