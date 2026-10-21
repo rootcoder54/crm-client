@@ -1,169 +1,176 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import HeaderPage from "../features/header-page";
-import { Facture } from "@prisma/client";
-import { fetcher } from "@/lib/fetcher";
-import { LoaderOne } from "../ui/loader";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import type { Facture, ItemFacture, Client } from "@prisma/client";
+import { Eye, FileText, Wallet } from "lucide-react";
+import HeaderPage from "@/components/features/header-page";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "@/components/ui/table";
-import { AlertCircleIcon, Printer } from "lucide-react";
-import { format } from "date-fns";
-import { Button } from "../ui/button";
+  Metric,
+  PageIntro,
+  QueryState,
+  StatusPill,
+} from "@/components/crm/workspace";
+import { Button } from "@/components/ui/button";
+import { fetcher } from "@/lib/fetcher";
+import { formatAmount, formatDate } from "@/lib/crm-metrics";
+import { FactureView } from "./shape-add/view-facture";
 
 export const DetailFacture = ({ idFacture }: { idFacture: string }) => {
+  const [preview, setPreview] = useState(false);
   const {
-    isError,
+    data: facture,
     isPending,
-    data: facture
+    isError,
+    refetch,
   } = useQuery<
-    Facture & {
-      itemFactures: {
-        id: string;
-        remise: number | null;
-        createdAt: Date;
-        updatedAt: Date;
-        reference: string;
-        libelle: string;
-        quantity: number;
-        unitPrice: number;
-        tva: number | null;
-        total: number;
-        factureId: string;
-      }[];
-    }
+    Facture & { itemFactures: ItemFacture[]; client: Client | null }
   >({
     queryKey: ["facture", idFacture],
-    queryFn: () => fetcher(`/api/facture/details/${idFacture}`)
+    queryFn: () => fetcher(`/api/facture/details/${idFacture}`),
   });
-
-  if (isPending) {
+  if (isPending || isError || !facture)
     return (
-      <div className="min-h-screen flex items-center w-full justify-center text-center">
-        <LoaderOne />
-      </div>
+      <QueryState
+        error={isError || (!isPending && !facture)}
+        retry={() => void refetch()}
+      />
     );
-  }
-
-  if (isError) {
-    return (
-      <div className="m-4">
-        <Alert variant="destructive">
-          <AlertCircleIcon />
-          <AlertTitle> Erreur de donnée </AlertTitle>
-          <AlertDescription>
-            <p>Une erreur est survenue lors du chargement des clients.</p>
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-
+  const amount = (value: number | null) => formatAmount(value, facture.devise);
   return (
-    <div>
+    <div className="crm-workspace">
       <HeaderPage
         chemins={[
           { title: "Factures", url: "/facture" },
-          { title: "Facture N° " + facture.numero, url: "#" }
+          { title: facture.numero, url: "#" },
         ]}
       >
-        <Button variant={"outline"}>
-          <Printer />
+        <Button variant="outline" onClick={() => setPreview(true)}>
+          <Eye size={18} />
           Aperçu
         </Button>
       </HeaderPage>
-      <div className="flex flex-col h-full w-full text-xl">
-        <div className="flex flex-row items-start mt-10">
-          <div className="flex flex-col">
-            <div className="grid grid-cols-3 gap-4">
-              <span>FACTURE N° </span>
-              <span className="text-center">:</span>
-              <span>{facture.numero}</span>
-              <span>Date </span>
-              <span className="text-center">:</span>
-              <span>{format(facture.date, "dd/MM/yyyy")}</span>
-            </div>
-          </div>
+      <div className="crm-page-content">
+        <PageIntro
+          eyebrow="FACTURATION · DÉTAIL"
+          title={`Facture ${facture.numero}`}
+          description={`${facture.client?.nomClient ?? "Client"} · Émise le ${formatDate(facture.date)}`}
+        >
+          <StatusPill done={!!facture.acquittee}>
+            {facture.acquittee ? "Acquittée" : "Non acquittée"}
+          </StatusPill>
+        </PageIntro>
+        <div className="crm-metrics crm-metrics-three">
+          <Metric
+            label="Total TTC"
+            value={amount(facture.totalTTC)}
+            detail={facture.type || "Facture"}
+            icon={Wallet}
+          />
+          <Metric
+            label="Prestations"
+            value={facture.itemFactures.length}
+            detail="Lignes enregistrées"
+            icon={FileText}
+            tone="violet"
+          />
+          <Metric
+            label="Règlement"
+            value={facture.modeReglement || "Non précisé"}
+            detail={
+              facture.acquittee ? "Facture acquittée" : "Règlement à suivre"
+            }
+            icon={Wallet}
+            tone="amber"
+          />
         </div>
-        <div className="flex flex-col mt-10">
-          <Table className="w-full max-w-full border border-gray-300">
-            <TableHeader>
-              <TableRow className="bg-gray-200 hover:bg-gray-300 border-black">
-                <TableHead className="text-lg border border-black">
-                  Ref.
-                </TableHead>
-                <TableHead className="text-lg border border-black">
-                  Description
-                </TableHead>
-                <TableHead className="text-lg border border-black">
-                  Quantité
-                </TableHead>
-                <TableHead className="text-lg border border-black">
-                  PUHT
-                </TableHead>
-                <TableHead className="text-lg border border-black">
-                  Remise %
-                </TableHead>
-                <TableHead className="text-lg border border-black">
-                  TVA %
-                </TableHead>
-                <TableHead className="text-lg border border-black">
-                  Total HT
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {facture.itemFactures.map((item, key) => (
-                <TableRow key={key} className="hover:bg-gray-100 h-full">
-                  <TableCell className="text-lg border border-black">
-                    {item.reference}
-                  </TableCell>
-                  <TableCell className="text-lg border border-black h-full">
-                    <p className="text-balance">{item.libelle}</p>
-                  </TableCell>
-                  <TableCell className="text-lg border border-black">
-                    {item.quantity}
-                  </TableCell>
-                  <TableCell className="text-lg border border-black">
-                    {item.unitPrice}
-                  </TableCell>
-                  <TableCell className="text-lg border border-black">
-                    {item.remise}
-                  </TableCell>
-                  <TableCell className="text-lg border border-black">
-                    {item.tva}
-                  </TableCell>
-                  <TableCell className="text-lg border border-black">
-                    {item.total}
-                  </TableCell>
-                </TableRow>
+        <section className="crm-panel">
+          <div className="crm-panel-heading">
+            <h2 className="text-xl font-semibold">Détail des prestations</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="crm-simple-table">
+              <thead>
+                <tr>
+                  {[
+                    "Description",
+                    "Quantité",
+                    "Prix HT",
+                    "Remise",
+                    "TVA",
+                    "Total TTC",
+                  ].map((label) => (
+                    <th key={label}>{label}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {facture.itemFactures.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <strong className="font-medium">{item.libelle}</strong>
+                      <p>{item.reference}</p>
+                    </td>
+                    <td>{item.quantity}</td>
+                    <td>{amount(item.unitPrice)}</td>
+                    <td>{item.remise ?? 0} %</td>
+                    <td>{item.tva ?? 0} %</td>
+                    <td>{amount(item.total)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section className="crm-panel crm-form-section">
+          <div className="crm-form-grid">
+            <div>
+              <h2 className="text-lg font-semibold">Observations</h2>
+              <p className="text-muted-foreground mt-3 whitespace-pre-wrap">
+                {facture.observation || "Aucune observation."}
+              </p>
+            </div>
+            <dl className="space-y-3 text-sm">
+              {[
+                ["Total HT brut", facture.totalHT],
+                ["Remises", facture.remise],
+                ["TVA", facture.totalTVA],
+                ["Total TTC", facture.totalTTC],
+              ].map(([label, value]) => (
+                <div
+                  key={String(label)}
+                  className="flex justify-between gap-4 last:border-t last:pt-4 last:font-semibold last:text-lg"
+                >
+                  <dt>{label}</dt>
+                  <dd>{amount(value as number | null)}</dd>
+                </div>
               ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        <div className="mt-10">
-          <div className="flex flex-col items-start">
-            <div className="grid grid-cols-2 gap-6 justify-items-end">
-              <span className="text-lg">Total HT :</span>
-              <span className="text-lg">{facture.totalHT}</span>
-              <span className="text-lg">Total Remises :</span>
-              <span className="text-lg">0</span>
-              <span className="text-lg">TVA 18% :</span>
-              <span className="text-lg">{facture.totalTVA}</span>
-              <span className="text-lg">Total TTC :</span>
-              <span className="text-lg">{facture.totalTTC}</span>
-            </div>
+            </dl>
           </div>
-        </div>
+        </section>
       </div>
+      <FactureView
+        open={preview}
+        close={() => setPreview(false)}
+        facture={{
+          numero: facture.numero,
+          date: formatDate(facture.date),
+          client: facture.client?.nomClient ?? "",
+          clientId: facture.client?.numero ?? "",
+          type: facture.type ?? "FACTURE",
+          devise: facture.devise ?? "CFA",
+          items: facture.itemFactures.map((item) => ({
+            ...item,
+            description: item.libelle,
+            remise: item.remise ?? 0,
+            tva: item.tva ?? 0,
+          })),
+          totalHT: facture.totalHT ?? 0,
+          totalRemise: facture.remise ?? 0,
+          totalTVA: facture.totalTVA ?? 0,
+          totalTTC: facture.totalTTC ?? 0,
+        }}
+      />
     </div>
   );
 };

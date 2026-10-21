@@ -1,10 +1,5 @@
 "use client";
-import {
-  Metric,
-  PageIntro,
-  FilterTabs,
-  StatusPill,
-} from "@/components/crm/workspace";
+import { Metric, PageIntro, StatusPill } from "@/components/crm/workspace";
 import { formatDate, isUnassigned } from "@/lib/crm-metrics";
 import { Clock3, CheckCircle2, UserRound } from "lucide-react";
 import { Requete, UserRole } from "@prisma/client";
@@ -40,12 +35,6 @@ interface RequeteWithClient extends Requete {
 
 const PageRequete = () => {
   const { data: session } = useSession();
-  const [view, setView] = useState("all");
-  useEffect(() => {
-    const preset = new URLSearchParams(window.location.search).get("view");
-    if (preset && ["open", "closed", "unassigned"].includes(preset))
-      setView(preset);
-  }, []);
   const [selectedId, setSelectedId] = useState<string>("");
   const [deleteControle, setDeleteControle] = useState<boolean>(false);
 
@@ -97,14 +86,6 @@ const PageRequete = () => {
   const open = requetes.filter((r) => !r.dateCloture);
   const closed = requetes.filter((r) => !!r.dateCloture);
   const unassigned = open.filter((r) => isUnassigned(r.technicien));
-  const rows =
-    view === "open"
-      ? open
-      : view === "closed"
-        ? closed
-        : view === "unassigned"
-          ? unassigned
-          : requetes;
   return (
     <div className="crm-workspace crm-list-page">
       <PageIntro
@@ -134,21 +115,6 @@ const PageRequete = () => {
           tone="violet"
         />
       </div>
-      <FilterTabs
-        label="Filtrer les requêtes"
-        value={view}
-        onChange={setView}
-        items={[
-          { value: "all", label: "Toutes", count: requetes.length },
-          { value: "open", label: "En cours", count: open.length },
-          { value: "closed", label: "Clôturées", count: closed.length },
-          {
-            value: "unassigned",
-            label: "À attribuer",
-            count: unassigned.length,
-          },
-        ]}
-      />
       <div className="crm-panel crm-table-panel">
         <DataTable
           chemins={[
@@ -180,7 +146,7 @@ const PageRequete = () => {
               hide: deleteControle,
             },
           ]}
-          data={rows}
+          data={requetes}
           globalSearch
           rowHref={(row) => `/requete/detail/${row.id}`}
           dateChose="dateDebut"

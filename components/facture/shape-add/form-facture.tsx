@@ -1,17 +1,29 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Client } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "@/components/ui/table";
+  Check,
+  ChevronsUpDown,
+  Eye,
+  FileText,
+  Plus,
+  RotateCcw,
+  Save,
+  Trash2,
+  Users,
+} from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
   Command,
@@ -19,753 +31,556 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList
+  CommandList,
 } from "@/components/ui/command";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList
-} from "@/components/ui/combobox";
-import { Button } from "@/components/ui/button";
-import { LoaderOne } from "@/components/ui/loader";
-import { useQuery } from "@tanstack/react-query";
-import { Client } from "@prisma/client";
-import { fetcher } from "@/lib/fetcher";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown, Plus, RotateCcw, Trash2 } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
-import { createFacture, maxorder } from "@/services/facture.service";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import HeaderPage from "@/components/features/header-page";
-import { Ban, Printer, Save } from "lucide-react";
-import { FactureView } from "./view-facture";
-import { createItemFacture } from "@/services/itemFacture.service";
-import { useRouter } from "next/navigation";
+import { EmptyState, PageIntro } from "@/components/crm/workspace";
+import { fetcher } from "@/lib/fetcher";
+import { formatAmount } from "@/lib/crm-metrics";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
+  invoiceDraftSchema,
+  invoiceEditingSchema,
+  invoiceTotals,
+  type InvoiceDraft,
+  type InvoiceLine,
+} from "@/lib/invoice-draft";
+import { saveInvoiceDraft } from "@/services/invoice-draft.service";
+import { FactureView } from "./view-facture";
 
-type Item = {
-  reference: string;
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  remise: number | undefined;
-  tva: number | undefined;
-  total: number;
+const STORAGE_KEY = "facture-form-draft";
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
+const emptyDraft = (): InvoiceDraft => ({
+  clientId: "",
+  date: today(),
+  type: "FACTURE",
+  devise: "CFA",
+  modeReglement: "Espèce",
+  observation: "",
+  items: [],
+});
 
 export function FactureForm() {
-  const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const { data: clientList, isLoading } = useQuery<Client[]>({
+  const queryClient = useQueryClient();
+  const {
+    data: clients = [],
+    isPending,
+    isError,
+    refetch,
+  } = useQuery<Client[]>({
     queryKey: ["clients"],
-    queryFn: () => fetcher(`/api/client`)
+    queryFn: () => fetcher("/api/client"),
   });
-
-  const [openClient, setopenClient] = useState<boolean>(false);
-  const [openView, setopenView] = useState<boolean>(false);
-
-  const [order, setorder] = useState<number>();
-  const [numero, setnumero] = useState<string>("");
-  const [date, setDate] = useState<Date>(new Date());
-  const [clientId, setclientId] = useState<string | null>(null);
-  const [type, setType] = useState<string>("FACTURE");
-  const [devise, setDevise] = useState<string>("CFA");
-  const [modeReglement, setmodeReglement] = useState<string>("Espèce");
-  const [observation, setObservation] = useState<string>("");
-  const [itemFacture, setItemFacture] = useState<Item[]>([]);
-
-  const STORAGE_KEY = "facture-form-draft";
+  const [draft, setDraft] = useState<InvoiceDraft>(emptyDraft);
   const [hydrated, setHydrated] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const saveLock = useRef(false);
+  const [openClient, setOpenClient] = useState(false);
+  const [preview, setPreview] = useState(false);
+  const [storageAvailable, setStorageAvailable] = useState(true);
+  const client = clients.find((c) => c.id === draft.clientId);
+  const totals = invoiceTotals(draft.items);
+  const amount = (value: number) => formatAmount(value, draft.devise);
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    setHydrated(true);
-    if (!saved) return;
-
     try {
-      const data = JSON.parse(saved);
-      //setorder(data.order);
-      setnumero(data.numero ?? "");
-      setDate(data.date ? new Date(data.date) : new Date());
-      setclientId(data.clientId ?? null);
-      setType(data.type ?? "FACTURE");
-      setDevise(data.devise ?? "CFA");
-      setmodeReglement(data.modeReglement ?? "Espèce");
-      setObservation(data.observation ?? "");
-      setItemFacture(data.itemFacture ?? []);
-    } catch (error) {
-      console.error("Erreur lors du chargement du brouillon :", error);
-      setHydrated(true);
-      localStorage.removeItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        // Preserve the previous editor's local drafts, including unfinished lines.
+        const lines = saved.items ?? saved.itemFacture ?? [];
+        const candidate = {
+          ...emptyDraft(),
+          ...saved,
+          clientId: saved.clientId ?? "",
+          date: saved.date?.slice(0, 10) || today(),
+          items: lines.map((item: InvoiceLine) => ({
+            reference: item.reference ?? "",
+            description: item.description ?? "",
+            quantity: Number(item.quantity ?? 1),
+            unitPrice: Number(item.unitPrice ?? 0),
+            remise: Number(item.remise ?? 0),
+            tva: Number(item.tva ?? 18),
+          })),
+        };
+        const parsed = invoiceEditingSchema.safeParse(candidate);
+        if (parsed.success) setDraft(parsed.data);
+        else
+          toast.warning(
+            "Le brouillon enregistré est invalide. Vérifiez les informations avant de recommencer.",
+          );
+      }
+    } catch {
+      setStorageAvailable(false);
     }
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
-    if (!hydrated) {
-      return;
+    if (!hydrated || saveLock.current) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+    } catch {
+      setStorageAvailable(false);
     }
+  }, [draft, hydrated]);
 
-    const data = {
-      //order,
-      numero,
-      date: date.toISOString(),
-      clientId,
-      type,
-      devise,
-      modeReglement,
-      observation,
-      itemFacture
-    };
-    console.log(data);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [
-    //order,
-    hydrated,
-    numero,
-    date,
-    clientId,
-    type,
-    devise,
-    modeReglement,
-    observation,
-    itemFacture
-  ]);
-
-  const addFactureItemBtn = () => {
-    if (!clientId) {
-      toast.warning("Veuillez sélectionner un client d'abord.");
-      return;
-    }
-    setItemFacture((prev) => [
-      ...prev,
+  const update = <K extends keyof InvoiceDraft>(
+    key: K,
+    value: InvoiceDraft[K],
+  ) => setDraft((current) => ({ ...current, [key]: value }));
+  const changeLine = (index: number, patch: Partial<InvoiceLine>) =>
+    setDraft((current) => ({
+      ...current,
+      items: current.items.map((item, i) =>
+        i === index ? { ...item, ...patch } : item,
+      ),
+    }));
+  const addLine = () =>
+    update("items", [
+      ...draft.items,
       {
-        reference:
-          clientList?.filter((client) => client.id === clientId)[0]?.numero +
-            (prev.length + 1).toString() || "",
+        reference: "",
         description: "",
         quantity: 1,
         unitPrice: 0,
         remise: 0,
         tva: 18,
-        total: 0
-      }
+      },
     ]);
+  const reset = () => {
+    if (window.confirm("Effacer le brouillon et toutes ses lignes ?"))
+      setDraft(emptyDraft());
   };
-
-  const removeIntervention = (ref: string) => {
-    setItemFacture((prev) => prev.filter((item) => item.reference !== ref));
-  };
-
-  const handleItemChange = (index: number, values: Item) => {
-    setItemFacture((prev) =>
-      prev.map((item, i) => (i === index ? values : item))
-    );
-  };
-
-  const handerViewFacture = () => {
-    if (!clientId) {
-      toast.warning("Veuillez sélectionner un client d'abord.");
+  const save = async () => {
+    if (saveLock.current) return;
+    const result = invoiceDraftSchema.safeParse(draft);
+    if (!result.success) {
+      toast.error(result.error.issues[0].message);
       return;
     }
-    setopenView(true);
-  };
-
-  const handerCloseViewFacture = () => {
-    setopenView(false);
-  };
-
-  const handlerCancel = () => {
-    router.back();
-  };
-
-  const handleReset = () => {
-    //setorder(undefined);
-    setnumero("");
-    setDate(new Date());
-    setclientId(null);
-    setType("FACTURE");
-    setDevise("CFA");
-    setmodeReglement("Espèce");
-    setObservation("");
-    setItemFacture([]);
-
-    localStorage.removeItem(STORAGE_KEY);
-  };
-
-  const handleSave = () => {
-    if (!numero || !date || !clientId || itemFacture.length === 0) {
-      toast.warning(
-        "Veuillez remplir tous les champs obligatoires avant d'enregistrer."
-      );
+    if (!client?.numero) {
+      toast.error("Le client doit avoir un numéro dans sa fiche.");
       return;
     }
-    startTransition(() => {
-      const totalHT = itemFacture.reduce(
-        (acc, item) => acc + item.unitPrice * item.quantity,
-        0
+    saveLock.current = true;
+    setSaving(true);
+    try {
+      const invoice = await saveInvoiceDraft(result.data);
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {
+        /* Saving the invoice succeeded even if browser storage is unavailable. */
+      }
+      await queryClient.invalidateQueries({ queryKey: ["factures"] });
+      toast.success(`Facture ${invoice.numero} enregistrée`);
+      router.push(`/facture/details/${invoice.id}`);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Enregistrement impossible. Votre brouillon est conservé.",
       );
-      const totalTTC = itemFacture.reduce((acc, item) => acc + item.total, 0);
-      const totalTVA = itemFacture.reduce(
-        (acc, item) =>
-          acc + (item.unitPrice * item.quantity * (item.tva || 0)) / 100,
-        0
-      );
-      createFacture({
-        numero,
-        date,
-        type,
-        acquittee: false,
-        numeroOrdre: order,
-        modeReglement,
-        devise,
-        observation,
-        clientId,
-        totalHT,
-        totalTVA,
-        totalTTC
-      }).then((facture) => {
-        //toast.success("Facture ajoutée avec succès");
-        const promises = itemFacture.map((item) => {
-          const donnee = {
-            reference: item.reference,
-            libelle: item.description,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            remise: item.remise,
-            tva: item.tva,
-            total: item.total,
-            factureId: facture.id
-          };
-          return createItemFacture(donnee);
-        });
-
-        Promise.all(promises).then(() => {
-          localStorage.removeItem(STORAGE_KEY);
-          toast.success("Facture enregistrée avec succès");
-          router.push("/facture");
-        });
-      });
-    });
+      saveLock.current = false;
+      setSaving(false);
+    }
   };
-
-  useEffect(() => {
-    const fetchOrder = async () => {
-      const res = await maxorder(); // si c’est une server action valide
-      setorder(res + 1);
-      console.log("max order:", res);
-    };
-    fetchOrder();
-  }, []);
-
-  if (isPending) {
-    return (
-      <AlertDialog open={true}>
-        <AlertDialogTrigger />
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle />
-            <LoaderOne />
-          </AlertDialogHeader>
-        </AlertDialogContent>
-      </AlertDialog>
-    );
-  }
 
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="crm-workspace crm-invoice-editor">
       <HeaderPage
         chemins={[
-          { title: "Facture", url: "/facture" },
-          { title: "Ajouter une facture", url: "#" }
+          { title: "Factures", url: "/facture" },
+          { title: "Nouvelle facture", url: "#" },
         ]}
       >
-        <Button onClick={handleSave}>
-          <Save />
-          Enregistrer
-        </Button>
-        <Button variant={"outline"} onClick={handerViewFacture}>
-          <Printer />
-          Aperçu
-        </Button>
-        <Button variant={"blue"} onClick={handleReset}>
-          <RotateCcw />
-          Reset
-        </Button>
-        <Button variant={"danger"} onClick={handlerCancel}>
-          <Ban />
-          Annuler
+        <Button asChild variant="ghost">
+          <Link href="/facture">Retour aux factures</Link>
         </Button>
       </HeaderPage>
-
-      <div className="">
-        <div className="flex flex-row h-full w-full border-t-2 my-5">
-          <div className="flex flex-col h-full w-4/6 px-2">
-            <h2 className="flex flex-col items-center justify-center text-center mt-5">
-              <span className="text-2xl font-bold text-gray-700">{type}</span>
-            </h2>
-            <div className="flex flex-row items-start mt-3">
-              <div className="flex flex-col gap-2">
-                <div className="flex">
-                  <div className="w-46 flex-auto">
-                    <span>FACTURE N° </span>
-                  </div>
-                  <div className="w-14 flex-none">
-                    <span className="text-center">:</span>
-                  </div>
-                  <div className="w-full flex-auto">
-                    <span>{numero || "Pas de numero"}</span>
-                  </div>
-                </div>
-
-                <div className="flex">
-                  <div className="w-46 flex-auto">
-                    <span>Date </span>
-                  </div>
-                  <div className="w-14 flex-none">
-                    <span className="text-center">:</span>
-                  </div>
-                  <div className="w-full flex-auto">
-                    <span>
-                      <Popover>
-                        <PopoverTrigger>
-                          <Button
-                            variant="outline"
-                            id="date-picker-simple"
-                            className="justify-start font-normal"
-                          >
-                            {date ? (
-                              format(date, "dd/MM/yyyy")
-                            ) : (
-                              <span>date</span>
-                            )}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={date}
-                            required
-                            onSelect={setDate}
-                            defaultMonth={date}
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex">
-                  <div className="w-46 flex-auto">
-                    <span>Client </span>
-                  </div>
-                  <div className="w-14 flex-none">
-                    <span className="text-center">:</span>
-                  </div>
-                  <div className="w-full flex-auto">
-                    <Popover open={openClient} onOpenChange={setopenClient}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full text-start font-normal flex flex-row items-center px-2 py-1 border rounded-md ",
-                            !clientId && "text-muted-foreground "
-                          )}
-                        >
-                          {clientId
-                            ? clientList?.find(
-                                (client) => client.id === clientId
-                              )?.nomClient
-                            : "Selectionner le client"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-full p-0">
-                        {isLoading ? (
-                          <LoaderOne />
-                        ) : (
-                          <Command>
-                            <CommandInput placeholder="Recherche client..." />
-                            <CommandList>
-                              <CommandEmpty>Pas de client.</CommandEmpty>
-                              <CommandGroup>
-                                {clientList?.map((client) => (
-                                  <CommandItem
-                                    value={client.nomClient}
-                                    key={client.id}
-                                    onSelect={() => {
-                                      if (!client.numero) {
-                                        toast.warning(
-                                          "Le client sélectionné n'a pas de numéro. Veuillez vérifier les informations du client."
-                                        );
-                                        return;
-                                      }
-                                      setclientId(client.id);
-                                      setnumero(
-                                        new Date().getFullYear().toString() +
-                                          "/" +
-                                          (order || 1)
-                                            .toString()
-                                            .padStart(4, "0") +
-                                          "/" +
-                                          client.numero
-                                      );
-                                      setopenClient(false);
-                                    }}
-                                  >
-                                    {client.nomClient}
-                                    <Check
-                                      className={cn(
-                                        "ml-auto",
-                                        client.id === clientId
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        )}
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </div>
-
-                <div className="flex">
-                  <div className="w-46 flex-auto">
-                    <span>N° Client </span>
-                  </div>
-                  <div className="w-14 flex-none">
-                    <span className="text-center">:</span>
-                  </div>
-                  <div className="w-full flex-auto">
-                    <span>
-                      {clientList?.find((client) => client.id === clientId)
-                        ?.numero || "Pas de client"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col mt-10">
-              <Table className="w-full max-w-full">
-                <TableHeader className="border-none">
-                  <TableRow className="bg-gray-200 hover:bg-gray-300">
-                    <TableHead className="text-lg border border-black">
-                      Ref.
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      Description
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      Quantité
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      PUHT
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      Remise %
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      TVA %
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      Total
-                    </TableHead>
-                    <TableHead className="bg-white border-none"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody className="border-none">
-                  {itemFacture.map((item, i) => (
-                    <FormItem
-                      key={i}
-                      values={item}
-                      onChange={(values) => handleItemChange(i, values)}
-                      removeItem={removeIntervention}
-                    />
-                  ))}
-                  <TableRow className="hover:bg-gray-100/5">
-                    <TableCell
-                      colSpan={7}
-                      className="text-sm text-center hover:bg-gray-100/5 border"
-                    >
-                      <span className="font-medium text-base">
-                        Ajouter un item
-                      </span>
-                      <Button
-                        variant="blue"
-                        size="icon"
-                        type="button"
-                        onClick={addFactureItemBtn}
-                        className="ml-2"
-                      >
-                        <Plus />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-
-            <div className="grid grid-cols-2 mt-10">
-              <div className="flex flex-col">
-                <span>Arrêté la présente facture à la somme de :</span>
-                <span className="font-bold text-lg">
-                  {itemFacture
-                    .reduce((acc, item) => acc + item.total, 0)
-                    .toFixed(2)}{" "}
-                  FCFA
-                </span>
-              </div>
-              <div className="flex flex-col items-end">
-                <div className="grid grid-cols-2 gap-2 justify-items-end">
-                  <span className="text-lg">Total HT :</span>
-                  <span className="text-lg">
-                    {itemFacture
-                      .reduce(
-                        (acc, item) => acc + item.unitPrice * item.quantity,
-                        0
-                      )
-                      .toFixed(2)}{" "}
-                    FCFA
-                  </span>
-                  <span className="text-lg">Total Remises :</span>
-                  <span className="text-lg">0</span>
-                  <span className="text-lg">TVA 18% :</span>
-                  <span className="text-lg">
-                    {itemFacture
-                      .reduce(
-                        (acc, item) =>
-                          acc +
-                          (item.unitPrice * item.quantity * (item.tva || 0)) /
-                            100,
-                        0
-                      )
-                      .toFixed(2)}{" "}
-                    FCFA
-                  </span>
-                  <span className="text-lg">Total TTC :</span>
-                  <span className="text-lg">
-                    {itemFacture
-                      .reduce((acc, item) => acc + item.total, 0)
-                      .toFixed(2)}{" "}
-                    FCFA
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col h-full w-2/6 text-lg border-l-2 ">
-            <div className="flex flex-col p-3 bg-gray-200 text-xl">
-              <span>Parametres</span>
-            </div>
-            <div className="flex flex-col p-3 gap-2">
-              <div className="flex flex-col gap-2">
-                <span>Type de Facture</span>
-                <Combobox
-                  items={["FACTURE", "PROFORMA"]}
-                  defaultValue={type}
-                >
-                  <ComboboxInput value={type} />
-                  <ComboboxContent>
-                    <ComboboxEmpty>No items found.</ComboboxEmpty>
-                    <ComboboxList>
-                      {(item) => (
-                        <ComboboxItem
-                          key={item}
-                          value={item}
-                          onClick={() => setType(item)}
-                        >
-                          {item}
-                        </ComboboxItem>
-                      )}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span>Devise</span>
-                <Combobox items={["CFA", "EURO", "USD"]} defaultValue={devise}>
-                  <ComboboxInput value={devise} />
-                  <ComboboxContent>
-                    <ComboboxEmpty>No items found.</ComboboxEmpty>
-                    <ComboboxList>
-                      {(item) => (
-                        <ComboboxItem
-                          key={item}
-                          value={item}
-                          onClick={() => setDevise(item)}
-                        >
-                          {item}
-                        </ComboboxItem>
-                      )}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span>Mode de Reglement</span>
-                <Combobox
-                  items={["Espèce", "Virement", "Cheque"]}
-                  defaultValue={modeReglement}
-                >
-                  <ComboboxInput value={modeReglement} />
-                  <ComboboxContent>
-                    <ComboboxEmpty>No items found.</ComboboxEmpty>
-                    <ComboboxList>
-                      {(item) => (
-                        <ComboboxItem
-                          key={item}
-                          value={item}
-                          onClick={() => setmodeReglement(item)}
-                        >
-                          {item}
-                        </ComboboxItem>
-                      )}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span>Ordre</span>
-                <Input
-                  type="number"
-                  value={order ?? 0}
-                  onChange={(e) => setorder(Number(e.target.value))}
-                  className="bg-zinc-100 text-black"
-                  disabled
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <span>Observation</span>
-                <Textarea
-                  value={observation}
-                  onChange={(e) => setObservation(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
+      <div className="crm-page-content">
+        <PageIntro
+          eyebrow="FACTURATION · CRÉATION"
+          title="Votre prochaine facture."
+          description="Choisissez un client, ajoutez vos prestations et vérifiez le récapitulatif avant d’enregistrer."
+        />
+        <div className="crm-draft-notice">
+          <FileText size={18} />
+          <span>
+            {storageAvailable
+              ? "Brouillon conservé automatiquement sur cet appareil."
+              : "Sauvegarde locale indisponible : gardez cette page ouverte jusqu’à l’enregistrement."}
+          </span>
         </div>
+        <fieldset disabled={saving || !hydrated} className="crm-invoice-layout">
+          <div className="crm-invoice-main">
+            <section className="crm-panel crm-form-section">
+              <div className="crm-section-title">
+                <span>01</span>
+                <div>
+                  <h2>Client et informations</h2>
+                  <p>Les coordonnées associées à cette facture.</p>
+                </div>
+                <Users size={22} />
+              </div>
+              <div className="crm-form-grid">
+                <div className="crm-field crm-field-wide">
+                  <label id="invoice-client-label">Client *</label>
+                  <Popover open={openClient} onOpenChange={setOpenClient}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        role="combobox"
+                        aria-labelledby="invoice-client-label"
+                        aria-expanded={openClient}
+                        className="w-full justify-between h-11"
+                        disabled={isPending || isError}
+                      >
+                        {client?.nomClient ||
+                          (isPending
+                            ? "Chargement…"
+                            : "Sélectionner un client")}
+                        <ChevronsUpDown size={16} />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-[min(440px,calc(100vw-32px))] p-0"
+                      align="start"
+                    >
+                      <Command>
+                        <CommandInput placeholder="Rechercher un client…" />
+                        <CommandList>
+                          <CommandEmpty>Aucun client trouvé.</CommandEmpty>
+                          <CommandGroup>
+                            {clients.map((c) => (
+                              <CommandItem
+                                key={c.id}
+                                value={`${c.nomClient} ${c.numero ?? ""}`}
+                                onSelect={() => {
+                                  update("clientId", c.id);
+                                  setOpenClient(false);
+                                }}
+                              >
+                                {c.nomClient}
+                                {c.id === draft.clientId && (
+                                  <Check className="ml-auto" size={16} />
+                                )}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {isError && (
+                    <p role="alert">
+                      Impossible de charger les clients.{" "}
+                      <button
+                        type="button"
+                        className="underline"
+                        onClick={() => void refetch()}
+                      >
+                        Réessayer
+                      </button>
+                    </p>
+                  )}
+                  {client && (
+                    <p className="crm-field-hint">
+                      N° {client.numero || "à compléter"} ·{" "}
+                      {client.telephone || "Téléphone non renseigné"}
+                    </p>
+                  )}
+                </div>
+                <div className="crm-field">
+                  <label htmlFor="invoice-date">Date de facturation *</label>
+                  <Input
+                    id="invoice-date"
+                    type="date"
+                    required
+                    value={draft.date}
+                    onChange={(e) => update("date", e.target.value)}
+                  />
+                </div>
+                <div className="crm-field">
+                  <label htmlFor="invoice-type">Type de document</label>
+                  <select
+                    id="invoice-type"
+                    value={draft.type}
+                    onChange={(e) =>
+                      update("type", e.target.value as InvoiceDraft["type"])
+                    }
+                  >
+                    <option value="FACTURE">Facture</option>
+                    <option value="PROFORMA">Proforma</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+            <section className="crm-panel crm-form-section">
+              <div className="crm-section-title">
+                <span>02</span>
+                <div>
+                  <h2>Prestations et produits</h2>
+                  <p>Quantités, tarifs, remises et taxes par ligne.</p>
+                </div>
+              </div>
+              {!draft.items.length ? (
+                <EmptyState
+                  title="Ajoutez votre première prestation"
+                  description="Une licence, une formation ou une intervention pour votre client."
+                />
+              ) : (
+                <div className="crm-line-list">
+                  {draft.items.map((line, index) => (
+                    <div className="crm-invoice-line" key={index}>
+                      <div className="crm-line-heading">
+                        <strong>Ligne {index + 1}</strong>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Supprimer la ligne ${index + 1}`}
+                          onClick={() =>
+                            update(
+                              "items",
+                              draft.items.filter((_, i) => i !== index),
+                            )
+                          }
+                        >
+                          <Trash2 size={17} />
+                        </Button>
+                      </div>
+                      <div className="crm-form-grid">
+                        <div className="crm-field">
+                          <label htmlFor={`ref-${index}`}>Référence</label>
+                          <Input
+                            id={`ref-${index}`}
+                            value={line.reference}
+                            placeholder="Référence (facultatif)"
+                            onChange={(e) =>
+                              changeLine(index, { reference: e.target.value })
+                            }
+                          />
+                        </div>
+                        <div className="crm-field">
+                          <label htmlFor={`desc-${index}`}>Description *</label>
+                          <Input
+                            id={`desc-${index}`}
+                            value={line.description}
+                            placeholder="Ex. Assistance RHPaie"
+                            onChange={(e) =>
+                              changeLine(index, { description: e.target.value })
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="crm-line-numbers">
+                        {(
+                          [
+                            {
+                              key: "quantity",
+                              label: "Quantité",
+                              min: 1,
+                              step: 1,
+                            },
+                            {
+                              key: "unitPrice",
+                              label: "Prix unitaire HT",
+                              min: 0,
+                              step: 0.01,
+                            },
+                            {
+                              key: "remise",
+                              label: "Remise (%)",
+                              min: 0,
+                              max: 100,
+                              step: 0.01,
+                            },
+                            {
+                              key: "tva",
+                              label: "TVA (%)",
+                              min: 0,
+                              max: 100,
+                              step: 0.01,
+                            },
+                          ] as const
+                        ).map((field) => (
+                          <div className="crm-field" key={field.key}>
+                            <label htmlFor={`${field.key}-${index}`}>
+                              {field.label}
+                            </label>
+                            <Input
+                              id={`${field.key}-${index}`}
+                              type="number"
+                              min={field.min}
+                              max={"max" in field ? field.max : undefined}
+                              step={field.step}
+                              value={line[field.key]}
+                              onChange={(e) =>
+                                changeLine(index, {
+                                  [field.key]:
+                                    e.target.value === ""
+                                      ? 0
+                                      : Number(e.target.value),
+                                })
+                              }
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="crm-line-total">
+                        Total TTC de la ligne{" "}
+                        <strong>{amount(totals.lines[index].total)}</strong>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full mt-4 h-11 border-dashed"
+                onClick={addLine}
+              >
+                <Plus size={18} />
+                Ajouter une ligne
+              </Button>
+            </section>
+            <section className="crm-panel crm-form-section">
+              <div className="crm-section-title">
+                <span>03</span>
+                <div>
+                  <h2>Règlement et observations</h2>
+                  <p>Précisez les modalités de cette facture.</p>
+                </div>
+              </div>
+              <div className="crm-form-grid">
+                <div className="crm-field">
+                  <label htmlFor="invoice-currency">Devise</label>
+                  <select
+                    id="invoice-currency"
+                    value={draft.devise}
+                    onChange={(e) =>
+                      update("devise", e.target.value as InvoiceDraft["devise"])
+                    }
+                  >
+                    <option value="CFA">FCFA</option>
+                    <option value="EURO">Euro (EUR)</option>
+                    <option value="USD">Dollar (USD)</option>
+                  </select>
+                </div>
+                <div className="crm-field">
+                  <label htmlFor="invoice-payment">Mode de règlement</label>
+                  <select
+                    id="invoice-payment"
+                    value={draft.modeReglement}
+                    onChange={(e) => update("modeReglement", e.target.value)}
+                  >
+                    {["Espèce", "Virement", "Cheque"].map((mode) => (
+                      <option key={mode} value={mode}>
+                        {mode === "Cheque" ? "Chèque" : mode}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="crm-field crm-field-wide">
+                  <label htmlFor="invoice-note">Observations</label>
+                  <Textarea
+                    id="invoice-note"
+                    placeholder="Informations complémentaires, modalités convenues avec le client…"
+                    rows={4}
+                    value={draft.observation}
+                    onChange={(e) => update("observation", e.target.value)}
+                  />
+                </div>
+              </div>
+            </section>
+          </div>
+          <aside className="crm-invoice-summary">
+            <div className="crm-panel crm-form-section">
+              <p className="crm-eyebrow">RÉCAPITULATIF</p>
+              <h2>Votre facture en un regard</h2>
+              <p className="crm-field-hint">
+                {draft.items.length} ligne(s) ·{" "}
+                {client?.nomClient || "Aucun client sélectionné"}
+              </p>
+              <dl>
+                <div>
+                  <dt>Total HT brut</dt>
+                  <dd>{amount(totals.totalHT)}</dd>
+                </div>
+                <div>
+                  <dt>Remises</dt>
+                  <dd>− {amount(totals.remise)}</dd>
+                </div>
+                <div>
+                  <dt>TVA après remises</dt>
+                  <dd>{amount(totals.totalTVA)}</dd>
+                </div>
+                <div className="crm-grand-total">
+                  <dt>Total TTC</dt>
+                  <dd aria-live="polite">{amount(totals.totalTTC)}</dd>
+                </div>
+              </dl>
+              <p className="crm-field-hint mb-5">
+                Le numéro définitif est attribué à l’enregistrement.
+              </p>
+              <Button
+                type="button"
+                className="w-full h-11"
+                onClick={() => void save()}
+                disabled={saving || isError || !draft.items.length || !client}
+              >
+                <Save size={18} />
+                {saving ? "Enregistrement…" : "Enregistrer la facture"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full mt-3 h-11"
+                onClick={() => setPreview(true)}
+                disabled={!client || !draft.items.length || !draft.date}
+              >
+                <Eye size={18} />
+                Aperçu
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full mt-3 text-muted-foreground"
+                onClick={reset}
+              >
+                <RotateCcw size={16} />
+                Réinitialiser le brouillon
+              </Button>
+            </div>
+          </aside>
+        </fieldset>
       </div>
       <FactureView
         facture={{
-          numero: numero,
-          date: format(date, "dd/MM/yyyy"),
-          client:
-            clientList?.find((client) => client.id === clientId)?.nomClient ||
-            "",
-          clientId:
-            clientList?.find((client) => client.id === clientId)?.numero || "",
-          items: itemFacture || [],
-          totalHT: itemFacture.reduce(
-            (acc, item) => acc + item.unitPrice * item.quantity,
-            0
-          ),
-          totalRemise: 0,
-          totalTVA: itemFacture.reduce(
-            (acc, item) =>
-              acc + (item.unitPrice * item.quantity * (item.tva || 0)) / 100,
-            0
-          ),
-          totalTTC: itemFacture.reduce((acc, item) => acc + item.total, 0)
+          numero: "Brouillon",
+          date: draft.date,
+          type: draft.type,
+          devise: draft.devise,
+          client: client?.nomClient ?? "",
+          clientId: client?.numero ?? "",
+          items: draft.items.map((line, i) => ({
+            ...line,
+            total: totals.lines[i].total,
+          })),
+          totalHT: totals.totalHT,
+          totalRemise: totals.remise,
+          totalTVA: totals.totalTVA,
+          totalTTC: totals.totalTTC,
         }}
-        open={openView}
-        close={handerCloseViewFacture}
+        open={preview}
+        close={() => setPreview(false)}
       />
     </div>
   );
 }
-
-const FormItem = ({
-  values,
-  onChange,
-  removeItem
-}: {
-  values: Item;
-  onChange: (values: Item) => void;
-  removeItem?: (ref: string) => void;
-}) => {
-  useEffect(() => {
-    values.total =
-      values.quantity *
-      values.unitPrice *
-      (1 - (values.remise || 0) / 100) *
-      (1 + (values.tva || 0) / 100);
-    onChange({ ...values, total: values.total });
-  }, [values.quantity, values.unitPrice, values.remise, values.tva]);
-
-  const handleChange =
-    (field: keyof Item) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      if (field !== "total") {
-        onChange({ ...values, [field]: e.target.value });
-      }
-    };
-
-  return (
-    <TableRow className="hover:bg-white h-full border-none">
-      <TableCell className="text-lg border border-black">
-        {values.reference}
-      </TableCell>
-      <TableCell className="text-lg border border-black w-[300px]">
-        <Textarea
-          value={values.description}
-          onChange={handleChange("description")}
-        />
-      </TableCell>
-      <TableCell className="text-lg border border-black">
-        <Input
-          type="number"
-          value={values.quantity}
-          onChange={handleChange("quantity")}
-        />
-      </TableCell>
-      <TableCell className="text-lg border border-black w-[180px]">
-        <Input
-          type="number"
-          value={values.unitPrice}
-          onChange={handleChange("unitPrice")}
-        />
-      </TableCell>
-      <TableCell className="text-lg border border-black">
-        <Input
-          type="number"
-          value={values.remise}
-          onChange={handleChange("remise")}
-        />
-      </TableCell>
-      <TableCell className="text-lg border border-black">
-        <Input
-          type="number"
-          value={values.tva}
-          onChange={handleChange("tva")}
-        />
-      </TableCell>
-      <TableCell className="text-lg border border-black w-[180px]">
-        <Input type="number" value={values.total} readOnly />
-      </TableCell>
-      <TableCell className="border-none">
-        <Trash2
-          className="transition duration-300 hover:text-red-700 hover:rotate-20 cursor-pointer"
-          onClick={() => removeItem && removeItem(values.reference)}
-        />
-      </TableCell>
-    </TableRow>
-  );
-};

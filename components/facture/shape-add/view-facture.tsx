@@ -1,20 +1,11 @@
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
 } from "@/components/ui/dialog";
+import { formatAmount } from "@/lib/crm-metrics";
 import Image from "next/image";
 
 interface FactureViewProps {
@@ -23,6 +14,8 @@ interface FactureViewProps {
     date: string;
     client: string;
     clientId: string;
+    type?: string;
+    devise?: string;
     items: {
       reference: string;
       description: string;
@@ -41,144 +34,112 @@ interface FactureViewProps {
   close?: () => void;
 }
 
-export function FactureView({ facture, open = false, close }: FactureViewProps) {
+export function FactureView({
+  facture,
+  open = false,
+  close,
+}: FactureViewProps) {
+  const amount = (value: number | undefined) =>
+    formatAmount(value, facture.devise ?? "CFA");
   return (
-    <Dialog open={open} onOpenChange={close}>
-      <DialogTrigger />
-      <DialogContent className="sm:min-w-[calc(100%-1rem)] lg:min-w-[calc(100%-10rem)] xl:min-w-[calc(100%-30rem)] min-h-[calc(100%-25rem)] max-w-screen max-h-screen p-10">
+    <Dialog
+      open={open}
+      onOpenChange={(value) => {
+        if (!value) close?.();
+      }}
+    >
+      <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-4xl max-h-[90vh] overflow-y-auto p-5 sm:p-8">
         <DialogHeader>
-          <DialogTitle>Facture Numero {facture.numero}</DialogTitle>
-          <DialogDescription />
+          <DialogTitle>
+            Aperçu · {facture.type === "PROFORMA" ? "Proforma" : "Facture"}{" "}
+            {facture.numero}
+          </DialogTitle>
+          <DialogDescription>
+            Vérifiez le client, les prestations et les montants avant
+            l’enregistrement.
+          </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="rounded-md border-2 p-10 min-w-[calc(100%-25rem)] min-h-[calc(100%-205rem)] max-w-screen max-h-screen">
-          <div className="flex flex-col h-full w-full text-xl">
-            <Image
-              src="/factureheader.png"
-              alt="facture header"
-              width={1000}
-              height={100}
-              className="w-full"
-            />
-            <div className="flex flex-row items-start mt-10">
-              <div className="flex flex-col">
-                <div className="grid grid-cols-3 gap-4">
-                  <span>FACTURE N° </span>
-                  <span className="text-center">:</span>
-                  <span>{facture.numero}</span>
-                  <span>Date </span>
-                  <span className="text-center">:</span>
-                  <span>{facture.date}</span>
-                  <span>Doit </span>
-                  <span className="text-center">:</span>
-                  <span>{facture.client}</span>
-                  <span>N° Client </span>
-                  <span className="text-center">:</span>
-                  <span>{facture.clientId}</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col mt-10">
-              <Table className="w-full max-w-full border border-gray-300">
-                <TableHeader>
-                  <TableRow className="bg-gray-200 hover:bg-gray-300 border-black">
-                    <TableHead className="text-lg border border-black">
-                      Ref.
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      Description
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      Quantité
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      PUHT
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      Remise %
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      TVA %
-                    </TableHead>
-                    <TableHead className="text-lg border border-black">
-                      Total HT
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {facture.items.map((item, key) => (
-                    <TableRow key={key} className="hover:bg-gray-100 h-full">
-                      <TableCell className="text-lg border border-black">
-                        {item.reference}
-                      </TableCell>
-                      <TableCell className="text-lg border border-black h-full">
-                        <p className="text-balance">{item.description}</p>
-                      </TableCell>
-                      <TableCell className="text-lg border border-black">
-                        {item.quantity}
-                      </TableCell>
-                      <TableCell className="text-lg border border-black">
-                        {item.unitPrice}
-                      </TableCell>
-                      <TableCell className="text-lg border border-black">
-                        {item.remise}
-                      </TableCell>
-                      <TableCell className="text-lg border border-black">
-                        {item.tva}
-                      </TableCell>
-                      <TableCell className="text-lg border border-black">
-                        {item.total}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-
-            <div className="grid grid-cols-2 mt-10">
-              <div className="flex flex-col">
-                <span>Arrêté la présente facture à la somme de :</span>
-                <span className="font-bold text-lg">
-                  {facture.totalTTC} francs
-                </span>
-              </div>
-              <div className="flex flex-col items-end">
-                <div className="grid grid-cols-2 gap-6 justify-items-end">
-                  <span className="text-lg">Total HT :</span>
-                  <span className="text-lg">{facture.totalHT}</span>
-                  <span className="text-lg">Total Remises :</span>
-                  <span className="text-lg">{facture.totalRemise}</span>
-                  <span className="text-lg">TVA 18% :</span>
-                  <span className="text-lg">{facture.totalTVA}</span>
-                  <span className="text-lg">Total TTC :</span>
-                  <span className="text-lg">{facture.totalTTC}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 mt-10 justify-items-center h-50">
-              <div className="flex flex-col items-start w-full">
-                <span className="text-start">Pour Acquit</span>
-              </div>
-              <span>Direction</span>
-            </div>
-
-            <hr className="mt-10" />
-            <div className="flex flex-col mt-2 text-center mb-3">
-              <p>
-                SARL au capital de 1 000 000 FCFA; N°R.C :3061 NIF 084106089P
-                N°Compte BMS : 006809020149 ; ECOBANK : 101467804015
-              </p>
-              <p>
-                Rond point CABRAL, Rue 269 Porte 606 Lafiabougou, B.P 5054,
-                Bamako, Mali
-              </p>
-              <p>
-                Tel (+223) 76 47 51 89 / 20 29 89 61 - Email :
-                email@malisystem.com
-              </p>
-            </div>
+        <Image
+          src="/factureheader.png"
+          alt="Malisystem"
+          width={1000}
+          height={100}
+          className="w-full h-auto mt-4"
+        />
+        <div className="grid sm:grid-cols-2 gap-5 my-5 text-sm">
+          <div>
+            <p className="text-muted-foreground">Facturé à</p>
+            <p className="font-semibold text-lg">{facture.client}</p>
+            <p>N° client : {facture.clientId}</p>
           </div>
-        </ScrollArea>
+          <div className="sm:text-right">
+            <p className="font-semibold">
+              {facture.type ?? "FACTURE"} · {facture.numero}
+            </p>
+            <p>Date : {facture.date}</p>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-muted">
+              <tr>
+                {[
+                  "Prestation",
+                  "Qté",
+                  "Prix HT",
+                  "Remise",
+                  "TVA",
+                  "Total TTC",
+                ].map((label) => (
+                  <th className="p-3 whitespace-nowrap font-medium" key={label}>
+                    {label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {facture.items.map((item, i) => (
+                <tr className="border-b" key={i}>
+                  <td className="p-3 min-w-48">
+                    <strong className="font-medium">{item.description}</strong>
+                    <p className="text-xs text-muted-foreground">
+                      {item.reference}
+                    </p>
+                  </td>
+                  <td className="p-3">{item.quantity}</td>
+                  <td className="p-3 whitespace-nowrap">
+                    {amount(item.unitPrice)}
+                  </td>
+                  <td className="p-3">{item.remise ?? 0} %</td>
+                  <td className="p-3">{item.tva ?? 0} %</td>
+                  <td className="p-3 whitespace-nowrap font-medium">
+                    {amount(item.total)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <dl className="sm:ml-auto sm:w-80 space-y-3 py-5 text-sm">
+          {[
+            ["Total HT brut", facture.totalHT],
+            ["Remises", facture.totalRemise],
+            ["TVA après remises", facture.totalTVA],
+            ["Total TTC", facture.totalTTC],
+          ].map(([label, value]) => (
+            <div
+              className="flex justify-between gap-4 last:border-t last:pt-4 last:text-lg last:font-semibold"
+              key={label}
+            >
+              <dt>{label}</dt>
+              <dd>{amount(Number(value))}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="text-xs text-muted-foreground border-t pt-4 text-center">
+          Malisystem · Lafiabougou, Bamako, Mali · (+223) 76 47 51 89 / 20 29 89
+          61 · email@malisystem.com
+        </p>
       </DialogContent>
     </Dialog>
   );

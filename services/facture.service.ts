@@ -22,31 +22,31 @@ export async function createFacture(data: {
 export async function getFactureById(id: string) {
   return prisma.facture.findUnique({
     where: { id },
-    include: { itemFactures: true }
+    include: { itemFactures: true, client: true },
   });
 }
 
 export async function getFacturesByClient(clientId: string) {
   return prisma.facture.findMany({
     where: { clientId },
-    include: { itemFactures: true }
+    include: { itemFactures: true },
   });
 }
 
 export async function getAllFactures() {
   return prisma.facture.findMany({
-    include: { itemFactures: true, client: true }
+    include: { itemFactures: true, client: true },
   });
 }
 
 export const maxorder = async () => {
   const dernier = await prisma.facture.findFirst({
     orderBy: {
-      numeroOrdre: "desc"
+      numeroOrdre: "desc",
     },
     select: {
-      numeroOrdre: true
-    }
+      numeroOrdre: true,
+    },
   });
 
   return dernier?.numeroOrdre ?? 0;
@@ -56,7 +56,7 @@ export async function updateFacture(
   id: string,
   data: Partial<
     Omit<Parameters<typeof createFacture>[0], "numero" | "date" | "clientId">
-  >
+  >,
 ) {
   return prisma.facture.update({ where: { id }, data });
 }
