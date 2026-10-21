@@ -1,27 +1,35 @@
 import Writor from "@/components/features/Writor";
 import { getVideoById } from "@/services/video.service";
-
-const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
+import { notFound } from "next/navigation";
+import SupportHero from "../../../_components/SupportHero";
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const video = await getVideoById(id);
-
-  if (!video) return <div>Vidéo introuvable</div>;
-
+  if (!video) notFound();
   return (
-    <div className="flex flex-col items-center gap-4 px-5 py-10">
-      <iframe
-        src={video.url}
+    <>
+      <SupportHero
+        eyebrow="Vidéo pratique"
         title={video.nom}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-        className="w-full sm:w-full md:w-[700px] lg:w-[950px] xl:w-[1150px] aspect-video rounded-md shadow-md"
-      ></iframe>
-      <div className="flex flex-col bg-zinc-100 border shadow-md rounded-md p-6 sm:w-full md:w-[700px] lg:w-[950px] xl:w-[1150px]">
-        <h2 className="text-2xl font-semibold text-zinc-700">{video.nom}</h2>
-        <Writor value={video.detail || ""} />
-      </div>
-    </div>
+        description={video.description ?? undefined}
+        back={{ href: "/support/astuce", label: "Toutes les vidéos" }}
+      />
+      <section className="ms-container ms-section ms-reading">
+        <iframe
+          src={video.url}
+          title={video.nom}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          className="ms-video"
+        />
+        <article className="ms-article">
+          <Writor value={video.detail || ""} />
+        </article>
+      </section>
+    </>
   );
-};
-
-export default Page;
+}
