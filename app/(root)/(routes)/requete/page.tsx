@@ -1,27 +1,32 @@
 "use client";
+import {
+  Metric,
+  PageIntro,
+  FilterTabs,
+  StatusPill,
+} from "@/components/crm/workspace";
+import { formatDate, isUnassigned } from "@/lib/crm-metrics";
+import { Clock3, CheckCircle2, UserRound } from "lucide-react";
 import { Requete, UserRole } from "@prisma/client";
 import {
   AlertCircleIcon,
   FileBox,
   LayoutGrid,
   Plus,
-  Trash
+  Trash,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DataTable } from "@/components/datatables";
 import { useEffect, useState } from "react";
-import { format } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { LoaderOne } from "@/components/ui/loader";
 import Link from "next/link";
 import Image from "next/image";
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSession } from "next-auth/react";
 
@@ -35,30 +40,38 @@ interface RequeteWithClient extends Requete {
 
 const PageRequete = () => {
   const { data: session } = useSession();
+  const [view, setView] = useState("all");
+  useEffect(() => {
+    const preset = new URLSearchParams(window.location.search).get("view");
+    if (preset && ["open", "closed", "unassigned"].includes(preset))
+      setView(preset);
+  }, []);
   const [selectedId, setSelectedId] = useState<string>("");
   const [deleteControle, setDeleteControle] = useState<boolean>(false);
 
   const {
     isError,
     isPending,
-    data: requetes
+    data: requetes,
   } = useQuery<RequeteWithClient[]>({
     queryKey: ["requete"],
-    queryFn: () => fetcher(`/api/requete`)
+    queryFn: () => fetcher(`/api/requete`),
   });
 
   const { data: roles } = useQuery<UserRole[]>({
     queryKey: ["role", session?.user?.id, "requete_delete"],
-    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_delete`)
+    enabled: !!session?.user?.id,
+    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_delete`),
   });
 
   useEffect(() => {
     if (roles && roles.length > 0) {
-      const hasDeleteRole = roles.some((role) => role.name === "requete_delete" && role.accessLevel === 0);
+      const hasDeleteRole = roles.some(
+        (role) => role.name === "requete_delete" && role.accessLevel === 0,
+      );
       setDeleteControle(hasDeleteRole);
     }
   }, [roles]);
-  console.log("roles de l'utilisateur",deleteControle);
 
   if (isPending) {
     return (
@@ -81,128 +94,194 @@ const PageRequete = () => {
     );
   }
 
+  const open = requetes.filter((r) => !r.dateCloture);
+  const closed = requetes.filter((r) => !!r.dateCloture);
+  const unassigned = open.filter((r) => isUnassigned(r.technicien));
+  const rows =
+    view === "open"
+      ? open
+      : view === "closed"
+        ? closed
+        : view === "unassigned"
+          ? unassigned
+          : requetes;
   return (
-    <div className="flex-1 h-full">
-      <DataTable
-        chemins={[
-          { title: "Requête", url: "/requete" },
-          { title: "Listes", url: "#" }
-        ]}
-        titre="Liste des Requêtes"
-        onDoubleClickLink={`/requete/detail/${selectedId}`}
-        action={[
-          {
-            label: "Nouvelle Requête",
-            icon: <Plus />,
-            url: "/requete/add",
-            variantbtn: "default"
-          }
-        ]}
-        selectAction={[
-          {
-            label: "Details",
-            icon: <FileBox />,
-            url: `/requete/detail/${selectedId}`,
-            variantbtn: "outline"
-          },
-          {
-            label: "Supprimer",
-            icon: <Trash />,
-            url: `/requete/delete/${selectedId}`,
-            variantbtn: "danger",
-            hide: deleteControle,
-          }
-        ]}
-        data={requetes}
-        dateChose="dateDebut"
-        dateChoseTitle="Filter par Date"
-        columnStyles={{
-          sujet: (value, row) => (
-            <Link
-              href={`/requete/detail/${row.id}`}
-              className="font-medium hover:underline"
-            >
-              {row.sujet && row.sujet.length > 30 ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span>{row.sujet.slice(0, 30) + "..."}</span>
-                  </TooltipTrigger>
-                  <TooltipContent className="w-[560px] p-4" side="bottom">
-                    <p>{value as string}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ) : (
-                <span>{value as string}</span>
-              )}
-            </Link>
-          ),
-          date: (value) => format(new Date(value as string), "dd/MM/yyyy"),
-          etat: (value) => (
-            <Badge
-              variant={"default"}
-              className={cn(value !== "Cloturée" && "bg-yellow-400 text-black")}
-            >
-              {value as string}
-            </Badge>
-          ),
-          type: (value) => <span className="uppercase">{value as string}</span>
-        }}
-        hideList={[
-          "createdAt",
-          "updatedAt",
-          "dateCloture",
-          "Intervention",
-          "logiciel",
-          "observation",
-          "clientId",
-          "dateDebut",
-          "description",
-          "isTacheClient",
-          "status",
-          "type"
-        ]}
-        searchId="sujet"
-        searchPlaceholder="Rechercher un sujet..."
-        popFilter={[
-          {
-            dataFilter: "logiciel",
-            icon: <LayoutGrid />,
-            options: [
-              {
-                label: "RHPaie",
-                value: "RHPaie",
-                icon: () => (
-                  <Image src="/rhpaie.png" alt="p" width={20} height={20} />
-                )
-              },
-              {
-                label: "TimeSheet",
-                value: "TimeSheet",
-                icon: () => (
-                  <Image src="/timesheet.png" alt="t" width={20} height={20} />
-                )
-              },
-              {
-                label: "RHData",
-                value: "RHData",
-                icon: () => (
-                  <Image src="/rhdata.png" alt="d" width={20} height={20} />
-                )
-              },
-              {
-                label: "RHFacture",
-                value: "RHFacture",
-                icon: () => (
-                  <Image src="/rhfacture.png" alt="f" width={20} height={20} />
-                )
-              }
-            ]
-          }
-        ]}
-        onRowSelect={(id) => setSelectedId(id)}
-        exportName="liste_requetes"
-        storageKey="requete-datatable"
+    <div className="crm-workspace crm-list-page">
+      <PageIntro
+        title="Un service client bien suivi."
+        description="Enregistrez les demandes, retrouvez les techniciens et suivez les interventions jusqu’à la clôture."
       />
+      <div className="crm-metrics crm-metrics-three">
+        <Metric
+          label="En cours"
+          value={open.length}
+          detail="Demandes à prendre en charge"
+          icon={Clock3}
+          tone="amber"
+        />
+        <Metric
+          label="Clôturées"
+          value={closed.length}
+          detail="Demandes traitées par l’équipe"
+          icon={CheckCircle2}
+          tone="green"
+        />
+        <Metric
+          label="À attribuer"
+          value={unassigned.length}
+          detail="Demandes ouvertes sans technicien"
+          icon={UserRound}
+          tone="violet"
+        />
+      </div>
+      <FilterTabs
+        label="Filtrer les requêtes"
+        value={view}
+        onChange={setView}
+        items={[
+          { value: "all", label: "Toutes", count: requetes.length },
+          { value: "open", label: "En cours", count: open.length },
+          { value: "closed", label: "Clôturées", count: closed.length },
+          {
+            value: "unassigned",
+            label: "À attribuer",
+            count: unassigned.length,
+          },
+        ]}
+      />
+      <div className="crm-panel crm-table-panel">
+        <DataTable
+          chemins={[
+            { title: "Requête", url: "/requete" },
+            { title: "Listes", url: "#" },
+          ]}
+          titre="Liste des Requêtes"
+          onDoubleClickLink={`/requete/detail/${selectedId}`}
+          action={[
+            {
+              label: "Nouvelle Requête",
+              icon: <Plus />,
+              url: "/requete/add",
+              variantbtn: "default",
+            },
+          ]}
+          selectAction={[
+            {
+              label: "Details",
+              icon: <FileBox />,
+              url: `/requete/detail/${selectedId}`,
+              variantbtn: "outline",
+            },
+            {
+              label: "Supprimer",
+              icon: <Trash />,
+              url: `/requete/delete/${selectedId}`,
+              variantbtn: "danger",
+              hide: deleteControle,
+            },
+          ]}
+          data={rows}
+          globalSearch
+          rowHref={(row) => `/requete/detail/${row.id}`}
+          dateChose="dateDebut"
+          dateChoseTitle="Date de début"
+          columnStyles={{
+            sujet: (value, row) => (
+              <Link
+                href={`/requete/detail/${row.id}`}
+                className="font-medium hover:underline"
+              >
+                {row.sujet && row.sujet.length > 30 ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>{row.sujet.slice(0, 30) + "..."}</span>
+                    </TooltipTrigger>
+                    <TooltipContent className="w-[560px] p-4" side="bottom">
+                      <p>{value as string}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <span>{value as string}</span>
+                )}
+              </Link>
+            ),
+            date: (value) => formatDate(value as string | null),
+            etat: (_value, row) => (
+              <StatusPill done={!!row.dateCloture}>
+                {row.dateCloture ? "Clôturée" : "En cours"}
+              </StatusPill>
+            ),
+            type: (value) => (
+              <span className="uppercase">{value as string}</span>
+            ),
+          }}
+          hideList={[
+            "createdAt",
+            "updatedAt",
+            "dateCloture",
+            "Intervention",
+            "logiciel",
+            "observation",
+            "clientId",
+            "dateDebut",
+            "description",
+            "isTacheClient",
+            "status",
+            "type",
+          ]}
+          searchId="sujet"
+          searchPlaceholder="Sujet, client, technicien, logiciel…"
+          popFilter={[
+            {
+              dataFilter: "logiciel",
+              icon: <LayoutGrid />,
+              options: [
+                {
+                  label: "RHPaie",
+                  value: "RHPaie",
+                  icon: () => (
+                    <Image src="/rhpaie.png" alt="p" width={20} height={20} />
+                  ),
+                },
+                {
+                  label: "TimeSheet",
+                  value: "TimeSheet",
+                  icon: () => (
+                    <Image
+                      src="/timesheet.png"
+                      alt="t"
+                      width={20}
+                      height={20}
+                    />
+                  ),
+                },
+                {
+                  label: "RHData",
+                  value: "RHData",
+                  icon: () => (
+                    <Image src="/rhdata.png" alt="d" width={20} height={20} />
+                  ),
+                },
+                {
+                  label: "RHFacture",
+                  value: "RHFacture",
+                  icon: () => (
+                    <Image
+                      src="/rhfacture.png"
+                      alt="f"
+                      width={20}
+                      height={20}
+                    />
+                  ),
+                },
+              ],
+            },
+          ]}
+          onRowSelect={(id) => setSelectedId(id)}
+          exportName="liste_requetes"
+          storageKey="requete-datatable"
+        />
+      </div>
     </div>
   );
 };

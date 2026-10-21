@@ -13,14 +13,16 @@ import { cn } from "@/lib/utils";
 interface headerprops<TData> {
   table: Table<TData>;
   chemins?: { title: string; url: string }[];
-  action?: {
-    label: string;
-    icon?: React.ReactNode;
-    url: string;
-    variantbtn: VariantProps<typeof buttonVariants>["variant"];
-    hide?: boolean;
-    target?: boolean;
-  }[] | React.ReactNode[];
+  action?:
+    | {
+        label: string;
+        icon?: React.ReactNode;
+        url: string;
+        variantbtn: VariantProps<typeof buttonVariants>["variant"];
+        hide?: boolean;
+        target?: boolean;
+      }[]
+    | React.ReactNode[];
   selectAction?: {
     label: string;
     icon?: React.ReactNode;
@@ -34,10 +36,9 @@ function Header<TData>({
   table,
   chemins,
   action,
-  selectAction
+  selectAction,
 }: headerprops<TData>) {
   const deselectRows = () => {
-    table.getState().rowSelection = {};
     table.setRowSelection({});
   };
   const ismobile = useIsMobile();
@@ -100,6 +101,7 @@ function Header<TData>({
                     size={"icon"}
                     className="size-8"
                     onClick={deselectRows}
+                    aria-label="Annuler la sélection"
                   >
                     <X />
                   </Button>
@@ -111,11 +113,11 @@ function Header<TData>({
             )}
           {action && (
             <div className="flex items-center gap-2">
-              {action.map((act, index) => (
+              {action.map((act, index) =>
                 typeof act === "object" &&
-                  act !== null &&
-                  "label" in act &&
-                  "url" in act ? (
+                act !== null &&
+                "label" in act &&
+                "url" in act ? (
                   <Button
                     key={index}
                     variant={act.variantbtn}
@@ -129,13 +131,15 @@ function Header<TData>({
                       className="dark:text-foreground"
                     >
                       {act.icon}
-                      <span className="hidden sm:flex">{act.label}</span>
+                      <span className="sr-only sm:not-sr-only">
+                        {act.label}
+                      </span>
                     </Link>
                   </Button>
                 ) : (
                   act
-                )
-              ))}
+                ),
+              )}
             </div>
           )}
 
@@ -153,7 +157,9 @@ function Header<TData>({
                     >
                       <Link href={act.url} className="dark:text-foreground">
                         {act.icon}
-                        <span className="hidden md:flex">{act.label}</span>
+                        <span className="sr-only md:not-sr-only">
+                          {act.label}
+                        </span>
                       </Link>
                     </Button>
                   ))}

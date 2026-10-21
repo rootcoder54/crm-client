@@ -10,7 +10,7 @@ import {
   RowSelectionState,
   SortingState,
   useReactTable,
-  VisibilityState
+  VisibilityState,
 } from "@tanstack/react-table";
 
 import { useOnClickOutside } from "usehooks-ts";
@@ -21,7 +21,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import React, { useEffect, useRef } from "react";
@@ -36,7 +36,7 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  X
+  X,
 } from "lucide-react";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { dateRangeFilter } from "./dateRangeFilter";
@@ -51,6 +51,8 @@ interface DataTableProps<TData extends Record<string, unknown>> {
   onDoubleClickLink?: string;
   notData?: string;
   searchId?: string;
+  globalSearch?: boolean;
+  rowHref?: (row: TData) => string;
   searchPlaceholder?: string;
   hideList?: string[];
   chemins?: { title: string; url: string }[];
@@ -103,6 +105,8 @@ export function DataTable<TData extends Record<string, unknown>>({
   onDoubleClickLink,
   notData,
   searchId,
+  globalSearch = false,
+  rowHref,
   searchPlaceholder,
   hideList,
   chemins,
@@ -116,7 +120,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   exportName,
   storageKey = "datatable",
   emptyImg,
-  headerEmpty
+  headerEmpty,
 }: DataTableProps<TData>) {
   const tableRef = useRef<HTMLTableElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -130,7 +134,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   const [open, setOpen] = React.useState(false);
   const [position, setPosition] = React.useState<{ x: number; y: number }>({
     x: 0,
-    y: 0
+    y: 0,
   });
   /*const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -140,7 +144,7 @@ export function DataTable<TData extends Record<string, unknown>>({
     if (typeof window === "undefined") {
       return {
         pageIndex: 0,
-        pageSize: 10
+        pageSize: 10,
       };
     }
     const saved = localStorage.getItem(`${storageKey}-pagination`);
@@ -148,7 +152,7 @@ export function DataTable<TData extends Record<string, unknown>>({
       ? JSON.parse(saved)
       : {
           pageIndex: 0,
-          pageSize: 10
+          pageSize: 10,
         };
   });
   //const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
@@ -159,7 +163,7 @@ export function DataTable<TData extends Record<string, unknown>>({
       const saved = localStorage.getItem(`${storageKey}-row-selection`);
 
       return saved ? JSON.parse(saved) : {};
-    }
+    },
   );
   /*const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -170,7 +174,7 @@ export function DataTable<TData extends Record<string, unknown>>({
 
       const saved = localStorage.getItem(`${storageKey}-filters`);
       return saved ? JSON.parse(saved) : [];
-    }
+    },
   );
 
   const columns = buildColumns(data, columnStyles);
@@ -188,7 +192,7 @@ export function DataTable<TData extends Record<string, unknown>>({
       if (typeof window === "undefined") {
         return {
           id: false,
-          ...initialVisibility
+          ...initialVisibility,
         };
       }
 
@@ -198,11 +202,12 @@ export function DataTable<TData extends Record<string, unknown>>({
         ? JSON.parse(saved)
         : {
             id: false,
-            ...initialVisibility
+            ...initialVisibility,
           };
     });
 
   const router = useRouter();
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
     data,
@@ -213,22 +218,25 @@ export function DataTable<TData extends Record<string, unknown>>({
     onColumnFiltersChange: setColumnFilters,
     getRowId: (row) => String(row.id),
     getCoreRowModel: getCoreRowModel(),
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: "includesString",
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     filterFns: {
-      dateRange: dateRangeFilter
+      dateRange: dateRangeFilter,
     },
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
+      globalFilter,
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination
-    }
+      pagination,
+    },
   });
 
   useOnClickOutside(tableRef as React.RefObject<HTMLElement>, (event) => {
@@ -245,12 +253,12 @@ export function DataTable<TData extends Record<string, unknown>>({
       const selectedId = selectedRows[0].getValue("id") as string;
       if (onRowSelect) onRowSelect(selectedId);
     }
-  }, [rowSelection, onRowSelect]);
+  }, [rowSelection, onRowSelect, table]);
 
   useEffect(() => {
     localStorage.setItem(
       `${storageKey}-filters`,
-      JSON.stringify(columnFilters)
+      JSON.stringify(columnFilters),
     );
   }, [columnFilters, storageKey]);
 
@@ -261,53 +269,61 @@ export function DataTable<TData extends Record<string, unknown>>({
   useEffect(() => {
     localStorage.setItem(
       `${storageKey}-visibility`,
-      JSON.stringify(columnVisibility)
+      JSON.stringify(columnVisibility),
     );
   }, [columnVisibility, storageKey]);
 
   useEffect(() => {
     localStorage.setItem(
       `${storageKey}-pagination`,
-      JSON.stringify(pagination)
+      JSON.stringify(pagination),
     );
   }, [pagination, storageKey]);
 
   useEffect(() => {
     localStorage.setItem(
       `${storageKey}-row-selection`,
-      JSON.stringify(rowSelection)
+      JSON.stringify(rowSelection),
     );
   }, [rowSelection, storageKey]);
 
   const exportExcel = async () => {
-    const data = table.getRowModel().rows.map((row) => {
-      return row.getAllCells().reduce(
-        (acc, cell) => {
-          acc[cell.column.id] = cell.getValue();
-          return acc;
+    try {
+      const data = table.getFilteredRowModel().rows.map((row) => {
+        return row
+          .getVisibleCells()
+          .filter((cell) => cell.column.id !== "select")
+          .reduce(
+            (acc, cell) => {
+              acc[cell.column.id] = cell.getValue();
+              return acc;
+            },
+            {} as Record<string, unknown>,
+          );
+      });
+      const response = await fetch("/api/export", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        {} as Record<string, unknown>
-      );
-    });
-    const response = await fetch("/api/export", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ data })
-    });
+        body: JSON.stringify({ data }),
+      });
 
-    if (response.ok) {
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = exportName ? exportName + ".xlsx" : "data.xlsx";
-      a.click();
-      URL.revokeObjectURL(url);
-    } else {
-      const error = await response.json();
-      toast.warning(error.message);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = exportName ? exportName + ".xlsx" : "data.xlsx";
+        a.click();
+        URL.revokeObjectURL(url);
+      } else {
+        toast.error("Impossible d’exporter les données. Réessayez.");
+      }
+    } catch {
+      toast.error(
+        "Impossible d’exporter les données. Vérifiez votre connexion.",
+      );
     }
   };
 
@@ -333,7 +349,7 @@ export function DataTable<TData extends Record<string, unknown>>({
             style={{
               top: position.y,
               left: position.x,
-              transform: "translate(1%, 1%)"
+              transform: "translate(1%, 1%)",
             }}
           >
             <div className="flex flex-col space-y-1">
@@ -352,7 +368,7 @@ export function DataTable<TData extends Record<string, unknown>>({
                           {actionItem.label}
                         </Button>
                       </Link>
-                    )
+                    ),
                 )}
               </>
               <Button
@@ -390,6 +406,7 @@ export function DataTable<TData extends Record<string, unknown>>({
       <div className="overflow-hidden">
         <div>
           <DataToolBar
+            globalSearch={globalSearch}
             table={table}
             searchId={searchId}
             searchPlaceholder={searchPlaceholder}
@@ -398,6 +415,22 @@ export function DataTable<TData extends Record<string, unknown>>({
             dateChoseTitle={dateChoseTitle}
           />
         </div>
+        {exportName && (
+          <div className="flex items-center justify-between flex-wrap gap-3 px-3 pb-3">
+            <p className="text-sm text-muted-foreground" aria-live="polite">
+              {table.getFilteredRowModel().rows.length} résultat(s)
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={exportExcel}
+              disabled={!table.getFilteredRowModel().rows.length}
+            >
+              <RiFileExcel2Line />
+              Exporter les résultats
+            </Button>
+          </div>
+        )}
         <Table className="border-y w-full" ref={tableRef}>
           <TableHeader className="bg-stone-600/30">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -416,7 +449,7 @@ export function DataTable<TData extends Record<string, unknown>>({
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </TableHead>
                       );
@@ -424,10 +457,7 @@ export function DataTable<TData extends Record<string, unknown>>({
                   : headerEmpty &&
                     headerEmpty.map((header, index) => {
                       return (
-                        <TableHead
-                          key={index}
-                          className={cn("border-r")}
-                        >
+                        <TableHead key={index} className={cn("border-r")}>
                           <span>{header.nom}</span>
                         </TableHead>
                       );
@@ -443,14 +473,18 @@ export function DataTable<TData extends Record<string, unknown>>({
                   className="cursor-pointer w-full h-8"
                   data-state={row.getIsSelected() && "selected"}
                   onClick={(event) => {
-                    event.preventDefault();
+                    if (
+                      (event.target as HTMLElement).closest(
+                        "a, button, input, [role=checkbox]",
+                      )
+                    )
+                      return;
                     table.setRowSelection({ [row.id]: true });
                   }}
                   onDoubleClick={(event) => {
                     event.preventDefault();
-                    if (onDoubleClickLink) {
-                      router.push(`${onDoubleClickLink}`);
-                    }
+                    if (rowHref) router.push(rowHref(row.original));
+                    else if (onDoubleClickLink) router.push(onDoubleClickLink);
                   }}
                   onContextMenu={(event) => {
                     event.preventDefault();
@@ -466,7 +500,7 @@ export function DataTable<TData extends Record<string, unknown>>({
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -475,7 +509,9 @@ export function DataTable<TData extends Record<string, unknown>>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length ===1 ? headerEmpty?.length : columns.length}
+                  colSpan={
+                    columns.length === 1 ? headerEmpty?.length : columns.length
+                  }
                   className="h-24 text-center justify-content-center"
                 >
                   <Image
@@ -509,6 +545,7 @@ export function DataTable<TData extends Record<string, unknown>>({
                     size="sm"
                   >
                     <ChevronsLeft />
+                    <span className="sr-only">Première page</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -517,6 +554,7 @@ export function DataTable<TData extends Record<string, unknown>>({
                     disabled={!table.getCanPreviousPage()}
                   >
                     <ChevronLeft />
+                    <span className="sr-only">Page précédente</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -525,6 +563,7 @@ export function DataTable<TData extends Record<string, unknown>>({
                     disabled={!table.getCanNextPage()}
                   >
                     <ChevronRight />
+                    <span className="sr-only">Page suivante</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -533,6 +572,7 @@ export function DataTable<TData extends Record<string, unknown>>({
                     disabled={!table.getCanNextPage()}
                   >
                     <ChevronsRight />
+                    <span className="sr-only">Dernière page</span>
                   </Button>
                 </div>
               )}

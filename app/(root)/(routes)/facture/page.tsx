@@ -1,175 +1,186 @@
 "use client";
 
-import { DataTable } from "@/components/datatables";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { fetcher } from "@/lib/fetcher";
-import { Facture } from "@prisma/client";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  AlertCircleIcon,
-  ArchiveIcon,
-  FileBox,
-  MailCheckIcon,
-  MoreHorizontalIcon,
-  Plus,
-  Trash
-} from "lucide-react";
-import { useState } from "react";
-import { LoaderOne } from "@/components/ui/loader";
-import { format } from "date-fns";
+import type { Facture } from "@prisma/client";
+import { FileText, Plus, Trash, Wallet, CheckCircle2, Eye } from "lucide-react";
 import Link from "next/link";
+import { DataTable } from "@/components/datatables";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from "@/components/ui/tooltip";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+  FilterTabs,
+  Metric,
+  PageIntro,
+  QueryState,
+  StatusPill,
+} from "@/components/crm/workspace";
+import { fetcher } from "@/lib/fetcher";
+import { formatAmount, formatDate, totalsByCurrency } from "@/lib/crm-metrics";
 
-const PageFacture = () => {
-  const [selectedId, setSelectedId] = useState<string>("");
+type Invoice = Facture & { client: { nomClient: string } | null };
+
+export default function PageFacture() {
+  const [selectedId, setSelectedId] = useState("");
+  const [view, setView] = useState("all");
+  useEffect(() => {
+    const preset = new URLSearchParams(window.location.search).get("view");
+    if (preset === "paid" || preset === "unpaid") setView(preset);
+  }, []);
   const {
-    isError,
+    data: factures,
     isPending,
-    data: factures
-  } = useQuery<(Facture & { client: { nomClient: string } })[]>({
+    isError,
+    refetch,
+  } = useQuery<Invoice[]>({
     queryKey: ["factures"],
-    queryFn: () => fetcher(`/api/facture`)
+    queryFn: () => fetcher("/api/facture"),
   });
-  if (isPending) {
-    return (
-      <div className="min-h-screen flex items-center w-full justify-center text-center">
-        <LoaderOne />
-      </div>
-    );
-  }
-  if (isError) {
-    return (
-      <div className="m-4">
-        <Alert variant="destructive">
-          <AlertCircleIcon />
-          <AlertTitle> Erreur de donnée </AlertTitle>
-          <AlertDescription>
-            <p>Une erreur est survenue lors du chargement des factures.</p>
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-  const listes =
-    factures?.map((f) => ({
+  if (isError || isPending)
+    return <QueryState error={isError} retry={() => void refetch()} />;
+  const paid = factures.filter((f) => f.acquittee);
+  const unpaid = factures.filter((f) => !f.acquittee);
+  const visible =
+    view === "paid" ? paid : view === "unpaid" ? unpaid : factures;
+  const rows = [...visible]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .map((f) => ({
       id: f.id,
       numero: f.numero,
-      type: f.type,
-      date: f.date,
       client: f.client?.nomClient || f.clientId,
+      date: f.date,
+      totalTTC: f.totalTTC,
       acquittee: f.acquittee,
+      type: f.type,
       modeReglement: f.modeReglement,
-      devise: f.devise
-    })) || [];
+      devise: f.devise,
+    }));
+  const unpaidTotals = totalsByCurrency(unpaid);
 
   return (
-    <div>
-      <DataTable
-        chemins={[
-          { title: "Factures", url: "/facture" },
-          { title: "Listes", url: "#" }
-        ]}
-        headerEmpty={[
-          {nom:"Numero"},
-          {nom:"Type"},
-          {nom:"Client"},
-          {nom:"Acquittee"},
-          {nom:"ModeReglement"},
-          {nom:"Devise"},
-        ]}
-        action={[
-          <ButtonGroup key={"bouttongroupe"}>
-            <Button variant="outline" asChild>
-              <Link href={"/facture/add"}>
-                <Plus />
-                Nouvelle Facture
-              </Link>
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                type="button"
-                className={cn(
-                  buttonVariants({ variant: "outline", size : "icon" }),
-                  "rounded-l-none focus-visible:ring-0 focus-visible:border-inherit"
-                )}
-              >
-                <MoreHorizontalIcon />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <MailCheckIcon />
-                    Achat de logiciel
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <ArchiveIcon />
-                    Mise à jour
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </ButtonGroup>
-        ]}
-        selectAction={[
-          {
-            label: "Details",
-            icon: <FileBox />,
-            url: `/facture/details/${selectedId}`,
-            variantbtn: "blue"
-          },
-          {
-            label: "Supprimer",
-            icon: <Trash />,
-            url: `/facture/delete/${selectedId}`,
-            variantbtn: "danger"
-          }
-        ]}
-        columnStyles={{
-          numero: (value, row) => (
-            <Link
-              href={`/facture/details/${row.id}`}
-              className="font-medium hover:underline"
-            >
-              {row.numero && row.numero.length > 30 ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span>{row.numero.slice(0, 30) + "..."}</span>
-                  </TooltipTrigger>
-                  <TooltipContent className="w-[560px] p-4" side="bottom">
-                    <p>{value as string}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ) : (
-                <span>{value as string}</span>
-              )}
-            </Link>
-          ),
-          date: (value) => format(new Date(value as string), "dd/MM/yyyy")
-        }}
-        data={listes || []}
-        dateChose="date"
-        dateChoseTitle="Filter par Date"
-        searchId="numero"
-        searchPlaceholder="Rechercher un sujet..."
-        onRowSelect={(id) => setSelectedId(id)}
-        storageKey="facture-datatable"
+    <div className="crm-workspace crm-list-page">
+      <PageIntro
+        title="Une facturation plus lisible."
+        description="Retrouvez vos factures, consultez les montants et identifiez les règlements à suivre."
       />
+      <div className="crm-metrics crm-metrics-three">
+        <Metric
+          label="Factures enregistrées"
+          value={factures.length}
+          detail="Tous types de factures"
+          icon={FileText}
+        />
+        <Metric
+          label="Acquittées"
+          value={paid.length}
+          detail="Factures marquées comme réglées"
+          icon={CheckCircle2}
+          tone="green"
+        />
+        <Metric
+          label="Non acquittées"
+          value={unpaid.length}
+          detail="Factures dont le règlement reste à suivre"
+          icon={Wallet}
+          tone="amber"
+        />
+      </div>
+      <div className="crm-balance">
+        <Wallet size={22} />
+        <div>
+          <strong>Montants TTC non acquittés</strong>
+          <p>
+            {unpaidTotals.length
+              ? unpaidTotals.join(" · ")
+              : unpaid.length
+                ? "Montants non renseignés"
+                : "Aucune facture à suivre"}
+          </p>
+          <small>
+            Totaux par devise, sur les montants renseignés. Aucune conversion
+            appliquée.
+          </small>
+        </div>
+      </div>
+      <FilterTabs
+        label="Filtrer les factures"
+        value={view}
+        onChange={setView}
+        items={[
+          {
+            value: "all",
+            label: "Toutes les factures",
+            count: factures.length,
+          },
+          { value: "unpaid", label: "Non acquittées", count: unpaid.length },
+          { value: "paid", label: "Acquittées", count: paid.length },
+        ]}
+      />
+      <div className="crm-panel crm-table-panel">
+        <DataTable
+          chemins={[{ title: "Factures", url: "/facture" }]}
+          titre="Historique de facturation"
+          headerEmpty={[
+            { nom: "Numéro" },
+            { nom: "Client" },
+            { nom: "Date" },
+            { nom: "Montant TTC" },
+            { nom: "Règlement" },
+          ]}
+          action={[
+            {
+              label: "Nouvelle facture",
+              icon: <Plus />,
+              url: "/facture/add",
+              variantbtn: "default",
+            },
+          ]}
+          selectAction={[
+            {
+              label: "Consulter",
+              icon: <Eye />,
+              url: `/facture/details/${selectedId}`,
+              variantbtn: "outline",
+            },
+            {
+              label: "Supprimer",
+              icon: <Trash />,
+              url: `/facture/delete/${selectedId}`,
+              variantbtn: "danger",
+            },
+          ]}
+          data={rows}
+          globalSearch
+          rowHref={(row) => `/facture/details/${row.id}`}
+          columnStyles={{
+            numero: (value, row) => (
+              <Link
+                className="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                href={`/facture/details/${row.id}`}
+              >
+                {value as string}
+              </Link>
+            ),
+            date: (value) => formatDate(value as string | null),
+            totalTTC: (value, row) => (
+              <span className="font-semibold tabular-nums">
+                {formatAmount(value as number | null, row.devise)}
+              </span>
+            ),
+            acquittee: (value) => (
+              <StatusPill done={!!value}>
+                {value ? "Acquittée" : "Non acquittée"}
+              </StatusPill>
+            ),
+          }}
+          dateChose="date"
+          dateChoseTitle="Date de facturation"
+          searchId="numero"
+          searchPlaceholder="Numéro, client, mode de règlement…"
+          onRowSelect={setSelectedId}
+          notData="Aucune facture ne correspond à votre recherche"
+          storageKey="facture-datatable"
+          exportName="liste_factures"
+        />
+      </div>
     </div>
   );
-};
-
-export default PageFacture;
+}

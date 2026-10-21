@@ -1,12 +1,14 @@
 "use client";
 
+import { Metric, PageIntro, FilterTabs } from "@/components/crm/workspace";
+import { Users, Phone, Building2 } from "lucide-react";
 import { DataTable } from "@/components/datatables";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LoaderOne } from "@/components/ui/loader";
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { fetcher } from "@/lib/fetcher";
 import { Client } from "@prisma/client";
@@ -16,20 +18,21 @@ import {
   FileChartPie,
   Plus,
   SquarePen,
-  Trash2
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 const ClientPage = () => {
+  const [view, setView] = useState("all");
   const [selectedId, setSelectedId] = useState<string>("");
   const {
     isPending,
     isError,
-    data: clients
+    data: clients,
   } = useQuery<Client[]>({
     queryKey: ["clients"],
-    queryFn: () => fetcher(`/api/client`)
+    queryFn: () => fetcher(`/api/client`),
   });
   const dataFiltered = Array.from(
     new Map(
@@ -37,10 +40,10 @@ const ClientPage = () => {
         client.activite || "N/A",
         {
           label: client.activite || "Pas d'activité",
-          value: client.activite || "Pas d'activité"
-        }
-      ])
-    ).values()
+          value: client.activite || "Pas d'activité",
+        },
+      ]),
+    ).values(),
   );
 
   if (isPending) {
@@ -64,85 +67,134 @@ const ClientPage = () => {
     );
   }
 
+  const missingPhone = clients.filter((client) => !client.telephone?.trim());
+  const visibleClients = view === "missing-phone" ? missingPhone : clients;
   return (
-    <DataTable
-      chemins={[
-        { title: "Clients", url: "/client" },
-        { title: "Listes", url: "#" }
-      ]}
-      titre="Liste des clients"
-      action={[
-        {
-          label: "Nouvelle Client",
-          icon: <Plus />,
-          url: "/client/add",
-          variantbtn: "default"
-        }
-      ]}
-      selectAction={[
-        {
-          label: "Details",
-          icon: <SquarePen />,
-          url: `/client/detail/${selectedId}`,
-          variantbtn: "outline"
-        },
-        {
-          label: "Supprimer",
-          icon: <Trash2 />,
-          url: `/client/delete/${selectedId}`,
-          variantbtn: "danger"
-        }
-      ]}
-      columnStyles={{
-        nomClient: (value, row) => (
-          <Link
-            href={`/client/detail/${row.id}`}
-            className="font-medium hover:underline"
-          >
-            {row.nomClient && row.nomClient.length > 30 ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>{row.nomClient.slice(0, 30) + "..."}</span>
-                </TooltipTrigger>
-                <TooltipContent className="w-[560px] p-4" side="bottom">
-                  <p>{value as string}</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : (
-              <span>{value as string}</span>
-            )}
-          </Link>
-        )
-      }}
-      data={clients || []}
-      hideList={[
-        "createdAt",
-        "updatedAt",
-        "adresse",
-        "sigle",
-        "dateInscription",
-        "dateNewVisite",
-        "dateLastVisite",
-        "requete"
-      ]}
-      popFilter={[
-        {
-          dataFilter: "activite",
-          icon: <FileChartPie />,
-          options: dataFiltered
-        }
-      ]}
-      onDoubleClickLink={"/client/detail/" + selectedId}
-      dateChose="dateLastVisite"
-      dateChoseTitle="Filter derniere requete"
-      searchId="nomClient"
-      searchPlaceholder="Rechercher un nom de client..."
-      notData="Aucun client trouvé"
-      onRowSelect={(id) => setSelectedId(id)}
-      //exportLien="/api/export/client"
-      exportName="liste_clients"
-      storageKey="client-datatable"
-    />
+    <div className="crm-workspace crm-list-page">
+      <PageIntro
+        title="Vos clients, au cœur du suivi."
+        description="Retrouvez les coordonnées, les requêtes et l’historique de chaque client Malisystem."
+      />
+      <div className="crm-metrics crm-metrics-three">
+        <Metric
+          label="Clients"
+          value={clients.length}
+          detail="Dans votre portefeuille"
+          icon={Users}
+        />
+        <Metric
+          label="Secteurs d’activité"
+          value={
+            new Set(clients.map((c) => c.activite?.trim()).filter(Boolean)).size
+          }
+          detail="Des entreprises de tous horizons"
+          icon={Building2}
+          tone="violet"
+        />
+        <Metric
+          label="Coordonnées à compléter"
+          value={missingPhone.length}
+          detail="Clients sans numéro de téléphone"
+          icon={Phone}
+          tone="amber"
+        />
+      </div>
+      <FilterTabs
+        label="Filtrer les clients"
+        value={view}
+        onChange={setView}
+        items={[
+          { value: "all", label: "Tous les clients", count: clients.length },
+          {
+            value: "missing-phone",
+            label: "Sans téléphone",
+            count: missingPhone.length,
+          },
+        ]}
+      />
+      <div className="crm-panel crm-table-panel">
+        <DataTable
+          chemins={[
+            { title: "Clients", url: "/client" },
+            { title: "Listes", url: "#" },
+          ]}
+          titre="Répertoire clients"
+          action={[
+            {
+              label: "Nouveau client",
+              icon: <Plus />,
+              url: "/client/add",
+              variantbtn: "default",
+            },
+          ]}
+          selectAction={[
+            {
+              label: "Details",
+              icon: <SquarePen />,
+              url: `/client/detail/${selectedId}`,
+              variantbtn: "outline",
+            },
+            {
+              label: "Supprimer",
+              icon: <Trash2 />,
+              url: `/client/delete/${selectedId}`,
+              variantbtn: "danger",
+            },
+          ]}
+          columnStyles={{
+            nomClient: (value, row) => (
+              <Link
+                href={`/client/detail/${row.id}`}
+                className="font-medium hover:underline"
+              >
+                {row.nomClient && row.nomClient.length > 30 ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>{row.nomClient.slice(0, 30) + "..."}</span>
+                    </TooltipTrigger>
+                    <TooltipContent className="w-[560px] p-4" side="bottom">
+                      <p>{value as string}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <span>{value as string}</span>
+                )}
+              </Link>
+            ),
+          }}
+          data={visibleClients}
+          globalSearch
+          rowHref={(row) => `/client/detail/${row.id}`}
+          hideList={[
+            "createdAt",
+            "updatedAt",
+            "adresse",
+            "sigle",
+            "dateInscription",
+            "dateNewVisite",
+            "dateLastVisite",
+            "requete",
+          ]}
+          popFilter={[
+            {
+              dataFilter: "activite",
+              icon: <FileChartPie />,
+              options: dataFiltered,
+            },
+          ]}
+          onDoubleClickLink={"/client/detail/" + selectedId}
+          dateChose="dateLastVisite"
+          dateChoseTitle="Dernière requête"
+          searchId="nomClient"
+          searchPlaceholder="Nom, téléphone, activité…"
+          notData="Aucun client trouvé"
+          onRowSelect={(id) => setSelectedId(id)}
+          //exportLien="/api/export/client"
+          exportName="liste_clients"
+          storageKey="client-datatable"
+        />
+      </div>
+    </div>
   );
 };
 

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import DataTableFilter from "./data-filter";
 import DateFilter from "./date-table-filter";
@@ -16,6 +16,7 @@ import DateFilter from "./date-table-filter";
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   searchId?: string;
+  globalSearch?: boolean;
   searchPlaceholder?: string;
   options?: {
     label: string;
@@ -46,12 +47,16 @@ function safeGetColumn<TData>(table: Table<TData>, id: string) {
 function DataToolBar<TData>({
   table,
   searchId,
+  globalSearch = false,
   searchPlaceholder,
   popFilter,
   dateChose,
-  dateChoseTitle
+  dateChoseTitle,
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0 || table.getState().sorting.length > 0;
+  const isFiltered =
+    table.getState().columnFilters.length > 0 ||
+    table.getState().sorting.length > 0 ||
+    !!table.getState().globalFilter;
 
   const filtreValeur = safeGetColumn(table, searchId ?? "");
 
@@ -59,17 +64,24 @@ function DataToolBar<TData>({
     <div className="flex items-center py-4 w-full">
       <div className="flex flex-col items-center w-full">
         <div className="flex flex-col md:flex-row md:items-center justify-start w-full gap-3 py-2 px-1">
-          {filtreValeur && (
+          {(globalSearch || filtreValeur) && (
             <Input
               placeholder={`${searchPlaceholder ?? "Filter"}`}
-              value={(filtreValeur?.getFilterValue() as string) ?? ""}
+              aria-label={searchPlaceholder ?? "Rechercher"}
+              value={
+                globalSearch
+                  ? (table.getState().globalFilter ?? "")
+                  : ((filtreValeur?.getFilterValue() as string) ?? "")
+              }
               onChange={(event) =>
-                filtreValeur?.setFilterValue(event.target.value)
+                globalSearch
+                  ? table.setGlobalFilter(event.target.value)
+                  : filtreValeur?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
             />
           )}
-          <div className="flex flex-row items-center justify-start w-full gap-3 py-2">
+          <div className="flex flex-row flex-wrap items-center justify-start w-full gap-3 py-2">
             {filtreValeur &&
               popFilter &&
               popFilter.map((filter, index) => (
@@ -93,12 +105,13 @@ function DataToolBar<TData>({
                   <Button
                     variant="danger"
                     onClick={() => {
+                      table.setGlobalFilter("");
                       table.resetColumnFilters();
                       table.resetSorting();
                     }}
                     className="h-8 px-2 lg:px-3"
                   >
-                    Reset
+                    Réinitialiser
                     <X />
                   </Button>
                 </TooltipTrigger>
