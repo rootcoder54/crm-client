@@ -14,7 +14,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
@@ -22,6 +22,7 @@ import { toast } from "sonner";
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { PageIntro } from "@/components/crm/workspace";
 import HeaderPage from "../features/header-page";
 import { createClient } from "@/services/client.service";
 import { useSession } from "next-auth/react";
@@ -41,8 +42,8 @@ const AddClient = () => {
     activite: z.string(),
     numero: z.string(),
     dateInscription: z.string().refine((val) => !isNaN(Date.parse(val)), {
-      message: "La date doit être au format valide (YYYY-MM-DD)"
-    })
+      message: "La date doit être au format valide (YYYY-MM-DD)",
+    }),
   });
 
   const form = useForm<z.infer<typeof schema>>({
@@ -54,8 +55,8 @@ const AddClient = () => {
       telephone: "",
       activite: "",
       numero: "",
-      dateInscription: ""
-    }
+      dateInscription: "",
+    },
   });
 
   function onSubmit(values: z.infer<typeof schema>) {
@@ -65,7 +66,7 @@ const AddClient = () => {
           createLog({
             action: "Ajout Client",
             details: `Client ${data.nomClient} a été crée`,
-            userId: session?.user.id ?? ""
+            userId: session?.user.id ?? "",
           }).then(() => {
             toast.success("Client ajouté avec succès");
             router.push("/client");
@@ -85,13 +86,13 @@ const AddClient = () => {
   }
 
   return (
-    <div className="w-full">
+    <div className="crm-workspace crm-form-page w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
               { title: "Clients", url: "/client" },
-              { title: "Nouveau Client", url: "#" }
+              { title: "Nouveau Client", url: "#" },
             ]}
           >
             <div className="flex items-center gap-2">
@@ -100,14 +101,18 @@ const AddClient = () => {
                 Ajouter Client
               </Button>
               <Link href={"/client"}>
-                <Button variant={"destructive"}>
+                <Button type="button" variant={"outline"}>
                   <Ban />
                   Annuler
                 </Button>
               </Link>
             </div>
           </HeaderPage>
-          <div className="space-y-8 px-12 py-5">
+          <PageIntro
+            title="Nouveau client"
+            description="Centralisez les coordonnées et les informations de votre client Malisystem."
+          />
+          <div className="crm-form-body">
             <FormField
               control={form.control}
               name="nomClient"

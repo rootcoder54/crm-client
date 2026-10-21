@@ -14,7 +14,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { format } from "date-fns";
+import { PageIntro } from "@/components/crm/workspace";
 import HeaderPage from "../features/header-page";
 import { updateClient } from "@/services/client.service";
 import { Client } from "@prisma/client";
@@ -40,8 +41,8 @@ const EditeClient = ({ client }: { client: Client }) => {
     activite: z.string(),
     numero: z.string(),
     dateInscription: z.string().refine((val) => !isNaN(Date.parse(val)), {
-      message: "La date doit être au format valide (YYYY-MM-DD)"
-    })
+      message: "La date doit être au format valide (YYYY-MM-DD)",
+    }),
   });
 
   const form = useForm<z.infer<typeof schema>>({
@@ -55,8 +56,8 @@ const EditeClient = ({ client }: { client: Client }) => {
       numero: client.numero || "",
       dateInscription: client.dateInscription
         ? format(new Date(client.dateInscription), "yyyy-MM-dd")
-        : ""
-    }
+        : "",
+    },
   });
 
   function onSubmit(values: z.infer<typeof schema>) {
@@ -80,13 +81,13 @@ const EditeClient = ({ client }: { client: Client }) => {
   }
 
   return (
-    <div className="w-full">
+    <div className="crm-workspace crm-form-page w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
               { title: "Clients", url: "/client" },
-              { title: "Editer Client", url: "#" }
+              { title: "Editer Client", url: "#" },
             ]}
           >
             <div className="flex items-center gap-2">
@@ -95,14 +96,18 @@ const EditeClient = ({ client }: { client: Client }) => {
                 Editer Client
               </Button>
               <Link href={"/client/detail/" + client.id}>
-                <Button variant={"destructive"}>
+                <Button type="button" variant={"outline"}>
                   <Ban />
                   Annuler
                 </Button>
               </Link>
             </div>
           </HeaderPage>
-          <div className="space-y-8 px-12 py-5">
+          <PageIntro
+            title="Mettre à jour le client"
+            description="Gardez des coordonnées fiables pour faciliter le suivi de votre équipe."
+          />
+          <div className="crm-form-body">
             <FormField
               control={form.control}
               name="nomClient"

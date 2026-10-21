@@ -13,7 +13,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -23,12 +23,13 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
 import { Requete } from "@prisma/client";
 import { updateRequete } from "@/services/requete.service";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { PageIntro } from "@/components/crm/workspace";
 import HeaderPage from "../features/header-page";
 import { LoaderOne } from "../ui/loader";
 import MyEditor from "../features/Editor";
@@ -44,7 +45,7 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
     observation: z.string(),
     logiciel: z.string(),
     demandeur: z.string(),
-    technicien: z.string()
+    technicien: z.string(),
   });
 
   const form = useForm<z.infer<typeof schema>>({
@@ -56,8 +57,8 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
       observation: requete.observation || "",
       logiciel: requete.logiciel || "",
       demandeur: requete.demandeur || "",
-      technicien: requete.technicien || ""
-    }
+      technicien: requete.technicien || "",
+    },
   });
 
   function onSubmit(values: z.infer<typeof schema>) {
@@ -65,7 +66,7 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
       updateRequete(requete.id, values).then((data) => {
         toast.success(`Requete ${data.sujet} a été modifié avec succes`);
         router.push("/requete/detail/" + requete.id);
-      })
+      }),
     );
   }
 
@@ -82,13 +83,13 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
   }
 
   return (
-    <div className="w-full">
+    <div className="crm-workspace crm-form-page w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
               { title: "Requête", url: "/requete" },
-              { title: "Modifier", url: "#" }
+              { title: "Modifier", url: "#" },
             ]}
           >
             <div className="flex items-center gap-2">
@@ -106,7 +107,11 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
               </Button>
             </div>
           </HeaderPage>
-          <div className="space-y-8 px-12 py-5">
+          <PageIntro
+            title="Mettre à jour la requête"
+            description="Complétez les informations utiles au traitement de cette demande."
+          />
+          <div className="crm-form-body">
             <FormField
               control={form.control}
               name="sujet"

@@ -566,3 +566,226 @@
     animation: none !important;
   }
 }
+
+/* Shared form layout for client/request creation and editing. */
+.crm-form-page .crm-form-body {
+  max-width: 1000px;
+  margin: 24px auto;
+  padding: 28px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.crm-form-page .crm-form-body > * {
+  margin: 0;
+  min-width: 0;
+}
+.crm-form-page .crm-form-body > :has(textarea),
+.crm-form-page .crm-form-body > :has([role="combobox"]) {
+  grid-column: 1 / -1;
+}
+.crm-form-page input:not([type="checkbox"]),
+.crm-form-page [role="combobox"] {
+  min-height: 44px;
+}
+.crm-form-page label {
+  font-size: 14px;
+  font-weight: 500;
+}
+.crm-form-page .crm-intro {
+  padding: 28px 12px 0;
+}
+.crm-draft-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+.crm-invoice-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  min-width: 0;
+}
+.crm-invoice-main {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.crm-form-section {
+  padding: 26px;
+}
+.crm-section-title {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.crm-section-title > span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-radius: 10px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.crm-section-title > div {
+  flex: 1;
+}
+.crm-section-title h2,
+.crm-invoice-summary h2 {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+.crm-section-title p {
+  font-size: 13px;
+  color: var(--muted-foreground);
+  margin-top: 4px;
+}
+.crm-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.crm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.crm-field-wide {
+  grid-column: 1 / -1;
+}
+.crm-field label {
+  font-size: 13px;
+  font-weight: 500;
+}
+.crm-field input,
+.crm-field select {
+  min-height: 44px;
+  width: 100%;
+}
+.crm-field select {
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--input);
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.crm-field-hint {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 6px;
+}
+.crm-line-list {
+  display: grid;
+  gap: 16px;
+}
+.crm-invoice-line {
+  background: color-mix(in srgb, var(--muted) 35%, var(--card));
+  border: 1px solid var(--border);
+  padding: 18px;
+  border-radius: 12px;
+}
+.crm-line-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+.crm-line-numbers {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.crm-line-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  margin-top: 18px;
+  color: var(--muted-foreground);
+}
+.crm-line-total strong {
+  color: var(--foreground);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.crm-invoice-summary {
+  min-width: 0;
+}
+.crm-invoice-summary > div {
+  position: sticky;
+  top: 24px;
+}
+.crm-invoice-summary dl {
+  margin: 28px 0 18px;
+  display: grid;
+  gap: 16px;
+  font-size: 14px;
+}
+.crm-invoice-summary dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.crm-invoice-summary dt {
+  color: var(--muted-foreground);
+}
+.crm-invoice-summary dd {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.crm-invoice-summary .crm-grand-total {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  flex-direction: column;
+}
+.crm-grand-total dd {
+  font-size: 30px;
+  letter-spacing: -0.6px;
+  color: var(--primary);
+}
+@media (max-width: 1150px) {
+  .crm-invoice-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .crm-invoice-summary > div {
+    position: static;
+  }
+}
+@media (max-width: 650px) {
+  .crm-form-grid,
+  .crm-form-page .crm-form-body {
+    grid-template-columns: 1fr;
+  }
+  .crm-form-section,
+  .crm-form-page .crm-form-body {
+    padding: 18px;
+  }
+  .crm-line-numbers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .crm-invoice-line {
+    padding: 14px;
+  }
+}
+/* Keep visually hidden table labels inside their horizontal scroll container. */
+.crm-workspace .overflow-x-auto {
+  position: relative;
+}

@@ -91,7 +91,7 @@ export default function Home() {
       </HeaderPage>
       <div className="crm-page-content">
         <PageIntro
-          title={`Bonjour${session?.user?.name ? `, ${session.user.name.split(" ")[0]}` : ""} 👋`}
+          title={`Bonjour${session?.user?.name ? `, ${session.user.name.split(" ")[0]}` : ""}`}
           description="Vos clients, vos demandes et votre facturation. L’essentiel, au même endroit."
         >
           <Button asChild>
@@ -119,7 +119,7 @@ export default function Home() {
                 detail={`${unassigned.length} sans technicien attribué`}
                 icon={Clock3}
                 tone="amber"
-                href="/requete?view=open"
+                href="/requete"
               />
               <Metric
                 label="Requêtes clôturées"
@@ -127,7 +127,7 @@ export default function Home() {
                 detail={`${rate} % des demandes enregistrées`}
                 icon={CheckCircle2}
                 tone="green"
-                href="/requete?view=closed"
+                href="/requete"
               />
               <Metric
                 label="Factures non acquittées"
@@ -146,7 +146,7 @@ export default function Home() {
                     <h2>Les demandes à traiter</h2>
                     <p>Les plus anciennes demandes encore ouvertes.</p>
                   </div>
-                  <Link href="/requete?view=open" className="crm-text-link">
+                  <Link href="/requete" className="crm-text-link">
                     Tout voir <ArrowUpRight size={16} />
                   </Link>
                 </div>
@@ -197,10 +197,7 @@ export default function Home() {
                   Gardez une vue claire sur les demandes à attribuer et les
                   factures à suivre.
                 </p>
-                <Link
-                  href="/requete?view=unassigned"
-                  className="crm-focus-item"
-                >
+                <Link href="/requete" className="crm-focus-item">
                   <Users size={20} />
                   <span>
                     <strong>

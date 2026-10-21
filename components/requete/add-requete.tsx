@@ -15,7 +15,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,12 +28,12 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxValue,
-  useComboboxAnchor
+  useComboboxAnchor,
 } from "@/components/ui/combobox";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
   Command,
@@ -41,7 +41,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList
+  CommandList,
 } from "@/components/ui/command";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,7 +50,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -59,6 +59,7 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Client, Requete } from "@prisma/client";
 import { autoSaveRequete } from "@/services/requete.service";
+import { PageIntro } from "@/components/crm/workspace";
 import HeaderPage from "../features/header-page";
 import { lastVisite } from "@/services/client.service";
 import { useQuery } from "@tanstack/react-query";
@@ -72,18 +73,18 @@ const AddRequete = ({ id }: { id: string }) => {
   const [isPending, transition] = useTransition();
 
   const [requete, setRequete] = useState<Requete>({
-    id: id
+    id: id,
   } as Requete);
   const { isPending: isLoading, data: clients } = useQuery<Client[]>({
     queryKey: ["clients"],
-    queryFn: () => fetcher(`/api/client`)
+    queryFn: () => fetcher(`/api/client`),
   });
 
   const { isPending: isTechniciensPending, data: techniciens } = useQuery<
     { technicien: string }[]
   >({
     queryKey: ["techniciens"],
-    queryFn: () => fetcher(`/api/requete/tech`)
+    queryFn: () => fetcher(`/api/requete/tech`),
   });
 
   const [techniciensList, setTechniciensList] = useState<string[]>([]);
@@ -103,7 +104,7 @@ const AddRequete = ({ id }: { id: string }) => {
     demandeur: z.string(),
     technicien: z.array(z.string()),
     dateDebut: z.date(),
-    clientId: z.string().optional()
+    clientId: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof schema>>({
@@ -117,8 +118,8 @@ const AddRequete = ({ id }: { id: string }) => {
       demandeur: "",
       technicien: [],
       dateDebut: new Date(),
-      clientId: undefined
-    }
+      clientId: undefined,
+    },
   });
 
   useEffect(() => {
@@ -128,8 +129,8 @@ const AddRequete = ({ id }: { id: string }) => {
           ({
             ...prev,
             ...values,
-            technicien: values.technicien?.join(" , ")
-          }) as Requete
+            technicien: values.technicien?.join(" , "),
+          }) as Requete,
       );
     });
     console.log(requete);
@@ -161,13 +162,13 @@ const AddRequete = ({ id }: { id: string }) => {
   }
 
   return (
-    <div className="w-full">
+    <div className="crm-workspace crm-form-page w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
             chemins={[
               { title: "Requête", url: "/requete" },
-              { title: "Nouvelle Requête", url: "#" }
+              { title: "Nouvelle Requête", url: "#" },
             ]}
           >
             <div className="flex items-center gap-2">
@@ -176,14 +177,18 @@ const AddRequete = ({ id }: { id: string }) => {
                 Valider
               </Button>
               <Link href={"/requete"}>
-                <Button variant={"destructive"}>
+                <Button type="button" variant={"outline"}>
                   <Ban />
                   Annuler
                 </Button>
               </Link>
             </div>
           </HeaderPage>
-          <div className="space-y-8 px-12 py-5">
+          <PageIntro
+            title="Nouvelle requête"
+            description="Décrivez la demande, choisissez le client et attribuez les techniciens."
+          />
+          <div className="crm-form-body">
             <FormField
               control={form.control}
               name="sujet"
@@ -211,12 +216,12 @@ const AddRequete = ({ id }: { id: string }) => {
                           role="combobox"
                           className={cn(
                             "justify-between",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value
                             ? clients?.find(
-                                (client) => client.id === field.value
+                                (client) => client.id === field.value,
                               )?.nomClient
                             : "Selectionner le client"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -249,7 +254,7 @@ const AddRequete = ({ id }: { id: string }) => {
                                     "ml-auto",
                                     client.id === field.value
                                       ? "opacity-100"
-                                      : "opacity-0"
+                                      : "opacity-0",
                                   )}
                                 />
                               </CommandItem>
@@ -276,7 +281,7 @@ const AddRequete = ({ id }: { id: string }) => {
                           variant={"outline"}
                           className={cn(
                             "pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value ? (
@@ -415,7 +420,7 @@ const AddRequete = ({ id }: { id: string }) => {
                                     ) {
                                       setTechniciensList((prev) => [
                                         ...prev,
-                                        input
+                                        input,
                                       ]); // ⚠️ idéalement utiliser un state
                                     }
 
@@ -425,7 +430,7 @@ const AddRequete = ({ id }: { id: string }) => {
                                     ) {
                                       field.onChange([
                                         ...(field.value || []),
-                                        input
+                                        input,
                                       ]);
                                     }
 
