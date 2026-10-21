@@ -11,16 +11,18 @@ import {
   Home,
   MessageCircleQuestion,
   Users,
-  UserSquareIcon
+  UserSquareIcon,
 } from "lucide-react";
 
 import {
   Sidebar,
   SidebarHeader,
-  SidebarContent
+  SidebarFooter,
+  SidebarContent,
 } from "@/components/ui/sidebar";
 import { UserButton } from "@/components/sidebar/userButton";
 import { NavItems } from "./navItems";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getNumberOfDraftRequetes } from "@/services/requete.service";
 
@@ -30,93 +32,104 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const [draftCount, setdraftCount] = React.useState<string>();
   React.useEffect(() => {
-    getNumberOfDraftRequetes().then((count) => {
-      if (count !== 0) {
-        setdraftCount(count + "");
-      } else {
-        setdraftCount(undefined);
-      }
-    });
-  }, [draftCount, pathname]);
+    getNumberOfDraftRequetes()
+      .then((count) => {
+        if (count !== 0) {
+          setdraftCount(count + "");
+        } else {
+          setdraftCount(undefined);
+        }
+      })
+      .catch(() => setdraftCount(undefined));
+  }, [pathname]);
   const data = {
     navMain: [
       {
         title: "Accueil",
         url: "/",
         icon: Home,
-        isActive: pathname === "/"
+        isActive: pathname === "/",
       },
       {
-        title: "Employé",
+        title: "Équipe",
         url: "/employe",
         icon: Users,
-        isActive: pathname === "/employe"
+        isActive: pathname === "/employe",
       },
       {
-        title: "Client",
+        title: "Clients",
         url: "/client",
         icon: UserSquareIcon,
-        isActive: pathname.startsWith("/client")
+        isActive: pathname.startsWith("/client"),
       },
       {
         title: "Licence",
         url: "/licence",
         icon: Copyright,
-        isActive: pathname.startsWith("/licence")
+        isActive: pathname.startsWith("/licence"),
       },
       {
-        title: "Requête",
+        title: "Requêtes",
         url: "/requete",
         icon: AlignLeft,
-        isActive: pathname.startsWith("/requete")
+        isActive: pathname.startsWith("/requete"),
       },
       {
-        title: "Requête Brouillon",
+        title: "Brouillons",
         url: "/draft",
         icon: BookDashed,
         isActive: pathname.startsWith("/draft"),
-        badge: draftCount
+        badge: draftCount,
       },
       {
-        title: "Facture",
+        title: "Factures",
         url: "/facture",
         icon: FileChartPie,
-        isActive: pathname.startsWith("/facture")
+        isActive: pathname.startsWith("/facture"),
       },
       {
-        title: "Video Astuce",
+        title: "Vidéos & astuces",
         url: "/video",
         icon: FileChartPie,
-        isActive: pathname.startsWith("/video")
+        isActive: pathname.startsWith("/video"),
       },
       {
-        title: "Formation User",
+        title: "Formations",
         url: "/formationuser",
         icon: FileArchive,
-        isActive: pathname === "/formationuser"
+        isActive: pathname === "/formationuser",
       },
       {
-        title: "Questions Frequents",
+        title: "Questions fréquentes",
         url: "/frequents",
         icon: MessageCircleQuestion,
-        isActive: pathname.startsWith("/frequents")
+        isActive: pathname.startsWith("/frequents"),
       },
       {
         title: "Importations",
         url: "/importation",
         icon: AppWindow,
-        isActive: pathname === "/importation"
-      }
-    ]
+        isActive: pathname === "/importation",
+      },
+    ],
   };
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <UserButton />
+        <Link href="/" className="crm-brand">
+          <span className="crm-brand-mark">M</span>
+          <span>
+            <strong>Malisystem</strong>
+            <small>Relation client & facturation</small>
+          </span>
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <NavItems items={data.navMain} />
       </SidebarContent>
+      <SidebarFooter className="border-t p-4">
+        <UserButton />
+      </SidebarFooter>
     </Sidebar>
   );
 }

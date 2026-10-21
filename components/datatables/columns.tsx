@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 
 import Image from "next/image";
@@ -92,7 +92,7 @@ const renderCell = (value: unknown) => {
 
 export function generateColumns<T extends Record<string, unknown>>(
   data: T[],
-  customStyles?: Record<string, (value: unknown, row: T) => React.ReactNode>
+  customStyles?: Record<string, (value: unknown, row: T) => React.ReactNode>,
 ): ColumnDef<T>[] {
   if (data.length === 0) return [];
 
@@ -109,14 +109,28 @@ export function generateColumns<T extends Record<string, unknown>>(
         !isNaN(Date.parse(firstNonNull)) && // 🔹 valide par Date.parse
         /[-/]/.test(firstNonNull)); // 🔹 doit contenir - ou /
 
-    console.log(key, ":", isDateColumn);
-
     return {
       accessorKey: key,
       header: ({ column, table }) => {
         return (
           <ColumnHeader
-            title={key.charAt(0).toUpperCase() + key.slice(1)}
+            title={
+              (
+                {
+                  nomClient: "Client",
+                  dateLastVisite: "Dernière requête",
+                  dateDebut: "Date de début",
+                  modeReglement: "Mode de règlement",
+                  totalTTC: "Montant TTC",
+                  acquittee: "Règlement",
+                  numero: "Numéro",
+                  telephone: "Téléphone",
+                  activite: "Activité",
+                  etat: "État",
+                  technicien: "Technicien",
+                } as Record<string, string>
+              )[key] ?? key.charAt(0).toUpperCase() + key.slice(1)
+            }
             column={column}
             table={table}
           />
@@ -131,14 +145,14 @@ export function generateColumns<T extends Record<string, unknown>>(
         }
 
         return renderCell(raw); // on rend le JSX mais on ne pollue pas getValue()
-      }
+      },
     } as ColumnDef<T>;
   });
 }
 
 export function buildColumns<T extends Record<string, unknown>>(
   data: T[],
-  customStyles?: Record<string, (value: unknown, row: T) => React.ReactNode>
+  customStyles?: Record<string, (value: unknown, row: T) => React.ReactNode>,
 ): ColumnDef<T>[] {
   const dynamicCols = generateColumns(data, customStyles);
 
@@ -150,7 +164,7 @@ export function buildColumns<T extends Record<string, unknown>>(
           checked={!!row.getIsSelected()}
           onClick={(event) => {
             event.stopPropagation();
-            
+
             row.toggleSelected(true);
           }}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -159,8 +173,8 @@ export function buildColumns<T extends Record<string, unknown>>(
         />
       ),
       enableSorting: false,
-      enableHiding: false
+      enableHiding: false,
     },
-    ...dynamicCols
+    ...dynamicCols,
   ];
 }
