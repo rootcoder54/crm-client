@@ -108,6 +108,7 @@ function DataToolBar<TData>({
                       table.setGlobalFilter("");
                       table.resetColumnFilters();
                       table.resetSorting();
+                      table.setPageIndex(0);
                     }}
                     className="h-8 px-2 lg:px-3"
                   >

@@ -117,6 +117,13 @@ const PageRequete = () => {
       </div>
       <div className="crm-panel crm-table-panel">
         <DataTable
+          emptyState={{
+            icon: "requests",
+            title: "Aucune requête pour le moment",
+            description:
+              "Enregistrez une demande client pour suivre son traitement et les interventions de votre équipe.",
+            action: { label: "Créer une requête", href: "/requete/add" },
+          }}
           chemins={[
             { title: "Requête", url: "/requete" },
             { title: "Listes", url: "#" },

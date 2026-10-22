@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const BaseClient = ({
   bases,
-  clientId
+  clientId,
 }: {
   bases: Base[];
   clientId: string;
@@ -15,26 +15,36 @@ const BaseClient = ({
 
   return (
     <DataTable
+      emptyState={{
+        icon: "databases",
+        title: "Aucune base pour ce client",
+        description:
+          "Enregistrez une base pour retrouver ses informations et suivre les sauvegardes de ce client.",
+        action: {
+          label: "Ajouter une base",
+          href: `/client/base/${clientId}/add`,
+        },
+      }}
       action={[
         {
           label: "Nouvelle Base",
           icon: <Plus />,
           url: `/client/base/${clientId}/add`,
-          variantbtn: "secondary"
-        }
+          variantbtn: "secondary",
+        },
       ]}
       chemins={[
         { title: "Clients", url: "/client" },
         { title: "Details", url: `/client/detail/${clientId}` },
-        { title: "Bases", url: "#" }
+        { title: "Bases", url: "#" },
       ]}
       selectAction={[
         {
           label: "Supprimer",
           icon: <Trash2 />,
           url: `/client/base/${clientId}/delete/${selectedId}`,
-          variantbtn: "danger"
-        }
+          variantbtn: "danger",
+        },
       ]}
       data={bases}
       hideList={[
@@ -43,7 +53,7 @@ const BaseClient = ({
         "updatedAt",
         "commentaire",
         "chemin",
-        "date"
+        "date",
       ]}
       notData="Aucun Base trouvé"
       onRowSelect={(id) => setSelectedId(id)}

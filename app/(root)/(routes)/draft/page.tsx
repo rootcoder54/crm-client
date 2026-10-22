@@ -11,7 +11,7 @@ import Link from "next/link";
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 
 interface RequeteWithClient extends Requete {
@@ -23,10 +23,10 @@ const PageRequete = () => {
   const {
     isError,
     isPending,
-    data: requetes
+    data: requetes,
   } = useQuery<RequeteWithClient[]>({
     queryKey: ["requeteDraft"],
-    queryFn: () => fetcher(`/api/requete/draft`)
+    queryFn: () => fetcher(`/api/requete/draft`),
   });
 
   if (isPending) {
@@ -52,14 +52,20 @@ const PageRequete = () => {
   const listes =
     requetes.map((requete) => ({
       ...requete,
-      client: requete.client?.nomClient || "Pas de client"
+      client: requete.client?.nomClient || "Pas de client",
     })) || [];
 
   return (
     <DataTable
+      emptyState={{
+        icon: "drafts",
+        title: "Aucune requête en brouillon",
+        description:
+          "Les requêtes commencées et non finalisées apparaîtront ici. Vous pourrez les reprendre à tout moment.",
+      }}
       chemins={[
         { title: "Requête", url: "/requete" },
-        { title: "Requête Brouillon", url: "/draft" }
+        { title: "Requête Brouillon", url: "/draft" },
       ]}
       titre="Liste des Requêtes Brouillons"
       selectAction={[
@@ -67,14 +73,14 @@ const PageRequete = () => {
           label: "Voir",
           icon: <FileBox />,
           url: `/draft/${selectedId}`,
-          variantbtn: "blue"
+          variantbtn: "blue",
         },
         {
           label: "Supprimer",
           icon: <AlertCircleIcon />,
           url: `/draft/${selectedId}/delete`,
-          variantbtn: "danger"
-        }
+          variantbtn: "danger",
+        },
       ]}
       data={listes}
       dateChose="dateDebut"
@@ -99,7 +105,7 @@ const PageRequete = () => {
             )}
           </Link>
         ),
-        type: (value) => <span className="uppercase">{value as string}</span>
+        type: (value) => <span className="uppercase">{value as string}</span>,
       }}
       hideList={[
         "createdAt",
@@ -114,7 +120,7 @@ const PageRequete = () => {
         "isTacheClient",
         "etat",
         "status",
-        "technicien"
+        "technicien",
       ]}
       searchId="sujet"
       searchPlaceholder="Rechercher un sujet..."

@@ -15,10 +15,10 @@ const UserLogPage = () => {
   const {
     isError,
     isPending,
-    data: logs
+    data: logs,
   } = useQuery<Log[]>({
     queryKey: ["logs"],
-    queryFn: () => fetcher(`/api/userlog/${userid}`)
+    queryFn: () => fetcher(`/api/userlog/${userid}`),
   });
   if (isPending) {
     return (
@@ -43,13 +43,19 @@ const UserLogPage = () => {
   const listes = logs.map((log) => ({
     ...log,
     date: format(log.timestamp, "dd-MM-yyyy"),
-    heure: format(log.timestamp, "HH:mm")
+    heure: format(log.timestamp, "HH:mm"),
   }));
   return (
     <DataTable
+      emptyState={{
+        icon: "logs",
+        title: "Aucune activité enregistrée",
+        description:
+          "Les actions enregistrées sur votre compte apparaîtront ici, au fil de votre utilisation.",
+      }}
       chemins={[
         { title: "user", url: "#" },
-        { title: "Logs", url: "#" }
+        { title: "Logs", url: "#" },
       ]}
       data={listes}
       hideList={["createdAt", "updatedAt", "userId", "timestamp"]}

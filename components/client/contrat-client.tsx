@@ -4,25 +4,35 @@ import { Plus } from "lucide-react";
 
 const ContratClient = ({
   contrats,
-  clientId
+  clientId,
 }: {
   contrats: Contrat[];
   clientId: string;
 }) => {
   return (
     <DataTable
+      emptyState={{
+        icon: "contracts",
+        title: "Aucun contrat pour ce client",
+        description:
+          "Enregistrez un contrat pour centraliser les engagements et les informations de ce client.",
+        action: {
+          label: "Ajouter un contrat",
+          href: `/client/contrat/${clientId}/add`,
+        },
+      }}
       action={[
         {
           label: "Nouveau Contrat",
           icon: <Plus />,
           url: `/client/contrat/${clientId}/add`,
-          variantbtn: "secondary"
-        }
+          variantbtn: "secondary",
+        },
       ]}
       chemins={[
         { title: "Clients", url: "/client" },
         { title: "Details", url: `/client/detail/${clientId}` },
-        { title: "Contrats", url: "#" }
+        { title: "Contrats", url: "#" },
       ]}
       selectAction={[]}
       data={contrats}

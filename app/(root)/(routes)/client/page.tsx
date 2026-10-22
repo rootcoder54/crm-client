@@ -114,6 +114,13 @@ const ClientPage = () => {
       />
       <div className="crm-panel crm-table-panel">
         <DataTable
+          emptyState={{
+            icon: "clients",
+            title: "Aucun client pour le moment",
+            description:
+              "Créez votre première fiche pour centraliser les coordonnées, les requêtes et les factures de vos clients.",
+            action: { label: "Ajouter un client", href: "/client/add" },
+          }}
           chemins={[
             { title: "Clients", url: "/client" },
             { title: "Listes", url: "#" },

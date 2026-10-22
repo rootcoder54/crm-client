@@ -11,9 +11,16 @@ const LicencePage = () => {
   }[] = [];
   return (
     <DataTable
+      emptyState={{
+        icon: "licenses",
+        title: "Aucune licence enregistrée",
+        description:
+          "Ajoutez une licence pour retrouver et suivre les informations de vos logiciels.",
+        action: { label: "Ajouter une licence", href: "/licence/add" },
+      }}
       chemins={[
         { title: "Licences", url: "/licence" },
-        { title: "Listes", url: "#" }
+        { title: "Listes", url: "#" },
       ]}
       titre="Liste des licences"
       action={[
@@ -21,22 +28,22 @@ const LicencePage = () => {
           label: "Nouvelle licence",
           icon: <Plus />,
           url: "/licence/add",
-          variantbtn: "secondary"
-        }
+          variantbtn: "secondary",
+        },
       ]}
       selectAction={[
         {
           label: "Details",
           icon: <SquarePen />,
           url: `/licence/detail/`,
-          variantbtn: "outline"
+          variantbtn: "outline",
         },
         {
           label: "Supprimer",
           icon: <Trash2 />,
           url: `/licence/delete/`,
-          variantbtn: "danger"
-        }
+          variantbtn: "danger",
+        },
       ]}
       data={data || []}
       hideList={["id"]}

@@ -3,17 +3,23 @@ import { DataTable } from "../datatables";
 
 const InterventionClient = ({
   items,
-  clientId
+  clientId,
 }: {
   items: ItemIntervention[];
   clientId?: string;
 }) => {
   return (
     <DataTable
+      emptyState={{
+        icon: "interventions",
+        title: "Aucune intervention pour ce client",
+        description:
+          "Les interventions réalisées pour ce client apparaîtront ici.",
+      }}
       chemins={[
         { title: "Clients", url: "/client" },
         { title: "Details", url: `/client/detail/${clientId}` },
-        { title: "Interventions", url: "#" }
+        { title: "Interventions", url: "#" },
       ]}
       data={items}
       hideList={["interventionId"]}

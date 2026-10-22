@@ -12,7 +12,7 @@ import Link from "next/link";
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 
 const PageVideoAstuce = () => {
@@ -20,10 +20,10 @@ const PageVideoAstuce = () => {
   const {
     isError,
     isPending,
-    data: videos
+    data: videos,
   } = useQuery<Video[]>({
     queryKey: ["videos"],
-    queryFn: () => fetcher(`/api/video`)
+    queryFn: () => fetcher(`/api/video`),
   });
   if (isPending) {
     return (
@@ -48,37 +48,44 @@ const PageVideoAstuce = () => {
 
   return (
     <DataTable
+      emptyState={{
+        icon: "videos",
+        title: "Aucune vidéo publiée",
+        description:
+          "Ajoutez une première vidéo pour enrichir les ressources pratiques du centre d’aide.",
+        action: { label: "Ajouter une vidéo", href: "/video/add" },
+      }}
       chemins={[
         { title: "Videos", url: "/video" },
-        { title: "Listes", url: "#" }
+        { title: "Listes", url: "#" },
       ]}
       action={[
         {
           label: "Nouvelle Video",
           icon: <Plus />,
           url: "/video/add",
-          variantbtn: "default"
-        }
+          variantbtn: "default",
+        },
       ]}
       selectAction={[
         {
           label: "Details",
           icon: <FileBox />,
           url: `/video/details/${selectedId}`,
-          variantbtn: "blue"
+          variantbtn: "blue",
         },
         {
           label: "Editer",
           icon: <SquarePen />,
           url: `/video/edite/${selectedId}`,
-          variantbtn: "outline"
+          variantbtn: "outline",
         },
         {
           label: "Supprimer",
           icon: <Trash />,
           url: `/video/delete/${selectedId}`,
-          variantbtn: "danger"
-        }
+          variantbtn: "danger",
+        },
       ]}
       columnStyles={{
         nom: (value, row) => (
@@ -99,7 +106,7 @@ const PageVideoAstuce = () => {
               <span>{value as string}</span>
             )}
           </Link>
-        )
+        ),
       }}
       data={videos || []}
       hideList={["createdAt", "updatedAt", "detail", "url"]}
