@@ -9,7 +9,7 @@ import { LoaderOne } from "@/components/ui/loader";
 const PageIntervention = () => {
   const { data: interventions } = useQuery<Intervention[]>({
     queryKey: ["intervention"],
-    queryFn: () => fetcher(`/api/intervention`)
+    queryFn: () => fetcher(`/api/intervention`),
   });
 
   if (!interventions) {
@@ -21,9 +21,15 @@ const PageIntervention = () => {
   }
   return (
     <DataTable
+      emptyState={{
+        icon: "interventions",
+        title: "Aucune intervention enregistrée",
+        description:
+          "Les interventions ajoutées aux requêtes clients apparaîtront ici pour suivre le travail réalisé.",
+      }}
       chemins={[
         { title: "Interventions", url: "/intervention" },
-        { title: "Listes", url: "#" }
+        { title: "Listes", url: "#" },
       ]}
       action={[]}
       selectAction={[]}
@@ -36,7 +42,7 @@ const PageIntervention = () => {
         "requeteId",
         "dateCloture",
         "createdAt",
-        "updatedAt"
+        "updatedAt",
       ]}
       searchId="intervenant"
       searchPlaceholder="Recherche par intervenant..."

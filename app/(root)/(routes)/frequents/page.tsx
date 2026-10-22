@@ -12,7 +12,7 @@ import Link from "next/link";
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 
 const PageFrequente = () => {
@@ -20,10 +20,10 @@ const PageFrequente = () => {
   const {
     isError,
     isPending,
-    data: articles
+    data: articles,
   } = useQuery<Article[]>({
     queryKey: ["articles"],
-    queryFn: () => fetcher(`/api/article`)
+    queryFn: () => fetcher(`/api/article`),
   });
   if (isPending) {
     return (
@@ -50,41 +50,48 @@ const PageFrequente = () => {
       id: a.id,
       titre: a.titre,
       decription: a.description,
-      contenu: a.contenu
+      contenu: a.contenu,
     })) || [];
   return (
     <DataTable
+      emptyState={{
+        icon: "articles",
+        title: "Aucun article publié",
+        description:
+          "Rédigez une première réponse pour aider vos clients à utiliser vos solutions.",
+        action: { label: "Rédiger un article", href: "/frequents/add" },
+      }}
       chemins={[
         { title: "Questions Frequentes", url: "/frequents" },
-        { title: "Listes", url: "#" }
+        { title: "Listes", url: "#" },
       ]}
       action={[
         {
           label: "Nouvelle Article",
           icon: <Plus />,
           url: "/frequents/add",
-          variantbtn: "secondary"
-        }
+          variantbtn: "secondary",
+        },
       ]}
       selectAction={[
         {
           label: "Details",
           icon: <FileBox />,
           url: `/frequents/details/${selectedId}`,
-          variantbtn: "blue"
+          variantbtn: "blue",
         },
         {
           label: "Editer",
           icon: <SquarePen />,
           url: `/frequents/edite/${selectedId}`,
-          variantbtn: "outline"
+          variantbtn: "outline",
         },
         {
           label: "Supprimer",
           icon: <Trash />,
           url: `/frequents/delete/${selectedId}`,
-          variantbtn: "danger"
-        }
+          variantbtn: "danger",
+        },
       ]}
       columnStyles={{
         titre: (value, row) => (
@@ -105,7 +112,7 @@ const PageFrequente = () => {
               <span>{value as string}</span>
             )}
           </Link>
-        )
+        ),
       }}
       data={listes || []}
       hideList={["createdAt", "updatedAt", "contenu"]}

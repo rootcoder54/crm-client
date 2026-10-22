@@ -26,6 +26,7 @@ import {
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import React, { useEffect, useRef } from "react";
 import DataToolBar from "./toolbar";
+import { useTableStorage } from "./use-table-storage";
 import { buildColumns } from "./columns";
 import { VariantProps } from "class-variance-authority";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -43,7 +44,7 @@ import { dateRangeFilter } from "./dateRangeFilter";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { DataTableEmptyState, type DataTableEmptyConfig } from "./empty-state";
 
 interface DataTableProps<TData extends Record<string, unknown>> {
   data: TData[];
@@ -93,7 +94,9 @@ interface DataTableProps<TData extends Record<string, unknown>> {
   >;
   exportName?: string;
   storageKey?: string;
+  /** @deprecated Empty states now use contextual vector icons. */
   emptyImg?: string;
+  emptyState?: DataTableEmptyConfig;
   headerEmpty?: { nom: string }[];
 }
 
@@ -119,91 +122,39 @@ export function DataTable<TData extends Record<string, unknown>>({
   columnStyles,
   exportName,
   storageKey = "datatable",
-  emptyImg,
+  emptyState,
   headerEmpty,
 }: DataTableProps<TData>) {
   const tableRef = useRef<HTMLTableElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  //const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [sorting, setSorting] = React.useState<SortingState>(() => {
-    if (typeof window === "undefined") return [];
-
-    const saved = localStorage.getItem(`${storageKey}-sorting`);
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [sorting, setSorting] = useTableStorage<SortingState>(
+    `${storageKey}-sorting`,
+    [],
+  );
+  const [columnFilters, setColumnFilters] = useTableStorage<ColumnFiltersState>(
+    `${storageKey}-filters`,
+    [],
+  );
+  const [pagination, setPagination] = useTableStorage(
+    `${storageKey}-pagination`,
+    { pageIndex: 0, pageSize: 10 },
+  );
+  const [rowSelection, setRowSelection] = useTableStorage<RowSelectionState>(
+    `${storageKey}-row-selection`,
+    {},
+  );
   const [open, setOpen] = React.useState(false);
-  const [position, setPosition] = React.useState<{ x: number; y: number }>({
-    x: 0,
-    y: 0,
-  });
-  /*const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10
-  });*/
-  const [pagination, setPagination] = React.useState(() => {
-    if (typeof window === "undefined") {
-      return {
-        pageIndex: 0,
-        pageSize: 10,
-      };
-    }
-    const saved = localStorage.getItem(`${storageKey}-pagination`);
-    return saved
-      ? JSON.parse(saved)
-      : {
-          pageIndex: 0,
-          pageSize: 10,
-        };
-  });
-  //const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
-  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>(
-    () => {
-      if (typeof window === "undefined") return {};
-
-      const saved = localStorage.getItem(`${storageKey}-row-selection`);
-
-      return saved ? JSON.parse(saved) : {};
-    },
-  );
-  /*const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );*/
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    () => {
-      if (typeof window === "undefined") return [];
-
-      const saved = localStorage.getItem(`${storageKey}-filters`);
-      return saved ? JSON.parse(saved) : [];
-    },
-  );
+  const [position, setPosition] = React.useState({ x: 0, y: 0 });
 
   const columns = buildColumns(data, columnStyles);
 
   const initialVisibility: VisibilityState = hideList
     ? hideList.reduce((acc, key) => ({ ...acc, [key]: false }), {})
     : {};
-  /*const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({
-      id: false,
-      ...initialVisibility
-    });*/
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>(() => {
-      if (typeof window === "undefined") {
-        return {
-          id: false,
-          ...initialVisibility,
-        };
-      }
-
-      const saved = localStorage.getItem(`${storageKey}-visibility`);
-
-      return saved
-        ? JSON.parse(saved)
-        : {
-            id: false,
-            ...initialVisibility,
-          };
+    useTableStorage<VisibilityState>(`${storageKey}-visibility`, {
+      id: false,
+      ...initialVisibility,
     });
 
   const router = useRouter();
@@ -255,37 +206,22 @@ export function DataTable<TData extends Record<string, unknown>>({
     }
   }, [rowSelection, onRowSelect, table]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      `${storageKey}-filters`,
-      JSON.stringify(columnFilters),
-    );
-  }, [columnFilters, storageKey]);
+  const filteredRowCount = table.getFilteredRowModel().rows.length;
+  const pageCount = table.getPageCount();
+  const hasActiveFilters = Boolean(globalFilter) || columnFilters.length > 0;
 
+  // A saved page can become invalid after deleting rows or applying a filter.
+  // Keep it in range so existing records never appear as an empty dataset.
   useEffect(() => {
-    localStorage.setItem(`${storageKey}-sorting`, JSON.stringify(sorting));
-  }, [sorting, storageKey]);
+    const lastPage = Math.max(0, pageCount - 1);
+    if (pagination.pageIndex > lastPage) table.setPageIndex(lastPage);
+  }, [pageCount, pagination.pageIndex, table]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      `${storageKey}-visibility`,
-      JSON.stringify(columnVisibility),
-    );
-  }, [columnVisibility, storageKey]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      `${storageKey}-pagination`,
-      JSON.stringify(pagination),
-    );
-  }, [pagination, storageKey]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      `${storageKey}-row-selection`,
-      JSON.stringify(rowSelection),
-    );
-  }, [rowSelection, storageKey]);
+  const resetFilters = () => {
+    table.setGlobalFilter("");
+    table.resetColumnFilters(true);
+    table.setPageIndex(0);
+  };
 
   const exportExcel = async () => {
     try {
@@ -466,71 +402,64 @@ export function DataTable<TData extends Record<string, unknown>>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="cursor-pointer w-full h-8"
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={(event) => {
-                    if (
-                      (event.target as HTMLElement).closest(
-                        "a, button, input, [role=checkbox]",
+            {table.getRowModel().rows?.length
+              ? table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className="cursor-pointer w-full h-8"
+                    data-state={row.getIsSelected() && "selected"}
+                    onClick={(event) => {
+                      if (
+                        (event.target as HTMLElement).closest(
+                          "a, button, input, [role=checkbox]",
+                        )
                       )
-                    )
-                      return;
-                    table.setRowSelection({ [row.id]: true });
-                  }}
-                  onDoubleClick={(event) => {
-                    event.preventDefault();
-                    if (rowHref) router.push(rowHref(row.original));
-                    else if (onDoubleClickLink) router.push(onDoubleClickLink);
-                  }}
-                  onContextMenu={(event) => {
-                    event.preventDefault();
-                    table.setRowSelection({ [row.id]: true });
-                    setOpen(true);
-                    setPosition({ x: event.clientX, y: event.clientY });
-                  }}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={cn(cell.column.getIndex() !== 0 && "border-r")}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={
-                    columns.length === 1 ? headerEmpty?.length : columns.length
-                  }
-                  className="h-24 text-center justify-content-center"
-                >
-                  <Image
-                    src={emptyImg ? `/empty/${emptyImg}` : "/empty.png"}
-                    alt="Pas de Resultat"
-                    width={400}
-                    height={400}
-                    className="mx-auto"
-                  />
-                  <span className="text-lg font-bold">
-                    {notData ? notData : "Pas de resultat"}
-                  </span>
-                </TableCell>
-              </TableRow>
-            )}
+                        return;
+                      table.setRowSelection({ [row.id]: true });
+                    }}
+                    onDoubleClick={(event) => {
+                      event.preventDefault();
+                      if (rowHref) router.push(rowHref(row.original));
+                      else if (onDoubleClickLink)
+                        router.push(onDoubleClickLink);
+                    }}
+                    onContextMenu={(event) => {
+                      event.preventDefault();
+                      table.setRowSelection({ [row.id]: true });
+                      setOpen(true);
+                      setPosition({ x: event.clientX, y: event.clientY });
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className={cn(
+                          cell.column.getIndex() !== 0 && "border-r",
+                        )}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              : null}
           </TableBody>
         </Table>
+        {!table.getRowModel().rows.length && (
+          <div className="border-b">
+            <DataTableEmptyState
+              filtered={data.length > 0 && hasActiveFilters}
+              config={emptyState}
+              fallbackTitle={notData}
+              onReset={resetFilters}
+            />
+          </div>
+        )}
         <div className="flex items-center gap-x-4 px-4 py-3">
-          {table.getPageCount() > 0 && (
+          {filteredRowCount > 0 && (
             <>
               <div className="text-sm text-muted-foreground">
                 Page {table.getState().pagination.pageIndex + 1} sur{" "}

@@ -5,7 +5,7 @@ import {
   FileArchive,
   Plus,
   SquarePen,
-  Trash
+  Trash,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
@@ -19,7 +19,7 @@ export const RequeteClient = ({ id }: { id: string }) => {
   const [isCloture, setIscloture] = useState<boolean>(false);
   const { data: requetes } = useQuery<Requete[]>({
     queryKey: ["requete-client", id],
-    queryFn: () => fetcher(`/api/client/requete/${id}`)
+    queryFn: () => fetcher(`/api/client/requete/${id}`),
   });
   useEffect(() => {
     getRequeteById(selectedId).then((data) => {
@@ -40,45 +40,51 @@ export const RequeteClient = ({ id }: { id: string }) => {
   }
   return (
     <DataTable
+      emptyState={{
+        icon: "requests",
+        title: "Aucune requête pour ce client",
+        description:
+          "Les demandes associées à ce client apparaîtront ici pour en suivre le traitement.",
+      }}
       chemins={[
         { title: "Client", url: "/client" },
         { title: "Details", url: "/client/detail/" + id },
-        { title: "Listes", url: "#" }
+        { title: "Listes", url: "#" },
       ]}
       action={[
         {
           label: "Nouvelle Requête",
           icon: <Plus />,
           url: "/requete/add",
-          variantbtn: "secondary"
-        }
+          variantbtn: "secondary",
+        },
       ]}
       selectAction={[
         {
           label: "Interventions",
           icon: <FileArchive />,
           url: `/requete/intervention/${selectedId}`,
-          variantbtn: "blue"
+          variantbtn: "blue",
         },
         {
           label: "Clôture",
           icon: <CalendarCheck2 />,
           url: `/requete/cloture/${selectedId}`,
           variantbtn: "gray",
-          hide: isCloture
+          hide: isCloture,
         },
         {
           label: "Editer",
           icon: <SquarePen />,
           url: `/requete/edite/${selectedId}`,
-          variantbtn: "outline"
+          variantbtn: "outline",
         },
         {
           label: "Supprimer",
           icon: <Trash />,
           url: `/requete/delete/${selectedId}`,
-          variantbtn: "danger"
-        }
+          variantbtn: "danger",
+        },
       ]}
       data={requetes}
       hideList={[
@@ -91,7 +97,7 @@ export const RequeteClient = ({ id }: { id: string }) => {
         "logiciel",
         "observation",
         "clientId",
-        "isTacheClient"
+        "isTacheClient",
       ]}
       searchId="sujet"
       searchPlaceholder="Rechercher une requête"

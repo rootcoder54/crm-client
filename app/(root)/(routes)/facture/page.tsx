@@ -116,6 +116,13 @@ export default function PageFacture() {
       />
       <div className="crm-panel crm-table-panel">
         <DataTable
+          emptyState={{
+            icon: "invoices",
+            title: "Votre première facture vous attend",
+            description:
+              "Créez une facture pour retrouver ici votre historique de facturation et suivre les règlements.",
+            action: { label: "Créer une facture", href: "/facture/add" },
+          }}
           chemins={[{ title: "Factures", url: "/facture" }]}
           titre="Historique de facturation"
           headerEmpty={[

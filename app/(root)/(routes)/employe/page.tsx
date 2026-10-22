@@ -6,9 +6,15 @@ import { employes } from "@/constante/employe";
 const PageEmploye = () => {
   return (
     <DataTable
+      emptyState={{
+        icon: "employees",
+        title: "Aucun employé enregistré",
+        description:
+          "Les employés enregistrés apparaîtront ici pour faciliter le suivi de votre équipe.",
+      }}
       chemins={[
         { title: "Employés", url: "/employe" },
-        { title: "Listes", url: "#" }
+        { title: "Listes", url: "#" },
       ]}
       titre="Employes"
       action={[]}

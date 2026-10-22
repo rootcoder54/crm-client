@@ -10,7 +10,7 @@ import {
   Menu,
   PlusCircle,
   SquarePen,
-  Trash2
+  Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getItemsByRequete } from "@/services/itemIntervention.service";
@@ -51,7 +51,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
     getItemsByRequete(requete.id).then((data) => {
       const listes = data?.map((item) => ({
         ...item,
-        date: format(item.date, "dd/MM/yyyy")
+        date: format(item.date, "dd/MM/yyyy"),
       }));
       setInterventionID(listes[0]?.interventionId || "");
       setitems(listes);
@@ -65,29 +65,29 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
 
   const { data: roles } = useQuery<UserRole[]>({
     queryKey: ["role", session?.user?.id, "requete_delete"],
-    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_delete`)
+    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_delete`),
   });
 
   const { data: rolesC } = useQuery<UserRole[]>({
     queryKey: ["role", session?.user?.id, "requete_cloture"],
-    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_cloture`)
+    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_cloture`),
   });
 
   const { data: rolesE } = useQuery<UserRole[]>({
     queryKey: ["role", session?.user?.id, "requete_edite"],
-    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_edite`)
+    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_edite`),
   });
 
   const { data: rolesI } = useQuery<UserRole[]>({
     queryKey: ["role", session?.user?.id, "requete_intervention"],
     queryFn: () =>
-      fetcher(`/api/role/${session?.user?.id}/requete_intervention`)
+      fetcher(`/api/role/${session?.user?.id}/requete_intervention`),
   });
 
   useEffect(() => {
     if (roles && roles.length > 0) {
       const hasDeleteRole = roles.some(
-        (role) => role.name === "requete_delete" && role.accessLevel === 0
+        (role) => role.name === "requete_delete" && role.accessLevel === 0,
       );
       setDeleteControle(hasDeleteRole);
     }
@@ -96,7 +96,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
   useEffect(() => {
     if (rolesC && rolesC.length > 0) {
       const hasClotureRole = rolesC.some(
-        (role) => role.name === "requete_cloture" && role.accessLevel === 0
+        (role) => role.name === "requete_cloture" && role.accessLevel === 0,
       );
       setClotureControle(hasClotureRole);
     }
@@ -105,7 +105,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
   useEffect(() => {
     if (rolesE && rolesE.length > 0) {
       const hasEditeRole = rolesE.some(
-        (role) => role.name === "requete_edite" && role.accessLevel === 0
+        (role) => role.name === "requete_edite" && role.accessLevel === 0,
       );
       setEditeControle(hasEditeRole);
     }
@@ -114,7 +114,8 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
   useEffect(() => {
     if (rolesI && rolesI.length > 0) {
       const hasInterventionRole = rolesI.some(
-        (role) => role.name === "requete_intervention" && role.accessLevel === 0
+        (role) =>
+          role.name === "requete_intervention" && role.accessLevel === 0,
       );
       setInterventionControle(hasInterventionRole);
     }
@@ -125,7 +126,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
       <HeaderPage
         chemins={[
           { title: "Requête", url: "/requete" },
-          { title: "Detail", url: "/requete/detail/" + requete.id }
+          { title: "Detail", url: "/requete/detail/" + requete.id },
         ]}
       >
         <div className="flex md:hidden">
@@ -285,7 +286,10 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                         <TooltipTrigger asChild>
                           <span>{requete.observation.substring(0, 30)}...</span>
                         </TooltipTrigger>
-                        <TooltipContent className="w-[350px] md:w-[560px] p-4 text-sm md:text-base" side="bottom">
+                        <TooltipContent
+                          className="w-[350px] md:w-[560px] p-4 text-sm md:text-base"
+                          side="bottom"
+                        >
                           <p>{requete.observation}</p>
                         </TooltipContent>
                       </Tooltip>
@@ -324,6 +328,12 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
             <hr />
             {items ? (
               <DataTable
+                emptyState={{
+                  icon: "interventions",
+                  title: "Aucune intervention sur cette requête",
+                  description:
+                    "Ajoutez une intervention depuis cette fiche pour garder une trace du travail réalisé.",
+                }}
                 isHeader={false}
                 data={items || []}
                 notData="Pas d'intervention enregistré"
@@ -336,8 +346,8 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                     label: "Supprimer",
                     icon: <Trash2 />,
                     url: `/requete/intervention/${requete.id}/delete/${selectedId}`,
-                    variantbtn: "danger"
-                  }
+                    variantbtn: "danger",
+                  },
                 ]}
                 storageKey="intervention-datatable"
               />
