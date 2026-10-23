@@ -10,7 +10,13 @@ const DetailClientPage = async ({ params }: pageProps) => {
   const { id } = await params;
   const client = await getClientById(id);
   const requetes = await getRequetesByClient(client?.id || "");
-  return <DetailClient client={client} requetes={requetes} />;
+  return (
+    <div className="crm-workspace">
+      <div className="crm-panel crm-table-panel">
+        <DetailClient client={client} requetes={requetes} />{" "}
+      </div>
+    </div>
+  );
 };
 
 export default DetailClientPage;

@@ -11,7 +11,7 @@ import Link from "next/link";
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger,
+  TooltipTrigger
 } from "@/components/ui/tooltip";
 
 interface RequeteWithClient extends Requete {
@@ -23,10 +23,10 @@ const PageRequete = () => {
   const {
     isError,
     isPending,
-    data: requetes,
+    data: requetes
   } = useQuery<RequeteWithClient[]>({
     queryKey: ["requeteDraft"],
-    queryFn: () => fetcher(`/api/requete/draft`),
+    queryFn: () => fetcher(`/api/requete/draft`)
   });
 
   if (isPending) {
@@ -52,82 +52,88 @@ const PageRequete = () => {
   const listes =
     requetes.map((requete) => ({
       ...requete,
-      client: requete.client?.nomClient || "Pas de client",
+      client: requete.client?.nomClient || "Pas de client"
     })) || [];
 
   return (
-    <DataTable
-      emptyState={{
-        icon: "drafts",
-        title: "Aucune requête en brouillon",
-        description:
-          "Les requêtes commencées et non finalisées apparaîtront ici. Vous pourrez les reprendre à tout moment.",
-      }}
-      chemins={[
-        { title: "Requête", url: "/requete" },
-        { title: "Requête Brouillon", url: "/draft" },
-      ]}
-      titre="Liste des Requêtes Brouillons"
-      selectAction={[
-        {
-          label: "Voir",
-          icon: <FileBox />,
-          url: `/draft/${selectedId}`,
-          variantbtn: "blue",
-        },
-        {
-          label: "Supprimer",
-          icon: <AlertCircleIcon />,
-          url: `/draft/${selectedId}/delete`,
-          variantbtn: "danger",
-        },
-      ]}
-      data={listes}
-      dateChose="dateDebut"
-      dateChoseTitle="Filter par Date"
-      columnStyles={{
-        sujet: (value, row) => (
-          <Link
-            href={`/draft/${row.id}`}
-            className="font-medium hover:underline"
-          >
-            {row.sujet && row.sujet.length > 30 ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>{row.sujet.slice(0, 30) + "..."}</span>
-                </TooltipTrigger>
-                <TooltipContent className="w-[560px] p-4" side="bottom">
-                  <p>{value as string}</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : (
-              <span>{value as string}</span>
-            )}
-          </Link>
-        ),
-        type: (value) => <span className="uppercase">{value as string}</span>,
-      }}
-      hideList={[
-        "createdAt",
-        "updatedAt",
-        "dateCloture",
-        "Intervention",
-        "logiciel",
-        "observation",
-        "clientId",
-        "dateDebut",
-        "description",
-        "isTacheClient",
-        "etat",
-        "status",
-        "technicien",
-      ]}
-      searchId="sujet"
-      searchPlaceholder="Rechercher un sujet..."
-      onRowSelect={(id) => setSelectedId(id)}
-      exportName="liste_requetes"
-      storageKey="requete-draft-datatable"
-    />
+    <div className="crm-workspace">
+      <div className="crm-panel crm-table-panel">
+        <DataTable
+          emptyState={{
+            icon: "drafts",
+            title: "Aucune requête en brouillon",
+            description:
+              "Les requêtes commencées et non finalisées apparaîtront ici. Vous pourrez les reprendre à tout moment."
+          }}
+          chemins={[
+            { title: "Requête", url: "/requete" },
+            { title: "Requête Brouillon", url: "/draft" }
+          ]}
+          titre="Liste des Requêtes Brouillons"
+          selectAction={[
+            {
+              label: "Voir",
+              icon: <FileBox />,
+              url: `/draft/${selectedId}`,
+              variantbtn: "blue"
+            },
+            {
+              label: "Supprimer",
+              icon: <AlertCircleIcon />,
+              url: `/draft/${selectedId}/delete`,
+              variantbtn: "danger"
+            }
+          ]}
+          data={listes}
+          dateChose="dateDebut"
+          dateChoseTitle="Filter par Date"
+          columnStyles={{
+            sujet: (value, row) => (
+              <Link
+                href={`/draft/${row.id}`}
+                className="font-medium hover:underline"
+              >
+                {row.sujet && row.sujet.length > 30 ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>{row.sujet.slice(0, 30) + "..."}</span>
+                    </TooltipTrigger>
+                    <TooltipContent className="w-[560px] p-4" side="bottom">
+                      <p>{value as string}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <span>{value as string}</span>
+                )}
+              </Link>
+            ),
+            type: (value) => (
+              <span className="uppercase">{value as string}</span>
+            )
+          }}
+          hideList={[
+            "createdAt",
+            "updatedAt",
+            "dateCloture",
+            "Intervention",
+            "logiciel",
+            "observation",
+            "clientId",
+            "dateDebut",
+            "description",
+            "isTacheClient",
+            "etat",
+            "status",
+            "technicien"
+          ]}
+          searchId="sujet"
+          searchPlaceholder="Rechercher un sujet..."
+          onRowSelect={(id) => setSelectedId(id)}
+          exportName="liste_requetes"
+          storageKey="requete-draft-datatable"
+        />
+      </div>
+    </div>
   );
 };
 
