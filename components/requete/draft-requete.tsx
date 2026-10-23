@@ -52,6 +52,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { LoaderOne } from "../ui/loader";
 import MyEditor from "../features/Editor";
+import { PageIntro } from "../crm/workspace";
 
 const DraftRequete = ({ requeteDraft }: { requeteDraft: Requete }) => {
   const router = useRouter();
@@ -123,7 +124,7 @@ const DraftRequete = ({ requeteDraft }: { requeteDraft: Requete }) => {
   }
 
   return (
-    <div className="w-full">
+    <div className="crm-workspace crm-form-page w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <HeaderPage
@@ -145,7 +146,11 @@ const DraftRequete = ({ requeteDraft }: { requeteDraft: Requete }) => {
               </Link>
             </div>
           </HeaderPage>
-          <div className="space-y-8 px-12 py-5">
+          <PageIntro
+            title="Requête Brouillon"
+            description="Vous pouvez modifier les informations de la requête et la valider pour l'enregistrer."
+          />
+          <div className="py-5 flex flex-col space-y-8 mt-6 bg-white p-6 rounded-md shadow-sm">
             <FormField
               control={form.control}
               name="sujet"

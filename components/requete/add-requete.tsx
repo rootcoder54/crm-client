@@ -188,7 +188,7 @@ const AddRequete = ({ id }: { id: string }) => {
             title="Nouvelle requête"
             description="Décrivez la demande, choisissez le client et attribuez les techniciens."
           />
-          <div className="crm-form-body">
+          <div className="flex flex-col space-y-6 mt-6 bg-white p-6 rounded-md shadow-sm">
             <FormField
               control={form.control}
               name="sujet"
