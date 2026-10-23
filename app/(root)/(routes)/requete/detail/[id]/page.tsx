@@ -9,7 +9,7 @@ const DetailRequetePage = async ({ params }: pageProps) => {
   const { id } = await params;
   const requete = (await getRequeteById(id)) as Requete
   return (
-    <div>
+    <div className="crm-workspace">
       <DetailRequete requete={requete} />
     </div>
   );

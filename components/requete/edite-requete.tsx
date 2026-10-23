@@ -111,7 +111,7 @@ const EditeRequete = ({ requete }: { requete: Requete }) => {
             title="Mettre à jour la requête"
             description="Complétez les informations utiles au traitement de cette demande."
           />
-          <div className="crm-form-body">
+          <div className="py-5 flex flex-col space-y-8 mt-6 bg-white p-6 rounded-md shadow-sm">
             <FormField
               control={form.control}
               name="sujet"
