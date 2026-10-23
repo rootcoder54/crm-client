@@ -24,6 +24,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSession } from "next-auth/react";
+import HeaderPage from "@/components/features/header-page";
+import { Button } from "@/components/ui/button";
 
 interface RequeteWithClient extends Requete {
   [key: string]: unknown;
@@ -87,7 +89,20 @@ const PageRequete = () => {
   const closed = requetes.filter((r) => !!r.dateCloture);
   const unassigned = open.filter((r) => isUnassigned(r.technicien));
   return (
-    <div className="crm-workspace crm-list-page">
+    <div className="crm-workspace">
+      <HeaderPage chemins={[{ title: "Requêtes", url: "/requete" }]}>
+        <Button
+          variant="blue"
+          asChild
+          className="flex items-center gap-2 hover:bg-blue-600 dark:hover:bg-blue-500"
+        >
+          <Link href="/requete/add" className="flex items-center gap-2">
+            <Plus size={18} />
+            Nouvelle requête
+          </Link>
+        </Button>
+      </HeaderPage>
+      <div className="crm-list-page">
       <PageIntro
         title="Un service client bien suivi."
         description="Enregistrez les demandes, retrouvez les techniciens et suivez les interventions jusqu’à la clôture."
@@ -115,7 +130,7 @@ const PageRequete = () => {
           tone="violet"
         />
       </div>
-      <div className="crm-panel crm-table-panel">
+      <div className="crm-panel crm-table-panel mt-5">
         <DataTable
           emptyState={{
             icon: "requests",
@@ -124,10 +139,7 @@ const PageRequete = () => {
               "Enregistrez une demande client pour suivre son traitement et les interventions de votre équipe.",
             action: { label: "Créer une requête", href: "/requete/add" },
           }}
-          chemins={[
-            { title: "Requête", url: "/requete" },
-            { title: "Listes", url: "#" },
-          ]}
+          isHeader={false}
           titre="Liste des Requêtes"
           onDoubleClickLink={`/requete/detail/${selectedId}`}
           action={[
@@ -254,6 +266,7 @@ const PageRequete = () => {
           exportName="liste_requetes"
           storageKey="requete-datatable"
         />
+      </div>
       </div>
     </div>
   );
