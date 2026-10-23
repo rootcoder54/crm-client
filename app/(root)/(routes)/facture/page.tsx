@@ -15,6 +15,8 @@ import {
 } from "@/components/crm/workspace";
 import { fetcher } from "@/lib/fetcher";
 import { formatAmount, formatDate, totalsByCurrency } from "@/lib/crm-metrics";
+import HeaderPage from "@/components/features/header-page";
+import { Button } from "@/components/ui/button";
 
 type Invoice = Facture & { client: { nomClient: string } | null };
 
@@ -56,7 +58,20 @@ export default function PageFacture() {
   const unpaidTotals = totalsByCurrency(unpaid);
 
   return (
-    <div className="crm-workspace crm-list-page">
+    <div className="crm-workspace">
+      <HeaderPage chemins={[{ title: "Factures", url: "/facture" }]}>
+        <Button
+          variant="blue"
+          asChild
+          className="flex items-center gap-2 hover:bg-blue-600 dark:hover:bg-blue-500"
+        >
+          <Link href="/facture/add" className="flex items-center gap-2">
+            <Plus size={18} />
+            Nouvelle facture
+          </Link>
+        </Button>
+      </HeaderPage>
+      <div className="crm-list-page">
       <PageIntro
         title="Une facturation plus lisible."
         description="Retrouvez vos factures, consultez les montants et identifiez les règlements à suivre."
@@ -123,7 +138,7 @@ export default function PageFacture() {
               "Créez une facture pour retrouver ici votre historique de facturation et suivre les règlements.",
             action: { label: "Créer une facture", href: "/facture/add" },
           }}
-          chemins={[{ title: "Factures", url: "/facture" }]}
+          isHeader={false}
           titre="Historique de facturation"
           headerEmpty={[
             { nom: "Numéro" },
@@ -187,6 +202,7 @@ export default function PageFacture() {
           storageKey="facture-datatable"
           exportName="liste_factures"
         />
+      </div>
       </div>
     </div>
   );
