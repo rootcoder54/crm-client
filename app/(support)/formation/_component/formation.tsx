@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { formations } from "@/constante/formation";
 
 export const ListFormation = () => {
@@ -39,7 +40,8 @@ const Chapitre = ({
           <div className="flex items-center gap-x-2">
             <span>{index + 1}</span>
             <span>-</span>
-            <span>{value.titre}</span>
+            <span>{value.titre} (non disponible)</span>
+            <Badge variant="destructive">Non disponible</Badge>
           </div>
           <span>{value.time}</span>
         </div>
