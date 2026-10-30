@@ -4,7 +4,7 @@ export const authRoutes = ["/login", "/logout"];
 export const apiAuthPrefix = "/api/auth";
 export const DEFAULT_LOGIN_REDIRECT = "/";
 export const DEFAULT_LOGOUT_REDIRECT = "/login";
-const publicAssets = ["/msys.png", "/rhpaie.png", "/timesheet.png", "/rhdata.png", "/rhfacture.png", "/astuce.png", "/question.png", "/taxe.png", "/error.png", "/favicon.ico", "/next.svg", "/window.svg", "/file.svg", "/globe.svg", "/vercel.svg"];
+const publicAssets = ["/factureheader.png","/msys.png", "/rhpaie.png", "/timesheet.png", "/rhdata.png", "/rhfacture.png", "/astuce.png", "/question.png", "/taxe.png", "/error.png", "/favicon.ico", "/next.svg", "/window.svg", "/file.svg", "/globe.svg", "/vercel.svg"];
 export function matchesRoute(pathname: string, route: string) {
   return pathname === route || (route !== "/" && pathname.startsWith(`${route}/`));
 }
