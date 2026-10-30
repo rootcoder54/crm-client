@@ -35,7 +35,7 @@ const Chapitre = ({
         Chapitre {id} : {titre}
       </h2>
       {lesson.map((value, index) => (
-        <div key={index} className="ms-lesson">
+        <div key={index} className="ms-lesson hover:underline hover:cursor-pointer">
           <div className="flex items-center gap-x-2">
             <span>{index + 1}</span>
             <span>-</span>
