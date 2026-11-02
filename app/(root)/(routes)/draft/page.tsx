@@ -69,6 +69,7 @@ const PageRequete = () => {
             { title: "Requête", url: "/requete" },
             { title: "Requête Brouillon", url: "/draft" }
           ]}
+          headerEmpty={[{ nom: "Sujet" }, { nom: "Type" }, { nom: "Demandeur" }, { nom: "Client" }]}
           titre="Liste des Requêtes Brouillons"
           selectAction={[
             {

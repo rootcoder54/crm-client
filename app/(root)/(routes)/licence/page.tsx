@@ -47,6 +47,7 @@ const LicencePage = () => {
               variantbtn: "danger"
             }
           ]}
+          headerEmpty={[{ nom: "Client" }, { nom: "Description" }, { nom: "Date d'expiration" }, { nom: "Etat" }]}
           data={data || []}
           hideList={["id"]}
           notData="Aucun licence trouvé"

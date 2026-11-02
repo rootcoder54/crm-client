@@ -24,6 +24,7 @@ const PageFormation = () => {
             { title: "Formations", url: "/formation" },
             { title: "Listes", url: "#" }
           ]}
+          headerEmpty={[{ nom: "Utilisateur" }, { nom: "Client" }, { nom: "Date d'expiration" }, { nom: "Etat" }]}
           titre="Liste des formations"
           action={[
             {
