@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { auditedMutation, auditedRead } from "@/lib/audit";
 
 export async function createContrat(data: {
   dateDebut: Date;
@@ -9,11 +10,11 @@ export async function createContrat(data: {
   reconduction?: string;
   clientId: string;
 }) {
-  return prisma.contrat.create({ data });
+  return auditedMutation("CREATE", { entity: "Contrat", route: "/client/contrat" }, (tx) => tx.contrat.create({ data }), (result) => result.id);
 }
 
 export async function getContratById(id: string) {
-  return prisma.contrat.findUnique({ where: { id } });
+  return auditedRead({ entity: "Contrat", entityId: id, route: "/client/contrat" }, () => prisma.contrat.findUnique({ where: { id } }));
 }
 
 export async function getContratsByClient(clientId: string) {
@@ -29,9 +30,9 @@ export async function updateContrat(
     reconduction: string;
   }>
 ) {
-  return prisma.contrat.update({ where: { id }, data });
+  return auditedMutation("UPDATE", { entity: "Contrat", route: "/client/contrat" }, (tx) => tx.contrat.update({ where: { id }, data }), (result) => result.id);
 }
 
 export async function deleteContrat(id: string) {
-  return prisma.contrat.delete({ where: { id } });
+  return auditedMutation("DELETE", { entity: "Contrat", route: "/client/contrat" }, (tx) => tx.contrat.delete({ where: { id } }), (result) => result.id);
 }
