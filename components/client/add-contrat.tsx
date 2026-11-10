@@ -33,12 +33,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
-import { useSession } from "next-auth/react";
-import { createLog } from "@/services/log.service";
 import { LoaderOne } from "../ui/loader";
 
 const AddContrat = ({ clientId }: { clientId: string }) => {
-  const { data: session } = useSession();
   const router = useRouter();
   const [isPending, transition] = useTransition();
 
@@ -66,18 +63,13 @@ const AddContrat = ({ clientId }: { clientId: string }) => {
     transition(() => {
       createContrat(values)
         .then((data) => {
-          createLog({
-            action: "Ajout Contrat",
-            details: `contrat ${data.type} a été crée`,
-            userId: session?.user.id ?? ""
-          }).then(() => {
+          
             toast.success("Contrat ajouté avec succès");
             router.push("/client/contrat/" + clientId);
           });
         })
         .catch((erreur) => {
           toast.error("Une erreur est survenue" + erreur.message);
-        });
     });
   }
   if (isPending) {
