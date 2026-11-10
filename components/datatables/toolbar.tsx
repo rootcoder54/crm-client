@@ -13,8 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import DataTableFilter from "./data-filter";
 import DateFilter from "./date-table-filter";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
+
 
 
 interface DataTableToolbarProps<TData> {
@@ -64,8 +63,6 @@ function DataToolBar<TData>({
   popFilter,
   dateChose,
   dateChoseTitle,
-  isHeader,
-  selectAction,
 }: DataTableToolbarProps<TData>) {
   const isFiltered =
     table.getState().columnFilters.length > 0 ||
@@ -137,7 +134,7 @@ function DataToolBar<TData>({
               )}
             </div>
           </div>
-          {table.getFilteredSelectedRowModel().rows.length !== 0 && !isHeader && (
+          {/*table.getFilteredSelectedRowModel().rows.length !== 0 && !isHeader && (
             <div className="flex items-center gap-2">
               {selectAction && (
                 <div className="flex items-center gap-2">
@@ -160,7 +157,7 @@ function DataToolBar<TData>({
                 </div>
               )}
             </div>
-          )}
+          )*/}
         </div>
       </div>
     </div>
