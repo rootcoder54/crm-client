@@ -66,10 +66,10 @@ const AddContrat = ({ clientId }: { clientId: string }) => {
           
             toast.success("Contrat ajouté avec succès");
             router.push("/client/contrat/" + clientId);
-          });
         })
         .catch((erreur) => {
           toast.error("Une erreur est survenue" + erreur.message);
+        });
     });
   }
   if (isPending) {
