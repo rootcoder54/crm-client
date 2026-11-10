@@ -1,6 +1,6 @@
 "use client";
 
-import { Requete, UserRole } from "@prisma/client";
+import { Requete } from "@prisma/client";
 import HeaderPage from "../features/header-page";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -20,9 +20,7 @@ import { format } from "date-fns";
 import { getClientById } from "@/services/client.service";
 import { Badge } from "../ui/badge";
 import Writor from "../features/Writor";
-import { useSession } from "next-auth/react";
-import { useQuery } from "@tanstack/react-query";
-import { fetcher } from "@/lib/fetcher";
+import { usePermission } from "@/hooks/use-permission";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
@@ -36,12 +34,10 @@ type Item = {
 };
 
 const DetailRequete = ({ requete }: { requete: Requete }) => {
-  const { data: session } = useSession();
-  const [deleteControle, setDeleteControle] = useState<boolean>(false);
-  const [clotureControle, setClotureControle] = useState<boolean>(false);
-  const [editeControle, setEditeControle] = useState<boolean>(false);
-  const [interventionControle, setInterventionControle] =
-    useState<boolean>(false);
+  const canDelete = usePermission("/requete", "delete", "requete_delete");
+  const canClose = usePermission("/requete", "update", "requete_cloture");
+  const canEdit = usePermission("/requete", "update", "requete_edite");
+  const canIntervene = usePermission("/requete", "update", "requete_intervention");
   const [items, setitems] = useState<Item[]>();
   const [client, setClient] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>("");
@@ -62,64 +58,6 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
       });
     }
   }, [requete.id, requete.clientId]);
-
-  const { data: roles } = useQuery<UserRole[]>({
-    queryKey: ["role", session?.user?.id, "requete_delete"],
-    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_delete`),
-  });
-
-  const { data: rolesC } = useQuery<UserRole[]>({
-    queryKey: ["role", session?.user?.id, "requete_cloture"],
-    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_cloture`),
-  });
-
-  const { data: rolesE } = useQuery<UserRole[]>({
-    queryKey: ["role", session?.user?.id, "requete_edite"],
-    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_edite`),
-  });
-
-  const { data: rolesI } = useQuery<UserRole[]>({
-    queryKey: ["role", session?.user?.id, "requete_intervention"],
-    queryFn: () =>
-      fetcher(`/api/role/${session?.user?.id}/requete_intervention`),
-  });
-
-  useEffect(() => {
-    if (roles && roles.length > 0) {
-      const hasDeleteRole = roles.some(
-        (role) => role.name === "requete_delete" && role.accessLevel === 0,
-      );
-      setDeleteControle(hasDeleteRole);
-    }
-  }, [roles]);
-
-  useEffect(() => {
-    if (rolesC && rolesC.length > 0) {
-      const hasClotureRole = rolesC.some(
-        (role) => role.name === "requete_cloture" && role.accessLevel === 0,
-      );
-      setClotureControle(hasClotureRole);
-    }
-  }, [rolesC]);
-
-  useEffect(() => {
-    if (rolesE && rolesE.length > 0) {
-      const hasEditeRole = rolesE.some(
-        (role) => role.name === "requete_edite" && role.accessLevel === 0,
-      );
-      setEditeControle(hasEditeRole);
-    }
-  }, [rolesE]);
-
-  useEffect(() => {
-    if (rolesI && rolesI.length > 0) {
-      const hasInterventionRole = rolesI.some(
-        (role) =>
-          role.name === "requete_intervention" && role.accessLevel === 0,
-      );
-      setInterventionControle(hasInterventionRole);
-    }
-  }, [rolesI]);
 
   return (
     <div>
@@ -142,7 +80,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                   <Button
                     asChild
                     variant={"ghost"}
-                    hidden={interventionControle}
+                    hidden={!canIntervene}
                   >
                     <Link href={`/requete/intervention/${requete.id}/add`}>
                       <PlusCircle />
@@ -151,7 +89,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                   </Button>
                 )}
                 {requete.etat !== "CLOTURER" && (
-                  <Button asChild variant={"ghost"} hidden={editeControle}>
+                  <Button asChild variant={"ghost"} hidden={!canEdit}>
                     <Link href={`/requete/edite/${requete.id}`}>
                       <SquarePen />
                       Editer
@@ -159,14 +97,14 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
                   </Button>
                 )}
                 {requete.etat !== "CLOTURER" && (
-                  <Button asChild variant={"ghost"} hidden={clotureControle}>
+                  <Button asChild variant={"ghost"} hidden={!canClose}>
                     <Link href={`/requete/cloture/${requete.id}`}>
                       <CalendarCheck2 />
                       Clôture
                     </Link>
                   </Button>
                 )}
-                <Button asChild variant={"danger"} hidden={deleteControle}>
+                <Button asChild variant={"danger"} hidden={!canDelete}>
                   <Link href={`/requete/delete/${requete.id}`}>
                     <Trash2 />
                     Supprimer
@@ -178,7 +116,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
         </div>
         <div className="hidden md:flex flex-row items-center space-x-2">
           {requete.etat !== "CLOTURER" && (
-            <Button asChild hidden={interventionControle}>
+            <Button asChild hidden={!canIntervene}>
               <Link href={`/requete/intervention/${requete.id}/add`}>
                 <PlusCircle />
                 Intervention
@@ -186,7 +124,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
             </Button>
           )}
           {requete.etat !== "CLOTURER" && (
-            <Button asChild variant={"outline"} hidden={editeControle}>
+            <Button asChild variant={"outline"} hidden={!canEdit}>
               <Link href={`/requete/edite/${requete.id}`}>
                 <SquarePen />
                 Editer
@@ -194,14 +132,14 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
             </Button>
           )}
           {requete.etat !== "CLOTURER" && (
-            <Button asChild hidden={clotureControle}>
+            <Button asChild hidden={!canClose}>
               <Link href={`/requete/cloture/${requete.id}`}>
                 <CalendarCheck2 />
                 Clôture
               </Link>
             </Button>
           )}
-          <Button asChild variant={"danger"} hidden={deleteControle}>
+          <Button asChild variant={"danger"} hidden={!canDelete}>
             <Link href={`/requete/delete/${requete.id}`}>
               <Trash2 />
               Supprimer
