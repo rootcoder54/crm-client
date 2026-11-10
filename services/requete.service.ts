@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/db";
 import { Requete } from "@prisma/client";
+import { requirePermission } from "@/lib/permissions";
 
 export async function createRequete(data: {
   sujet: string;
@@ -16,10 +17,12 @@ export async function createRequete(data: {
   isTacheClient?: boolean;
   clientId?: string;
 }) {
+  await requirePermission("/requete", "create");
   return prisma.requete.create({ data });
 }
 
 export async function getRequeteById(id: string) {
+  await requirePermission("/requete", "read");
   return prisma.requete.findUnique({
     where: { id },
     include: { Intervention: true }
@@ -27,16 +30,19 @@ export async function getRequeteById(id: string) {
 }
 
 export async function getRequeteByIdWithOutIntervention(id: string) {
+  await requirePermission("/requete", "read");
   return prisma.requete.findUnique({
     where: { id }
   });
 }
 
 export async function getRequetesByClient(clientId: string) {
+  await requirePermission("/requete", "read");
   return prisma.requete.findMany({ where: { clientId } });
 }
 
 export async function getAllRequetes() {
+  await requirePermission("/requete", "read");
   return prisma.requete.findMany({
     include: { client: true, Intervention: true },
     orderBy: { createdAt: "desc" }
@@ -44,6 +50,7 @@ export async function getAllRequetes() {
 }
 
 export async function getRequetesTech() {
+  await requirePermission("/requete", "read");
   return prisma.requete.findMany({
     where: { technicien: { not: null } },
     orderBy: { createdAt: "desc" },
@@ -52,6 +59,7 @@ export async function getRequetesTech() {
 }
 
 export async function getDraftRequetes() {
+  await requirePermission("/requete", "read");
   return prisma.requete.findMany({
     where: { status: "draft" },
     include: { client: true, Intervention: true },
@@ -60,12 +68,14 @@ export async function getDraftRequetes() {
 }
 
 export async function getNumberOfDraftRequetes() {
+  await requirePermission("/requete", "read");
   return prisma.requete.count({
     where: { status: "draft" }
   });
 }
 
 export async function getSubmittedRequetes() {
+  await requirePermission("/requete", "read");
   return prisma.requete.findMany({
     where: { status: "submitted" },
     include: { client: true, Intervention: true },
@@ -81,10 +91,12 @@ export async function updateRequete(
     >
   >
 ) {
+  await requirePermission("/requete", "update", "requete_edite");
   return prisma.requete.update({ where: { id }, data });
 }
 
 export async function autoSaveRequete(requete: Requete, status?: string) {
+  await requirePermission("/requete", "create");
   const { id, ...data } = requete;
   return prisma.requete.upsert({
     where: { id },
@@ -94,6 +106,7 @@ export async function autoSaveRequete(requete: Requete, status?: string) {
 }
 
 export async function clotureRequete(id: string, date: Date, etat: string) {
+  await requirePermission("/requete", "update", "requete_cloture");
   return prisma.requete.update({
     where: { id },
     data: {
@@ -104,5 +117,6 @@ export async function clotureRequete(id: string, date: Date, etat: string) {
 }
 
 export async function deleteRequete(id: string) {
+  await requirePermission("/requete", "delete", "requete_delete");
   return prisma.requete.delete({ where: { id } });
 }
