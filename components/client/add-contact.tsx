@@ -22,13 +22,10 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import HeaderPage from "../features/header-page";
 import { createContact } from "@/services/contact.service";
-import { createLog } from "@/services/log.service";
-import { useSession } from "next-auth/react";
 import { LoaderOne } from "../ui/loader";
 
 const AddContact = ({ clientId }: { clientId: string }) => {
   const router = useRouter();
-  const { data: session } = useSession();
 
   const [isPending, transition] = useTransition();
 
@@ -56,14 +53,9 @@ const AddContact = ({ clientId }: { clientId: string }) => {
     transition(() => {
       createContact(values)
         .then((data) => {
-          createLog({
-            action: "Ajout Contact",
-            details: `Contact de ${data.nom} a été crée`,
-            userId: session?.user.id ?? ""
-          }).then(() => {
+          
             toast.success("Contact ajouté avec succès");
             router.push("/client/contact/" + clientId);
-          });
         })
         .catch((erreur) => {
           toast.error("Une erreur est survenue" + erreur.message);
