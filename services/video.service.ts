@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
+import { auditedMutation, auditedRead } from "@/lib/audit";
 
 export async function createVideo(data: {
   nom: string;
@@ -7,7 +8,7 @@ export async function createVideo(data: {
   url: string;
   description: string;
 }) {
-  return prisma.video.create({ data });
+  return auditedMutation("CREATE", { entity: "Video", route: "/video" }, (tx) => tx.video.create({ data }), (result) => result.id);
 }
 
 export async function getVideoById(id: string) {
@@ -24,9 +25,9 @@ export async function updateVideo(
   id: string,
   data: Partial<Omit<Parameters<typeof createVideo>[0], "nom">>
 ) {
-  return prisma.video.update({ where: { id }, data });
+  return auditedMutation("UPDATE", { entity: "Video", route: "/video" }, (tx) => tx.video.update({ where: { id }, data }), (result) => result.id);
 }
 
 export async function deleteVideo(id: string) {
-  return prisma.video.delete({ where: { id } });
+  return auditedMutation("DELETE", { entity: "Video", route: "/video" }, (tx) => tx.video.delete({ where: { id } }), (result) => result.id);
 }
