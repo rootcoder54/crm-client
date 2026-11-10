@@ -22,7 +22,7 @@ export async function getLogicielById(id: string) {
 }
 
 export async function getLogicielsByClient(clientId: string) {
-  return prisma.logiciel.findMany({ where: { clientId } });
+  return auditedRead({ entity: "Logiciel", route: "/client/logiciel", details: "Consultation d'une liste" }, () => prisma.logiciel.findMany({ where: { clientId } }));
 }
 
 export async function updateLogiciel(id: string, data: Partial<Omit<Parameters<typeof createLogiciel>[0], "clientId">>) {
