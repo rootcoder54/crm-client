@@ -99,6 +99,19 @@ export async function updateRequete(
 export async function autoSaveRequete(requete: Requete, status?: string) {
   await requirePermission("/requete", "create");
   const { id, ...data } = requete;
+  // Draft autosaves are not user validations and should not flood the audit log.
+  if (status === "submitted") {
+    return auditedMutation(
+      "CREATE",
+      { entity: "Requete", route: "/requete", details: "Validation de la requête (nouvelle ou brouillon)" },
+      (tx) => tx.requete.upsert({
+        where: { id },
+        update: { ...data, status: "submitted" },
+        create: { ...data, status: "submitted", id },
+      }),
+      (result) => result.id,
+    );
+  }
   return prisma.requete.upsert({
     where: { id },
     update: { ...data, status: status || requete.status },
@@ -108,7 +121,7 @@ export async function autoSaveRequete(requete: Requete, status?: string) {
 
 export async function clotureRequete(id: string, date: Date, etat: string) {
   await requirePermission("/requete", "update", "requete_cloture");
-  return auditedMutation("UPDATE", { entity: "Requete", route: "/requete" }, (tx) => tx.requete.update({
+  return auditedMutation("CLOSE", { entity: "Requete", route: "/requete" }, (tx) => tx.requete.update({
     where: { id },
     data: {
       dateCloture: date,
