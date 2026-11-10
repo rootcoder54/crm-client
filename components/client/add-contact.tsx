@@ -56,10 +56,10 @@ const AddContact = ({ clientId }: { clientId: string }) => {
           
             toast.success("Contact ajouté avec succès");
             router.push("/client/contact/" + clientId);
-          });
         })
         .catch((erreur) => {
           toast.error("Une erreur est survenue" + erreur.message);
+        });
     });
   }
   if (isPending) {
