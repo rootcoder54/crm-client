@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
+import { auditedMutation, auditedRead } from "@/lib/audit";
 import { requirePermission } from "@/lib/permissions";
 import { getRequeteById } from "./requete.service";
 
@@ -11,11 +12,11 @@ export async function createItemIntervention(data: {
   interventionId?: string;
 }) {
   await requirePermission("/requete", "update", "requete_intervention");
-  return prisma.itemIntervention.create({ data });
+  return auditedMutation("CREATE", { entity: "ItemIntervention", route: "/requete/intervention" }, (tx) => tx.itemIntervention.create({ data }), (result) => result.id);
 }
 
 export async function getItemInterventionById(id: string) {
-  return prisma.itemIntervention.findUnique({ where: { id } });
+  return auditedRead({ entity: "ItemIntervention", entityId: id, route: "/requete/intervention" }, () => prisma.itemIntervention.findUnique({ where: { id } }));
 }
 
 export async function getItemsByIntervention(interventionId: string) {
@@ -36,10 +37,10 @@ export async function updateItemIntervention(
   id: string,
   data: Partial<{ date: Date; debut: string; fin: string; description: string }>
 ) {
-  return prisma.itemIntervention.update({ where: { id }, data });
+  return auditedMutation("UPDATE", { entity: "ItemIntervention", route: "/requete/intervention" }, (tx) => tx.itemIntervention.update({ where: { id }, data }), (result) => result.id);
 }
 
 export async function deleteItemIntervention(id: string) {
   await requirePermission("/requete", "delete", "requete_intervention");
-  return prisma.itemIntervention.delete({ where: { id } });
+  return auditedMutation("DELETE", { entity: "ItemIntervention", route: "/requete/intervention" }, (tx) => tx.itemIntervention.delete({ where: { id } }), (result) => result.id);
 }
