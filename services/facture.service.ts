@@ -28,16 +28,16 @@ export async function getFactureById(id: string) {
 }
 
 export async function getFacturesByClient(clientId: string) {
-  return prisma.facture.findMany({
+  return auditedRead({ entity: "Facture", route: "/facture", details: "Consultation d'une liste" }, () => prisma.facture.findMany({
     where: { clientId },
     include: { itemFactures: true },
-  });
+  }));
 }
 
 export async function getAllFactures() {
-  return prisma.facture.findMany({
+  return auditedRead({ entity: "Facture", route: "/facture", details: "Consultation d'une liste" }, () => prisma.facture.findMany({
     include: { itemFactures: true, client: true },
-  });
+  }));
 }
 
 export const maxorder = async () => {
