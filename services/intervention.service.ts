@@ -28,11 +28,11 @@ export async function getInterventionById(id: string) {
 }
 
 export async function getInterventionsByClient(clientId: string) {
-  return prisma.intervention.findMany({ where: { clientId } });
+  return auditedRead({ entity: "Intervention", route: "/intervention", details: "Consultation d'une liste" }, () => prisma.intervention.findMany({ where: { clientId } }));
 }
 
 export async function getInterventions() {
-  return prisma.intervention.findMany({});
+  return auditedRead({ entity: "Intervention", route: "/intervention", details: "Consultation d'une liste" }, () => prisma.intervention.findMany({}));
 }
 
 export async function updateIntervention(
