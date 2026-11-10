@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { exportToExcel } from "@/lib/exportExcel";
 import { prisma } from "@/lib/db";
+import { auditRead } from "@/lib/audit";
 
 export async function GET() {
   try {
@@ -21,6 +22,8 @@ export async function GET() {
       buffer.byteOffset,
       buffer.byteOffset + buffer.byteLength
     ) as ArrayBuffer; // <-- on force le type ici
+
+    await auditRead({ entity: "Client", route: "/api/export/client", details: "Export Excel des clients" });
 
     // ✅ Retourner le fichier Excel
     return new NextResponse(arrayBuffer, {

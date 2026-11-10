@@ -42,16 +42,24 @@ model UserRole {
 }
 
 model Log {
-  id        String   @id @default(uuid())
-  action    String
-  timestamp DateTime @default(now())
-  details   String?
+  id            String   @id @default(uuid())
+  action        String
+  timestamp     DateTime @default(now())
+  details       String?
+  entity        String?
+  entityId      String?
+  route         String?
+  actorUsername String?
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Conserver les journaux même lorsque le compte utilisateur est supprimé.
+  userId String?
+  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId, timestamp])
+  @@index([entity, timestamp])
 }
 
 model Client {

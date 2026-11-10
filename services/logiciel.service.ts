@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { auditedMutation, auditedRead } from "@/lib/audit";
 
 export async function createLogiciel(data: {
   nom: string;
@@ -13,21 +14,21 @@ export async function createLogiciel(data: {
   dossier: string;
   clientId: string;
 }) {
-  return prisma.logiciel.create({ data });
+  return auditedMutation("CREATE", { entity: "Logiciel", route: "/client/logiciel" }, (tx) => tx.logiciel.create({ data }), (result) => result.id);
 }
 
 export async function getLogicielById(id: string) {
-  return prisma.logiciel.findUnique({ where: { id } });
+  return auditedRead({ entity: "Logiciel", entityId: id, route: "/client/logiciel" }, () => prisma.logiciel.findUnique({ where: { id } }));
 }
 
 export async function getLogicielsByClient(clientId: string) {
-  return prisma.logiciel.findMany({ where: { clientId } });
+  return auditedRead({ entity: "Logiciel", route: "/client/logiciel", details: "Consultation d'une liste" }, () => prisma.logiciel.findMany({ where: { clientId } }));
 }
 
 export async function updateLogiciel(id: string, data: Partial<Omit<Parameters<typeof createLogiciel>[0], "clientId">>) {
-  return prisma.logiciel.update({ where: { id }, data });
+  return auditedMutation("UPDATE", { entity: "Logiciel", route: "/client/logiciel" }, (tx) => tx.logiciel.update({ where: { id }, data }), (result) => result.id);
 }
 
 export async function deleteLogiciel(id: string) {
-  return prisma.logiciel.delete({ where: { id } });
+  return auditedMutation("DELETE", { entity: "Logiciel", route: "/client/logiciel" }, (tx) => tx.logiciel.delete({ where: { id } }), (result) => result.id);
 }

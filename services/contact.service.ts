@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
+import { auditedMutation, auditedRead } from "@/lib/audit";
 
 export async function createContact(data: {
   nom: string;
@@ -8,15 +9,15 @@ export async function createContact(data: {
   poste?: string;
   clientId: string;
 }) {
-  return prisma.contact.create({ data });
+  return auditedMutation("CREATE", { entity: "Contact", route: "/client/contact" }, (tx) => tx.contact.create({ data }), (result) => result.id);
 }
 
 export async function getContactById(id: string) {
-  return prisma.contact.findUnique({ where: { id } });
+  return auditedRead({ entity: "Contact", entityId: id, route: "/client/contact" }, () => prisma.contact.findUnique({ where: { id } }));
 }
 
 export async function getContactsByClient(clientId: string) {
-  return prisma.contact.findMany({ where: { clientId } });
+  return auditedRead({ entity: "Contact", route: "/client/contact", details: "Consultation d'une liste" }, () => prisma.contact.findMany({ where: { clientId } }));
 }
 
 export async function updateContact(
@@ -28,9 +29,9 @@ export async function updateContact(
     poste: string;
   }>
 ) {
-  return prisma.contact.update({ where: { id }, data });
+  return auditedMutation("UPDATE", { entity: "Contact", route: "/client/contact" }, (tx) => tx.contact.update({ where: { id }, data }), (result) => result.id);
 }
 
 export async function deleteContact(id: string) {
-  return prisma.contact.delete({ where: { id } });
+  return auditedMutation("DELETE", { entity: "Contact", route: "/client/contact" }, (tx) => tx.contact.delete({ where: { id } }), (result) => result.id);
 }
