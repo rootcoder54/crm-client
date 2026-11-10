@@ -31,7 +31,7 @@ export async function getBaseById(id: string) {
 }
 
 export async function getBasesByClient(clientId: string) {
-  return prisma.base.findMany({ where: { clientId } });
+  return auditedRead({ entity: "Base", route: "/client/base", details: "Consultation d'une liste" }, () => prisma.base.findMany({ where: { clientId } }));
 }
 
 export async function updateBase(
