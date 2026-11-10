@@ -20,7 +20,7 @@ export async function getItemInterventionById(id: string) {
 }
 
 export async function getItemsByIntervention(interventionId: string) {
-  return prisma.itemIntervention.findMany({ where: { interventionId } });
+  return auditedRead({ entity: "ItemIntervention", route: "/requete/intervention", details: "Consultation d'une liste" }, () => prisma.itemIntervention.findMany({ where: { interventionId } }));
 }
 
 export async function getItemsByRequete(requeteId: string) {
@@ -28,9 +28,9 @@ export async function getItemsByRequete(requeteId: string) {
   if (!requete || !requete.Intervention[0]) {
     return [];
   }
-  return prisma.itemIntervention.findMany({
+  return auditedRead({ entity: "ItemIntervention", route: "/requete/intervention", details: "Consultation d'une liste" }, () => prisma.itemIntervention.findMany({
     where: { interventionId: requete?.Intervention[0].id }
-  });
+  }));
 }
 
 export async function updateItemIntervention(
