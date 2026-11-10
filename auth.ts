@@ -45,6 +45,23 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return token;
     },
   },
+  events: {
+    async signOut(message) {
+      // JWT strategy: NextAuth provides the token on successful sign out.
+      if (!("token" in message) || !message.token?.sub) return;
+      const token = message.token;
+      await prisma.log.create({
+        data: {
+          userId: token.sub,
+          actorUsername: typeof token.username === "string" ? token.username : null,
+          action: "LOGOUT",
+          entity: "Session",
+          route: "/logout",
+          details: "Déconnexion",
+        },
+      });
+    },
+  },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   ...authConfig,
