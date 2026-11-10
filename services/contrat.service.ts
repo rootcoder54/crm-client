@@ -18,7 +18,7 @@ export async function getContratById(id: string) {
 }
 
 export async function getContratsByClient(clientId: string) {
-  return prisma.contrat.findMany({ where: { clientId } });
+  return auditedRead({ entity: "Contrat", route: "/client/contrat", details: "Consultation d'une liste" }, () => prisma.contrat.findMany({ where: { clientId } }));
 }
 
 export async function updateContrat(
