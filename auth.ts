@@ -13,6 +13,17 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (!existingUser) {
         return false;
       }
+      // This event is written server-side with the verified account.
+      await prisma.log.create({
+        data: {
+          userId: existingUser.id,
+          actorUsername: existingUser.username,
+          action: "LOGIN",
+          entity: "Session",
+          route: "/login",
+          details: "Connexion réussie",
+        },
+      });
       return true;
     },
     async session({ token, session }) {
