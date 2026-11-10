@@ -91,10 +91,10 @@ const AddBase = ({ clientId }: { clientId: string }) => {
           
             toast.success("Base ajouté avec succès");
             router.push("/client/base/" + clientId);
-          });
         })
         .catch((erreur) => {
           toast.error("Une erreur est survenue" + erreur.message);
+        });
     });
   }
   if (isPending) {
