@@ -63,10 +63,10 @@ const AddClient = () => {
           
             toast.success("Client ajouté avec succès");
             router.push("/client");
-          });
         })
         .catch(() => {
           toast.error("Une erreur est survenue");
+        });
     });
   }
   if (isPending) {
