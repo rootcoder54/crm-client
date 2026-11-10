@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { auditedMutation, auditedRead } from "@/lib/audit";
 
 export async function createClient(data: {
   nomClient: string;
@@ -11,7 +12,7 @@ export async function createClient(data: {
   numero?: string;
   dateInscription?: string;
 }) {
-  return prisma.client.create({
+  return auditedMutation("CREATE", { entity: "Client", route: "/client" }, (tx) => tx.client.create({
     data: {
       nomClient: data.nomClient,
       sigle: data.sigle,
@@ -23,11 +24,11 @@ export async function createClient(data: {
         ? new Date(data.dateInscription)
         : undefined
     }
-  });
+  }), (result) => result.id);
 }
 
 export async function getClientById(id: string) {
-  return prisma.client.findUnique({
+  return auditedRead({ entity: "Client", entityId: id, route: "/client" }, () => prisma.client.findUnique({
     where: { id },
     include: {
       contacts: true,
@@ -37,7 +38,7 @@ export async function getClientById(id: string) {
       Facture: true,
       bases: true
     }
-  });
+  }));
 }
 
 export async function getAllClients() {
@@ -52,7 +53,7 @@ export async function updateClient(
   id: string,
   data: Partial<Omit<Parameters<typeof createClient>[0], "nomClient">>
 ) {
-  return prisma.client.update({
+  return auditedMutation("UPDATE", { entity: "Client", route: "/client" }, (tx) => tx.client.update({
     where: { id },
     data: {
       sigle: data.sigle,
@@ -64,7 +65,7 @@ export async function updateClient(
         ? new Date(data.dateInscription)
         : undefined
     }
-  });
+  }), (result) => result.id);
 }
 
 export async function lastVisite(id: string, date: Date | null) {
@@ -77,5 +78,5 @@ export async function lastVisite(id: string, date: Date | null) {
 }
 
 export async function deleteClient(id: string) {
-  return prisma.client.delete({ where: { id } });
+  return auditedMutation("DELETE", { entity: "Client", route: "/client" }, (tx) => tx.client.delete({ where: { id } }), (result) => result.id);
 }
