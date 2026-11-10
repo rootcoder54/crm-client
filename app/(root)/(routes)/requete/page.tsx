@@ -2,7 +2,7 @@
 import { Metric, PageIntro, StatusPill } from "@/components/crm/workspace";
 import { formatDate, isUnassigned } from "@/lib/crm-metrics";
 import { Clock3, CheckCircle2, UserRound } from "lucide-react";
-import { Requete, UserRole } from "@prisma/client";
+import { Requete } from "@prisma/client";
 import {
   AlertCircleIcon,
   FileBox,
@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "@/lib/fetcher";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DataTable } from "@/components/datatables";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LoaderOne } from "@/components/ui/loader";
 import Link from "next/link";
 import Image from "next/image";
@@ -23,7 +23,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useSession } from "next-auth/react";
+import { usePermission } from "@/hooks/use-permission";
 import HeaderPage from "@/components/features/header-page";
 import { Button } from "@/components/ui/button";
 
@@ -36,9 +36,9 @@ interface RequeteWithClient extends Requete {
 }
 
 const PageRequete = () => {
-  const { data: session } = useSession();
+  const canDelete = usePermission("/requete", "delete", "requete_delete");
+  const canCreate = usePermission("/requete", "create");
   const [selectedId, setSelectedId] = useState<string>("");
-  const [deleteControle, setDeleteControle] = useState<boolean>(false);
 
   const {
     isError,
@@ -48,21 +48,6 @@ const PageRequete = () => {
     queryKey: ["requete"],
     queryFn: () => fetcher(`/api/requete`),
   });
-
-  const { data: roles } = useQuery<UserRole[]>({
-    queryKey: ["role", session?.user?.id, "requete_delete"],
-    enabled: !!session?.user?.id,
-    queryFn: () => fetcher(`/api/role/${session?.user?.id}/requete_delete`),
-  });
-
-  useEffect(() => {
-    if (roles && roles.length > 0) {
-      const hasDeleteRole = roles.some(
-        (role) => role.name === "requete_delete" && role.accessLevel === 0,
-      );
-      setDeleteControle(hasDeleteRole);
-    }
-  }, [roles]);
 
   if (isPending) {
     return (
@@ -92,6 +77,7 @@ const PageRequete = () => {
     <div className="crm-workspace">
       <HeaderPage chemins={[{ title: "Requêtes", url: "/requete" }]}>
         <Button
+          disabled={!canCreate}
           variant="blue"
           asChild
           className="flex items-center gap-2 hover:bg-blue-600 dark:hover:bg-blue-500"
@@ -142,14 +128,14 @@ const PageRequete = () => {
           isHeader={false}
           titre="Liste des Requêtes"
           onDoubleClickLink={`/requete/detail/${selectedId}`}
-          action={[
+          action={canCreate ? [
             {
               label: "Nouvelle Requête",
               icon: <Plus />,
               url: "/requete/add",
               variantbtn: "default",
             },
-          ]}
+          ] : []}
           selectAction={[
             {
               label: "Details",
@@ -162,7 +148,7 @@ const PageRequete = () => {
               icon: <Trash />,
               url: `/requete/delete/${selectedId}`,
               variantbtn: "danger",
-              hide: deleteControle,
+              hide: !canDelete,
             },
           ]}
           data={requetes}

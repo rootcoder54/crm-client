@@ -28,7 +28,7 @@ model User {
 
 model UserRole {
   id          String @id @default(uuid())
-  name        String @unique
+  name        String
   url         String?
   accessLevel Int
   userId      String
@@ -36,6 +36,9 @@ model UserRole {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId, url])
 }
 
 model Log {

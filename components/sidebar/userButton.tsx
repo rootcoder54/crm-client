@@ -7,6 +7,7 @@ import {
   HelpCircle,
   LogOut,
   Settings,
+  ShieldCheck,
   User,
   UserPlus,
   Users
@@ -80,6 +81,12 @@ export const UserButton = () => {
                   <DropdownMenuItem className="cursor-pointer">
                     <BookUser />
                     <span>User Log</span>
+                  </DropdownMenuItem>
+                </Link>
+                <Link href={"/roles"}>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <ShieldCheck />
+                    <span>Permissions</span>
                   </DropdownMenuItem>
                 </Link>
                 <Link href={"/setting"}>
