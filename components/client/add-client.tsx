@@ -60,7 +60,7 @@ const AddClient = () => {
     transition(() => {
       createClient(values)
         .then((data) => {
-          
+            console.log(data);
             toast.success("Client ajouté avec succès");
             router.push("/client");
         })

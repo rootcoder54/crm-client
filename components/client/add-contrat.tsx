@@ -63,7 +63,7 @@ const AddContrat = ({ clientId }: { clientId: string }) => {
     transition(() => {
       createContrat(values)
         .then((data) => {
-          
+            console.log(data);
             toast.success("Contrat ajouté avec succès");
             router.push("/client/contrat/" + clientId);
         })

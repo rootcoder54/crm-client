@@ -70,7 +70,7 @@ export default function RolesPage() {
         <label className="grid gap-1 text-sm">Route URL
           <input className="border rounded p-2" value={url} onChange={(e) => setUrl(e.target.value)} />
         </label>
-        <label className="grid gap-1 text-sm">Niveau d'accès
+        <label className="grid gap-1 text-sm">Niveau d&apos;accès
           <select className="border rounded p-2" value={level} onChange={(e) => setLevel(Number(e.target.value))}>
             <option value={0}>0 — Refusé</option><option value={1}>1 — Lecture</option>
             <option value={2}>2 — Lecture et écriture</option><option value={3}>3 — Complet</option>

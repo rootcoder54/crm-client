@@ -53,7 +53,7 @@ const AddContact = ({ clientId }: { clientId: string }) => {
     transition(() => {
       createContact(values)
         .then((data) => {
-          
+            console.log(data);
             toast.success("Contact ajouté avec succès");
             router.push("/client/contact/" + clientId);
         })

@@ -88,7 +88,7 @@ const AddBase = ({ clientId }: { clientId: string }) => {
     transition(() => {
       createBase(data)
         .then((data) => {
-          
+            console.log(data);
             toast.success("Base ajouté avec succès");
             router.push("/client/base/" + clientId);
         })
