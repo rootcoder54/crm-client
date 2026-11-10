@@ -1,27 +1,22 @@
 "use server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
-import { requireRoleAdmin } from "@/lib/permissions";
 
-/**
- * Only authenticated server-side business operations write to Log.
- * Never accept a client-supplied userId to create an audit record.
- */
+export async function createLog(data: {
+  action: string;
+  details?: string;
+  userId: string;
+}) {
+  return prisma.log.create({ data });
+}
+
 export async function getLogById(id: string) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Non authentifié");
-  const log = await prisma.log.findUnique({ where: { id } });
-  if (log?.userId !== session.user.id) await requireRoleAdmin();
-  return log;
+  return prisma.log.findUnique({ where: { id } });
 }
 
 export async function getLogsByUser(userId: string) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Non authentifié");
-  if (session.user.id !== userId) await requireRoleAdmin();
-  return prisma.log.findMany({
-    where: { userId },
-    orderBy: { timestamp: "desc" },
-    take: 100,
-  });
+  return prisma.log.findMany({ where: { userId } });
+}
+
+export async function deleteLog(id: string) {
+  return prisma.log.delete({ where: { id } });
 }

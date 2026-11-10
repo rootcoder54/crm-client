@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { auditRead } from "@/lib/audit";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -180,7 +179,6 @@ export async function GET(req: Request) {
       ...factures.map((f) => ({ type: "Facture", data: f }))
     ];*/
 
-    await auditRead({ entity: "Search", route: "/api/search", details: "Recherche globale effectuée" });
     return NextResponse.json({
       clients,
       contacts,

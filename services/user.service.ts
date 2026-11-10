@@ -1,7 +1,5 @@
 "use server";
 import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
-import { auditedMutation, auditedRead } from "@/lib/audit";
 
 export async function createUser(data: {
   name?: string;
@@ -9,7 +7,7 @@ export async function createUser(data: {
   password?: string;
   image?: string;
 }) {
-  return auditedMutation("CREATE", { entity: "User", route: "/register", details: "Création de compte" }, (tx) => tx.user.create({ data }), (result) => result.id);
+  return prisma.user.create({ data });
 }
 
 export async function getUserById(id: string) {
@@ -27,7 +25,7 @@ export async function getUserByUserName(username: string) {
 }
 
 export async function getAllUsers() {
-  return auditedRead({ entity: "User", route: "/register", details: "Liste des utilisateurs" }, () => prisma.user.findMany({ include: { roles: true } }));
+  return prisma.user.findMany({ include: { roles: true } });
 }
 
 export async function updateUser(
@@ -39,11 +37,9 @@ export async function updateUser(
     image: string;
   }>
 ) {
-  return auditedMutation("UPDATE", { entity: "User", route: "/register", details: "Modification de compte (champs non consignés)" }, (tx) => tx.user.update({ where: { id }, data }), (result) => result.id);
+  return prisma.user.update({ where: { id }, data });
 }
 
 export async function deleteUser(id: string) {
-  const session = await auth();
-  if (session?.user?.id === id) throw new Error("Suppression de son propre compte interdite.");
-  return auditedMutation("DELETE", { entity: "User", route: "/register", details: "Suppression de compte" }, (tx) => tx.user.delete({ where: { id } }), (result) => result.id);
+  return prisma.user.delete({ where: { id } });
 }

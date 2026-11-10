@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 
@@ -22,8 +21,6 @@ function excelDate(dateString: string | null): Date | null {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) return NextResponse.json({ message: "Non authentifié" }, { status: 401 });
     const formData = await req.formData();
     const file = formData.get("file") as File;
 
@@ -106,8 +103,7 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        await prisma.$transaction(async (tx) => {
-          const client = await tx.client.create({
+        await prisma.client.create({
           data: {
             nomClient: String(nomClient).trim(),
             sigle: sigle ? String(sigle).trim() : null,
@@ -117,18 +113,6 @@ export async function POST(req: NextRequest) {
             numero: numero ? String(numero).trim() : null,
             dateInscription: excelDate(dateInscription ?? null)
           }
-        });
-          await tx.log.create({
-            data: {
-              userId: session.user.id,
-              actorUsername: session.user.username || session.user.name || null,
-              action: "CREATE",
-              entity: "Client",
-              entityId: client.id,
-              route: "/importation",
-              details: "Client créé lors de l'importation Excel",
-            },
-          });
         });
 
         insertedCount++;

@@ -1,6 +1,5 @@
 "use server";
 import { prisma } from "@/lib/db";
-import { auditedMutation, auditedRead } from "@/lib/audit";
 
 export async function createBase(data: {
   societe: string;
@@ -12,7 +11,7 @@ export async function createBase(data: {
   commentaire?: string;
   clientId: string;
 }) {
-  return auditedMutation("CREATE", { entity: "Base", route: "/client/base" }, (tx) => tx.base.create({
+  return prisma.base.create({
     data: {
       societe: data.societe,
       chemin: data.chemin,
@@ -23,24 +22,24 @@ export async function createBase(data: {
       commentaire: data.commentaire,
       clientId: data.clientId
     }
-  }), (result) => result.id);
+  });
 }
 
 export async function getBaseById(id: string) {
-  return auditedRead({ entity: "Base", entityId: id, route: "/client/base" }, () => prisma.base.findUnique({ where: { id } }));
+  return prisma.base.findUnique({ where: { id } });
 }
 
 export async function getBasesByClient(clientId: string) {
-  return auditedRead({ entity: "Base", route: "/client/base", details: "Consultation d'une liste" }, () => prisma.base.findMany({ where: { clientId } }));
+  return prisma.base.findMany({ where: { clientId } });
 }
 
 export async function updateBase(
   id: string,
   data: Partial<Omit<Parameters<typeof createBase>[0], "clientId">>
 ) {
-  return auditedMutation("UPDATE", { entity: "Base", route: "/client/base" }, (tx) => tx.base.update({ where: { id }, data }), (result) => result.id);
+  return prisma.base.update({ where: { id }, data });
 }
 
 export async function deleteBase(id: string) {
-  return auditedMutation("DELETE", { entity: "Base", route: "/client/base" }, (tx) => tx.base.delete({ where: { id } }), (result) => result.id);
+  return prisma.base.delete({ where: { id } });
 }

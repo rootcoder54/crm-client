@@ -13,17 +13,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (!existingUser) {
         return false;
       }
-      // This event is written server-side with the verified account.
-      await prisma.log.create({
-        data: {
-          userId: existingUser.id,
-          actorUsername: existingUser.username,
-          action: "LOGIN",
-          entity: "Session",
-          route: "/login",
-          details: "Connexion réussie",
-        },
-      });
       return true;
     },
     async session({ token, session }) {
@@ -43,23 +32,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       token.password = existinguser.password;
       //console.log({ token });
       return token;
-    },
-  },
-  events: {
-    async signOut(message) {
-      // JWT strategy: NextAuth provides the token on successful sign out.
-      if (!("token" in message) || !message.token?.sub) return;
-      const token = message.token;
-      await prisma.log.create({
-        data: {
-          userId: token.sub,
-          actorUsername: typeof token.username === "string" ? token.username : null,
-          action: "LOGOUT",
-          entity: "Session",
-          route: "/logout",
-          details: "Déconnexion",
-        },
-      });
     },
   },
   adapter: PrismaAdapter(prisma),

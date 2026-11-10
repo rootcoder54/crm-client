@@ -25,9 +25,12 @@ import { useTransition } from "react";
 import { PageIntro } from "@/components/crm/workspace";
 import HeaderPage from "../features/header-page";
 import { createClient } from "@/services/client.service";
+import { useSession } from "next-auth/react";
+import { createLog } from "@/services/log.service";
 import { LoaderOne } from "../ui/loader";
 
 const AddClient = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const [isPending, transition] = useTransition();
 
@@ -60,9 +63,14 @@ const AddClient = () => {
     transition(() => {
       createClient(values)
         .then((data) => {
-          
+          createLog({
+            action: "Ajout Client",
+            details: `Client ${data.nomClient} a été crée`,
+            userId: session?.user.id ?? "",
+          }).then(() => {
             toast.success("Client ajouté avec succès");
             router.push("/client");
+          });
         })
         .catch(() => {
           toast.error("Une erreur est survenue");
