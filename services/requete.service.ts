@@ -39,33 +39,33 @@ export async function getRequeteByIdWithOutIntervention(id: string) {
 
 export async function getRequetesByClient(clientId: string) {
   await requirePermission("/requete", "read");
-  return prisma.requete.findMany({ where: { clientId } });
+  return auditedRead({ entity: "Requete", route: "/requete", details: "Consultation d'une liste" }, () => prisma.requete.findMany({ where: { clientId } }));
 }
 
 export async function getAllRequetes() {
   await requirePermission("/requete", "read");
-  return prisma.requete.findMany({
+  return auditedRead({ entity: "Requete", route: "/requete", details: "Consultation d'une liste" }, () => prisma.requete.findMany({
     include: { client: true, Intervention: true },
     orderBy: { createdAt: "desc" }
-  });
+  }));
 }
 
 export async function getRequetesTech() {
   await requirePermission("/requete", "read");
-  return prisma.requete.findMany({
+  return auditedRead({ entity: "Requete", route: "/requete", details: "Consultation d'une liste" }, () => prisma.requete.findMany({
     where: { technicien: { not: null } },
     orderBy: { createdAt: "desc" },
     distinct: ["technicien"]
-  });
+  }));
 }
 
 export async function getDraftRequetes() {
   await requirePermission("/requete", "read");
-  return prisma.requete.findMany({
+  return auditedRead({ entity: "Requete", route: "/requete", details: "Consultation d'une liste" }, () => prisma.requete.findMany({
     where: { status: "draft" },
     include: { client: true, Intervention: true },
     orderBy: { updatedAt: "desc" }
-  });
+  }));
 }
 
 export async function getNumberOfDraftRequetes() {
@@ -77,11 +77,11 @@ export async function getNumberOfDraftRequetes() {
 
 export async function getSubmittedRequetes() {
   await requirePermission("/requete", "read");
-  return prisma.requete.findMany({
+  return auditedRead({ entity: "Requete", route: "/requete", details: "Consultation d'une liste" }, () => prisma.requete.findMany({
     where: { status: "submitted" },
     include: { client: true, Intervention: true },
     orderBy: { createdAt: "desc" }
-  });
+  }));
 }
 export async function updateRequete(
   id: string,
