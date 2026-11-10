@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
+import { auditedMutation } from "@/lib/audit";
 import {
   invoiceDraftSchema,
   invoiceTotals,
@@ -14,7 +15,7 @@ export async function saveInvoiceDraft(input: InvoiceDraft) {
     throw new Error("Votre session a expiré. Reconnectez-vous.");
   const data = invoiceDraftSchema.parse(input);
   const totals = invoiceTotals(data.items);
-  return prisma.$transaction(async (tx) => {
+  return auditedMutation("CREATE", { entity: "Facture", route: "/facture", details: "Facture enregistrée depuis le formulaire" }, async (tx) => {
     const client = await tx.client.findUnique({ where: { id: data.clientId } });
     if (!client?.numero)
       throw new Error(
@@ -60,5 +61,5 @@ export async function saveInvoiceDraft(input: InvoiceDraft) {
       },
       select: { id: true, numero: true },
     });
-  });
+  }, (result) => result.id);
 }
