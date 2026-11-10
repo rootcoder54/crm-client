@@ -42,11 +42,11 @@ export async function getClientById(id: string) {
 }
 
 export async function getAllClients() {
-  return prisma.client.findMany({
+  return auditedRead({ entity: "Client", route: "/client", details: "Consultation d'une liste" }, () => prisma.client.findMany({
     include: {
       Requete: true
     }
-  });
+  }));
 }
 
 export async function updateClient(
