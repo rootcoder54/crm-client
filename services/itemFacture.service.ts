@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
+import { auditedMutation, auditedRead } from "@/lib/audit";
 
 export async function createItemFacture(data: {
   reference: string;
@@ -11,7 +12,7 @@ export async function createItemFacture(data: {
   total: number;
   factureId: string;
 }) {
-  return prisma.itemFacture.create({
+  return auditedMutation("CREATE", { entity: "ItemFacture", route: "/facture" }, (tx) => tx.itemFacture.create({
     data: {
       reference: data.reference,
       libelle: data.libelle,
@@ -34,24 +35,24 @@ export async function createItemFacture(data: {
 
       factureId: data.factureId
     }
-  });
+  }), (result) => result.id);
 }
 
 export async function getItemFactureById(id: string) {
-  return prisma.itemFacture.findUnique({ where: { id } });
+  return auditedRead({ entity: "ItemFacture", entityId: id, route: "/facture" }, () => prisma.itemFacture.findUnique({ where: { id } }));
 }
 
 export async function getItemsByFacture(factureId: string) {
-  return prisma.itemFacture.findMany({ where: { factureId } });
+  return auditedRead({ entity: "ItemFacture", route: "/facture", details: "Consultation d'une liste" }, () => prisma.itemFacture.findMany({ where: { factureId } }));
 }
 
 export async function updateItemFacture(
   id: string,
   data: Partial<Omit<Parameters<typeof createItemFacture>[0], "factureId">>
 ) {
-  return prisma.itemFacture.update({ where: { id }, data });
+  return auditedMutation("UPDATE", { entity: "ItemFacture", route: "/facture" }, (tx) => tx.itemFacture.update({ where: { id }, data }), (result) => result.id);
 }
 
 export async function deleteItemFacture(id: string) {
-  return prisma.itemFacture.delete({ where: { id } });
+  return auditedMutation("DELETE", { entity: "ItemFacture", route: "/facture" }, (tx) => tx.itemFacture.delete({ where: { id } }), (result) => result.id);
 }

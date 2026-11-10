@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
+import { auditedMutation, auditedRead } from "@/lib/audit";
 
 export async function createFacture(data: {
   numero: string;
@@ -16,27 +17,27 @@ export async function createFacture(data: {
   totalTVA?: number;
   clientId: string;
 }) {
-  return prisma.facture.create({ data });
+  return auditedMutation("CREATE", { entity: "Facture", route: "/facture" }, (tx) => tx.facture.create({ data }), (result) => result.id);
 }
 
 export async function getFactureById(id: string) {
-  return prisma.facture.findUnique({
+  return auditedRead({ entity: "Facture", entityId: id, route: "/facture" }, () => prisma.facture.findUnique({
     where: { id },
     include: { itemFactures: true, client: true },
-  });
+  }));
 }
 
 export async function getFacturesByClient(clientId: string) {
-  return prisma.facture.findMany({
+  return auditedRead({ entity: "Facture", route: "/facture", details: "Consultation d'une liste" }, () => prisma.facture.findMany({
     where: { clientId },
     include: { itemFactures: true },
-  });
+  }));
 }
 
 export async function getAllFactures() {
-  return prisma.facture.findMany({
+  return auditedRead({ entity: "Facture", route: "/facture", details: "Consultation d'une liste" }, () => prisma.facture.findMany({
     include: { itemFactures: true, client: true },
-  });
+  }));
 }
 
 export const maxorder = async () => {
@@ -58,9 +59,9 @@ export async function updateFacture(
     Omit<Parameters<typeof createFacture>[0], "numero" | "date" | "clientId">
   >,
 ) {
-  return prisma.facture.update({ where: { id }, data });
+  return auditedMutation("UPDATE", { entity: "Facture", route: "/facture" }, (tx) => tx.facture.update({ where: { id }, data }), (result) => result.id);
 }
 
 export async function deleteFacture(id: string) {
-  return prisma.facture.delete({ where: { id } });
+  return auditedMutation("DELETE", { entity: "Facture", route: "/facture" }, (tx) => tx.facture.delete({ where: { id } }), (result) => result.id);
 }

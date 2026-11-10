@@ -77,7 +77,7 @@ function DataToolBar<TData>({
   return (
     <div className="flex items-center py-4 w-full">
       <div className="flex flex-col items-center w-full">
-        <div className="flex flex-col md:flex-row md:items-center justify-between w-full border-b">
+        <div className="flex flex-col md:flex-row md:items-center justify-between w-full border-b-2">
           <div className="flex flex-col md:flex-row md:items-center justify-start w-full gap-3 py-2 px-1">
             {(globalSearch || filtreValeur) && (
               <Input

@@ -24,14 +24,11 @@ import { useTransition } from "react";
 import HeaderPage from "../features/header-page";
 import { createBase } from "@/services/base.service";
 import { Textarea } from "../ui/textarea";
-import { createLog } from "@/services/log.service";
-import { useSession } from "next-auth/react";
 import { LoaderOne } from "../ui/loader";
 
 const AddBase = ({ clientId }: { clientId: string }) => {
   const router = useRouter();
   const [isPending, transition] = useTransition();
-  const { data: session } = useSession();
 
   const schema = z.object({
     societe: z.string(),
@@ -91,14 +88,9 @@ const AddBase = ({ clientId }: { clientId: string }) => {
     transition(() => {
       createBase(data)
         .then((data) => {
-          createLog({
-            action: "Ajout Base",
-            details: `Base de ${data.societe} a été crée`,
-            userId: session?.user.id ?? ""
-          }).then(() => {
+          
             toast.success("Base ajouté avec succès");
             router.push("/client/base/" + clientId);
-          });
         })
         .catch((erreur) => {
           toast.error("Une erreur est survenue" + erreur.message);
