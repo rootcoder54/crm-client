@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
+import { auditedMutation, auditedRead } from "@/lib/audit";
 import { Requete } from "@prisma/client";
 import { requirePermission } from "@/lib/permissions";
 
@@ -18,22 +19,22 @@ export async function createRequete(data: {
   clientId?: string;
 }) {
   await requirePermission("/requete", "create");
-  return prisma.requete.create({ data });
+  return auditedMutation("CREATE", { entity: "Requete", route: "/requete" }, (tx) => tx.requete.create({ data }), (result) => result.id);
 }
 
 export async function getRequeteById(id: string) {
   await requirePermission("/requete", "read");
-  return prisma.requete.findUnique({
+  return auditedRead({ entity: "Requete", entityId: id, route: "/requete" }, () => prisma.requete.findUnique({
     where: { id },
     include: { Intervention: true }
-  });
+  }));
 }
 
 export async function getRequeteByIdWithOutIntervention(id: string) {
   await requirePermission("/requete", "read");
-  return prisma.requete.findUnique({
+  return auditedRead({ entity: "Requete", entityId: id, route: "/requete" }, () => prisma.requete.findUnique({
     where: { id }
-  });
+  }));
 }
 
 export async function getRequetesByClient(clientId: string) {
@@ -92,7 +93,7 @@ export async function updateRequete(
   >
 ) {
   await requirePermission("/requete", "update", "requete_edite");
-  return prisma.requete.update({ where: { id }, data });
+  return auditedMutation("UPDATE", { entity: "Requete", route: "/requete" }, (tx) => tx.requete.update({ where: { id }, data }), (result) => result.id);
 }
 
 export async function autoSaveRequete(requete: Requete, status?: string) {
@@ -107,16 +108,16 @@ export async function autoSaveRequete(requete: Requete, status?: string) {
 
 export async function clotureRequete(id: string, date: Date, etat: string) {
   await requirePermission("/requete", "update", "requete_cloture");
-  return prisma.requete.update({
+  return auditedMutation("UPDATE", { entity: "Requete", route: "/requete" }, (tx) => tx.requete.update({
     where: { id },
     data: {
       dateCloture: date,
       etat
     }
-  });
+  }), (result) => result.id);
 }
 
 export async function deleteRequete(id: string) {
   await requirePermission("/requete", "delete", "requete_delete");
-  return prisma.requete.delete({ where: { id } });
+  return auditedMutation("DELETE", { entity: "Requete", route: "/requete" }, (tx) => tx.requete.delete({ where: { id } }), (result) => result.id);
 }
