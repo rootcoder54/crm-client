@@ -349,6 +349,8 @@ export function DataTable<TData extends Record<string, unknown>>({
             popFilter={popFilter}
             dateChose={dateChose}
             dateChoseTitle={dateChoseTitle}
+            selectAction={selectAction}
+            isHeader={isHeader}
           />
         </div>
         {exportName && (
