@@ -17,7 +17,7 @@ export async function getContactById(id: string) {
 }
 
 export async function getContactsByClient(clientId: string) {
-  return prisma.contact.findMany({ where: { clientId } });
+  return auditedRead({ entity: "Contact", route: "/client/contact", details: "Consultation d'une liste" }, () => prisma.contact.findMany({ where: { clientId } }));
 }
 
 export async function updateContact(
