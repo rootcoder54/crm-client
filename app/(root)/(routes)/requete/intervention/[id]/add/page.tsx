@@ -1,3 +1,4 @@
+import { requirePermission } from "@/lib/permissions";
 import { AddIntervention } from "@/components/intervention/add-intervention";
 import { getRequeteById } from "@/services/requete.service";
 import { Intervention, Requete } from "@prisma/client";
@@ -6,6 +7,7 @@ interface InterventionRequeteProps {
 }
 
 const AddInterventionPage = async ({ params }: InterventionRequeteProps) => {
+  await requirePermission("/requete", "update", "requete_intervention");
   const { id } = await params;
   const requete = (await getRequeteById(id)) as Requete & {
     Intervention: Intervention[];
