@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
+import { requirePermission } from "@/lib/permissions";
 import { getRequeteById } from "./requete.service";
 
 export async function createItemIntervention(data: {
@@ -9,6 +10,7 @@ export async function createItemIntervention(data: {
   description?: string;
   interventionId?: string;
 }) {
+  await requirePermission("/requete", "update", "requete_intervention");
   return prisma.itemIntervention.create({ data });
 }
 
@@ -38,5 +40,6 @@ export async function updateItemIntervention(
 }
 
 export async function deleteItemIntervention(id: string) {
+  await requirePermission("/requete", "delete", "requete_intervention");
   return prisma.itemIntervention.delete({ where: { id } });
 }
