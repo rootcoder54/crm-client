@@ -43,7 +43,7 @@ export async function getItemFactureById(id: string) {
 }
 
 export async function getItemsByFacture(factureId: string) {
-  return prisma.itemFacture.findMany({ where: { factureId } });
+  return auditedRead({ entity: "ItemFacture", route: "/facture", details: "Consultation d'une liste" }, () => prisma.itemFacture.findMany({ where: { factureId } }));
 }
 
 export async function updateItemFacture(
