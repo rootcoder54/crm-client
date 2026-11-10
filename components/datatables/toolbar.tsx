@@ -1,6 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { VariantProps } from "class-variance-authority";
+import { Button, buttonVariants } from "../ui/button";
 import { Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
 
