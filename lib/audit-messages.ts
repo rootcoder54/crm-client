@@ -55,11 +55,11 @@ export function auditMessage(
 
   const label = entityLabels[entity ?? ""] ?? "élément";
   const feminine = feminineEntities.has(entity ?? "");
-  const article = feminine ? "la" : "le";
+  const article = feminine ? "de la" : "du";
   const safeTitle = clean(title);
 
   if (action === "READ") {
-    if (safeTitle) return `Consultation de ${article} ${label} : ${safeTitle}`;
+    if (safeTitle) return `Consultation ${article} ${label} : ${safeTitle}`;
     return `Consultation de la page ${pluralEntities[entity ?? ""] ?? label}`;
   }
 
@@ -71,7 +71,7 @@ export function auditMessage(
 
   const suffix = safeTitle ? ` : ${safeTitle}` : "";
   const prefix = action === "CLOSE" ? "Clôture" : verb;
-  return `${prefix} de ${article} ${label}${suffix}`;
+  return `${prefix} ${article} ${label}${suffix}`;
 }
 
 export function legacyAuditMessage(log: {
