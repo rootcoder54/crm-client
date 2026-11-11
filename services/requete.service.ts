@@ -103,7 +103,7 @@ export async function autoSaveRequete(requete: Requete, status?: string) {
   if (status === "submitted") {
     return auditedMutation(
       "CREATE",
-      { entity: "Requete", route: "/requete", details: "Validation de la requête (nouvelle ou brouillon)" },
+      { entity: "Requete", route: "/requete" },
       (tx) => tx.requete.upsert({
         where: { id },
         update: { ...data, status: "submitted" },
