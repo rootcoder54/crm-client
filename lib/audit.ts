@@ -57,7 +57,7 @@ export async function auditedMutation<T>(
  */
 export async function auditRead(meta: Metadata) {
   const actor = await currentActor();
-  const pathname = meta.route.replace(/\\/$/, "") || "/";
+  const pathname = meta.route.endsWith("/") && meta.route !== "/" ? meta.route.slice(0, -1) : meta.route;
   // Une seule visite par utilisateur, par page et par tranche de 30 secondes.
   // La contrainte UNIQUE protège aussi contre deux demandes concurrentes.
   const bucket = Math.floor(Date.now() / 30_000);
