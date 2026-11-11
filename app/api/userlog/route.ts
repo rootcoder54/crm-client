@@ -50,10 +50,10 @@ export async function GET(req: NextRequest) {
       where: { id: { in: idsFor("Facture") } }, select: { id: true, numero: true },
     }) : [],
   ]);
-  const titles = new Map([
-    ...requetes.map((item) => [`Requete:${item.id}`, item.sujet]),
-    ...clients.map((item) => [`Client:${item.id}`, item.nomClient]),
-    ...factures.map((item) => [`Facture:${item.id}`, item.numero]),
+  const titles = new Map<string, string | null>([
+    ...requetes.map((item): [string, string | null] => [`Requete:${item.id}`, item.sujet]),
+    ...clients.map((item): [string, string | null] => [`Client:${item.id}`, item.nomClient]),
+    ...factures.map((item): [string, string | null] => [`Facture:${item.id}`, item.numero]),
   ]);
   const formatted = logs.map((log) => ({
     ...log,
