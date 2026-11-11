@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { auditedMutation, auditedRead } from "@/lib/audit";
+import { auditedMutation } from "@/lib/audit";
 
 export async function createLogiciel(data: {
   nom: string;
@@ -18,11 +18,11 @@ export async function createLogiciel(data: {
 }
 
 export async function getLogicielById(id: string) {
-  return auditedRead({ entity: "Logiciel", entityId: id, route: "/client/logiciel" }, () => prisma.logiciel.findUnique({ where: { id } }));
+  return prisma.logiciel.findUnique({ where: { id } });
 }
 
 export async function getLogicielsByClient(clientId: string) {
-  return auditedRead({ entity: "Logiciel", route: "/client/logiciel", details: "Consultation d'une liste" }, () => prisma.logiciel.findMany({ where: { clientId } }));
+  return prisma.logiciel.findMany({ where: { clientId } });
 }
 
 export async function updateLogiciel(id: string, data: Partial<Omit<Parameters<typeof createLogiciel>[0], "clientId">>) {

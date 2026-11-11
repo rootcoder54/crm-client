@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
-import { auditedMutation, auditedRead } from "@/lib/audit";
+import { auditedMutation } from "@/lib/audit";
 
 export async function createItemFacture(data: {
   reference: string;
@@ -39,11 +39,11 @@ export async function createItemFacture(data: {
 }
 
 export async function getItemFactureById(id: string) {
-  return auditedRead({ entity: "ItemFacture", entityId: id, route: "/facture" }, () => prisma.itemFacture.findUnique({ where: { id } }));
+  return prisma.itemFacture.findUnique({ where: { id } });
 }
 
 export async function getItemsByFacture(factureId: string) {
-  return auditedRead({ entity: "ItemFacture", route: "/facture", details: "Consultation d'une liste" }, () => prisma.itemFacture.findMany({ where: { factureId } }));
+  return prisma.itemFacture.findMany({ where: { factureId } });
 }
 
 export async function updateItemFacture(

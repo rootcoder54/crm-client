@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
-import { auditedMutation, auditedRead } from "@/lib/audit";
+import { auditedMutation } from "@/lib/audit";
 
 export async function createBase(data: {
   societe: string;
@@ -27,11 +27,11 @@ export async function createBase(data: {
 }
 
 export async function getBaseById(id: string) {
-  return auditedRead({ entity: "Base", entityId: id, route: "/client/base" }, () => prisma.base.findUnique({ where: { id } }));
+  return prisma.base.findUnique({ where: { id } });
 }
 
 export async function getBasesByClient(clientId: string) {
-  return auditedRead({ entity: "Base", route: "/client/base", details: "Consultation d'une liste" }, () => prisma.base.findMany({ where: { clientId } }));
+  return prisma.base.findMany({ where: { clientId } });
 }
 
 export async function updateBase(

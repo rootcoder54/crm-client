@@ -1,7 +1,7 @@
 "use server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
-import { auditedMutation, auditedRead } from "@/lib/audit";
+import { auditedMutation } from "@/lib/audit";
 
 export async function createUser(data: {
   name?: string;
@@ -27,7 +27,7 @@ export async function getUserByUserName(username: string) {
 }
 
 export async function getAllUsers() {
-  return auditedRead({ entity: "User", route: "/register", details: "Liste des utilisateurs" }, () => prisma.user.findMany({ include: { roles: true } }));
+  return prisma.user.findMany({ include: { roles: true } });
 }
 
 export async function updateUser(

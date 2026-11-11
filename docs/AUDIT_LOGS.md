@@ -50,3 +50,24 @@ La saisie automatique de brouillons n'est **pas** enregistrée à chaque frappe.
 - Les consultations publiques d'articles et vidéos (visiteurs non authentifiés) ne sont pas journalisées par utilisateur.
 - Les opérations en cascade SQLite ne produisent qu'un événement pour l'action métier d'origine.
 - La journalisation applicative n'est pas inviolable contre un administrateur de la base SQLite. Pour un audit réglementaire, ajouter un stockage séparé append-only / export immuable, des contrôles de rétention et des tests.
+
+## Navigation et libellés lisibles (mise à jour)
+
+- Les services `get*()` et les listes Prisma **ne journalisent plus automatiquement** les consultations : un rafraîchissement React Query ne correspond pas à une nouvelle visite.
+- `ActivityPageTracker` déclenche l'enregistrement lors d'une navigation CRM, via `POST /api/activity/page-view`. Le serveur connaît les routes autorisées et retrouve le nom du client, le numéro de la facture ou le sujet de la requête en base.
+- `Log.dedupeKey` est unique : une même page visitée par un même utilisateur dans une fenêtre d'environ 30 secondes ne produit qu'un seul événement, y compris en cas d'appels concurrents. Les véritables modifications ne sont **jamais** dédupliquées par cette clé.
+- Les créations, éditions, clôtures et suppressions utilisent `auditedMutation()` : le message stocké inclut désormais un intitulé court de l'élément lorsque la valeur renvoyée le permet.
+- L'API historique enrichit l'affichage des **anciens** journaux à partir des fiches existantes. Les sujets d'éléments déjà supprimés ne peuvent pas être reconstitués si l'ancien log ne les contenait pas.
+- La recherche globale n'enregistre plus de consultation à chaque frappe.
+- Ne pas supprimer automatiquement les anciens doublons : ils sont conservés à des fins d'audit. Seules les nouvelles visites sont dédupliquées.
+
+### Vérifications complémentaires
+
+1. Ouvrir `/client` : un seul log « Consultation de la page Clients ».
+2. Recharger plusieurs fois la page dans les 30 secondes : pas de nouveau log.
+3. Ouvrir `/requete/detail/<id>` : « Consultation de la requête : <sujet> ».
+4. Valider une requête avec un sujet : « Création de la requête : <sujet> » (pas de log à chaque sauvegarde du brouillon).
+5. Modifier, clôturer, supprimer : un seul événement métier pour chaque action réussie, avec son sujet.
+6. Vérifier les autres modules, les filtres et les sessions de plusieurs utilisateurs.
+7. Appliquer `npx prisma migrate deploy` et `npx prisma generate` sur une sauvegarde SQLite avant toute production.
+

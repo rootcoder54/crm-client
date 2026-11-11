@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
-import { auditedMutation, auditedRead } from "@/lib/audit";
+import { auditedMutation } from "@/lib/audit";
 import { requirePermission } from "@/lib/permissions";
 import { getRequeteById } from "./requete.service";
 
@@ -16,11 +16,11 @@ export async function createItemIntervention(data: {
 }
 
 export async function getItemInterventionById(id: string) {
-  return auditedRead({ entity: "ItemIntervention", entityId: id, route: "/requete/intervention" }, () => prisma.itemIntervention.findUnique({ where: { id } }));
+  return prisma.itemIntervention.findUnique({ where: { id } });
 }
 
 export async function getItemsByIntervention(interventionId: string) {
-  return auditedRead({ entity: "ItemIntervention", route: "/requete/intervention", details: "Consultation d'une liste" }, () => prisma.itemIntervention.findMany({ where: { interventionId } }));
+  return prisma.itemIntervention.findMany({ where: { interventionId } });
 }
 
 export async function getItemsByRequete(requeteId: string) {
@@ -28,9 +28,9 @@ export async function getItemsByRequete(requeteId: string) {
   if (!requete || !requete.Intervention[0]) {
     return [];
   }
-  return auditedRead({ entity: "ItemIntervention", route: "/requete/intervention", details: "Consultation d'une liste" }, () => prisma.itemIntervention.findMany({
+  return prisma.itemIntervention.findMany({
     where: { interventionId: requete?.Intervention[0].id }
-  }));
+  });
 }
 
 export async function updateItemIntervention(
