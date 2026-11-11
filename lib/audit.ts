@@ -58,25 +58,36 @@ export async function auditedMutation<T>(
 export async function auditRead(meta: Metadata) {
   const actor = await currentActor();
   const pathname = meta.route.endsWith("/") && meta.route !== "/" ? meta.route.slice(0, -1) : meta.route;
-  // Une seule visite par utilisateur, par page et par tranche de 30 secondes.
-  // La contrainte UNIQUE protège aussi contre deux demandes concurrentes.
-  const bucket = Math.floor(Date.now() / 30_000);
+  // Fenêtre glissante de 30 secondes : les chargements concurrents ne doivent
+  // pas créer plusieurs consultations d'une même page.
+  const timestamp = Date.now();
+  const bucket = Math.floor(timestamp / 30_000);
   const dedupeKey = `${actor.userId}:${pathname}:${bucket}`;
-  await prisma.log.create({
-    data: {
-      action: "READ",
-      entity: meta.entity,
-      entityId: meta.entityId ?? null,
-      route: pathname,
-      details: meta.details?.slice(0, 500) ?? auditMessage("READ", meta.entity),
-      dedupeKey,
-      ...actor,
-    },
+  await prisma.$transaction(async (tx) => {
+    const recent = await tx.log.findFirst({
+      where: {
+        userId: actor.userId,
+        action: "READ",
+        route: pathname,
+        timestamp: { gte: new Date(timestamp - 30_000) },
+      },
+      select: { id: true },
+    });
+    if (recent) return;
+    await tx.log.create({
+      data: {
+        action: "READ",
+        entity: meta.entity,
+        entityId: meta.entityId ?? null,
+        route: pathname,
+        details: meta.details?.slice(0, 500) ?? auditMessage("READ", meta.entity),
+        dedupeKey,
+        ...actor,
+      },
+    });
   }).catch((error: unknown) => {
-    // P2002 = violation de contrainte unique (navigation déjà enregistrée).
-    if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
-      return;
-    }
+    // Une seconde transaction peut avoir inséré la même visite entre-temps.
+    if (error && typeof error === "object" && "code" in error && error.code === "P2002") return;
     throw error;
   });
 }
