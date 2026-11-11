@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { auditedMutation, auditedRead } from "@/lib/audit";
+import { auditedMutation } from "@/lib/audit";
 
 export async function createClient(data: {
   nomClient: string;
@@ -28,7 +28,7 @@ export async function createClient(data: {
 }
 
 export async function getClientById(id: string) {
-  return auditedRead({ entity: "Client", entityId: id, route: "/client" }, () => prisma.client.findUnique({
+  return prisma.client.findUnique({
     where: { id },
     include: {
       contacts: true,
@@ -38,15 +38,15 @@ export async function getClientById(id: string) {
       Facture: true,
       bases: true
     }
-  }));
+  });
 }
 
 export async function getAllClients() {
-  return auditedRead({ entity: "Client", route: "/client", details: "Consultation d'une liste" }, () => prisma.client.findMany({
+  return prisma.client.findMany({
     include: {
       Requete: true
     }
-  }));
+  });
 }
 
 export async function updateClient(
