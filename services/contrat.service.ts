@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { auditedMutation, auditedRead } from "@/lib/audit";
+import { auditedMutation } from "@/lib/audit";
 
 export async function createContrat(data: {
   dateDebut: Date;
@@ -14,11 +14,11 @@ export async function createContrat(data: {
 }
 
 export async function getContratById(id: string) {
-  return auditedRead({ entity: "Contrat", entityId: id, route: "/client/contrat" }, () => prisma.contrat.findUnique({ where: { id } }));
+  return prisma.contrat.findUnique({ where: { id } });
 }
 
 export async function getContratsByClient(clientId: string) {
-  return auditedRead({ entity: "Contrat", route: "/client/contrat", details: "Consultation d'une liste" }, () => prisma.contrat.findMany({ where: { clientId } }));
+  return prisma.contrat.findMany({ where: { clientId } });
 }
 
 export async function updateContrat(
