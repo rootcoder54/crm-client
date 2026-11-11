@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { auditedMutation, auditedRead } from "@/lib/audit";
+import { auditedMutation } from "@/lib/audit";
 import { requirePermission } from "@/lib/permissions";
 
 export async function createIntervention(data: {
@@ -21,18 +21,18 @@ export async function createIntervention(data: {
 }
 
 export async function getInterventionById(id: string) {
-  return auditedRead({ entity: "Intervention", entityId: id, route: "/intervention" }, () => prisma.intervention.findUnique({
+  return prisma.intervention.findUnique({
     where: { id },
     include: { items: true, document: true , client: true }
-  }));
+  });
 }
 
 export async function getInterventionsByClient(clientId: string) {
-  return auditedRead({ entity: "Intervention", route: "/intervention", details: "Consultation d'une liste" }, () => prisma.intervention.findMany({ where: { clientId } }));
+  return prisma.intervention.findMany({ where: { clientId } });
 }
 
 export async function getInterventions() {
-  return auditedRead({ entity: "Intervention", route: "/intervention", details: "Consultation d'une liste" }, () => prisma.intervention.findMany({}));
+  return prisma.intervention.findMany({});
 }
 
 export async function updateIntervention(
