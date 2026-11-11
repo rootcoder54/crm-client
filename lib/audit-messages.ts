@@ -78,16 +78,13 @@ export function legacyAuditMessage(log: {
   action: string; entity: string | null;
   details: string | null; entityId: string | null;
 }, title?: string | null): string {
-  if (log.details?.startsWith("Consultation de la page ") ||
-      log.details?.startsWith("Consultation de la requête :") ||
-      log.details?.startsWith("Consultation du client :") ||
-      log.details?.startsWith("Création de ") ||
-      log.details?.startsWith("Modification de ") ||
-      log.details?.startsWith("Suppression de ") ||
-      log.details?.startsWith("Clôture de ") ||
-      log.details === "Connexion à l'application" ||
-      log.details === "Déconnexion de l'application") {
-    return log.details;
+  const details = log.details?.trim() ?? "";
+  // Un message métier précis est conservé, même si l'élément a été supprimé.
+  // Les anciens marqueurs génériques ne sont pas affichés.
+  if (/^(Consultation|Création|Modification|Suppression|Clôture) (du |de la |de l'|de )/.test(details)
+    || details === "Connexion à l'application"
+    || details === "Déconnexion de l'application") {
+    return details;
   }
-  return auditMessage(log.action, log.entity, title, log.details);
+  return auditMessage(log.action, log.entity, title, details);
 }
