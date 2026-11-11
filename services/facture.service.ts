@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
-import { auditedMutation, auditedRead } from "@/lib/audit";
+import { auditedMutation } from "@/lib/audit";
 
 export async function createFacture(data: {
   numero: string;
@@ -21,23 +21,23 @@ export async function createFacture(data: {
 }
 
 export async function getFactureById(id: string) {
-  return auditedRead({ entity: "Facture", entityId: id, route: "/facture" }, () => prisma.facture.findUnique({
+  return prisma.facture.findUnique({
     where: { id },
     include: { itemFactures: true, client: true },
-  }));
+  });
 }
 
 export async function getFacturesByClient(clientId: string) {
-  return auditedRead({ entity: "Facture", route: "/facture", details: "Consultation d'une liste" }, () => prisma.facture.findMany({
+  return prisma.facture.findMany({
     where: { clientId },
     include: { itemFactures: true },
-  }));
+  });
 }
 
 export async function getAllFactures() {
-  return auditedRead({ entity: "Facture", route: "/facture", details: "Consultation d'une liste" }, () => prisma.facture.findMany({
+  return prisma.facture.findMany({
     include: { itemFactures: true, client: true },
-  }));
+  });
 }
 
 export const maxorder = async () => {
