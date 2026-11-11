@@ -50,6 +50,7 @@ model Log {
   entityId      String?
   route         String?
   actorUsername String?
+  dedupeKey     String? @unique
 
   // Conserver les journaux même lorsque le compte utilisateur est supprimé.
   userId String?
