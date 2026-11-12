@@ -7,8 +7,13 @@ export const dateRangeFilter = <TData>(
 ) => {
   if (!filterValue || filterValue.length !== 2) return true;
 
-  const value = new Date(row.getValue(columnId) as string);
+  const raw = row.getValue(columnId);
+  const value = raw instanceof Date ? raw : new Date(raw as string);
   const [from, to] = filterValue.map((d) => (d ? new Date(d) : undefined));
+  // Comparer les jours entiers : une requête à 16h doit appartenir à la date
+  // de fin choisie, et pas seulement aux événements de minuit.
+  if (from && !isNaN(from.getTime())) from.setHours(0, 0, 0, 0);
+  if (to && !isNaN(to.getTime())) to.setHours(23, 59, 59, 999);
 
   if (isNaN(value.getTime())) return false;
 

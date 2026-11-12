@@ -93,6 +93,7 @@ const renderCell = (value: unknown) => {
 export function generateColumns<T extends Record<string, unknown>>(
   data: T[],
   customStyles?: Record<string, (value: unknown, row: T) => React.ReactNode>,
+  dateColumns: string[] = [],
 ): ColumnDef<T>[] {
   if (data.length === 0) return [];
 
@@ -102,6 +103,7 @@ export function generateColumns<T extends Record<string, unknown>>(
     const firstNonNull = data.find((row) => row[key] != null)?.[key];
 
     const isDateColumn =
+      dateColumns.includes(key) ||
       firstNonNull instanceof Date ||
       (typeof firstNonNull === "string" &&
         !/^\d+$/.test(firstNonNull) && // 🔹 exclut les nombres purs
@@ -153,8 +155,9 @@ export function generateColumns<T extends Record<string, unknown>>(
 export function buildColumns<T extends Record<string, unknown>>(
   data: T[],
   customStyles?: Record<string, (value: unknown, row: T) => React.ReactNode>,
+  dateColumns: string[] = [],
 ): ColumnDef<T>[] {
-  const dynamicCols = generateColumns(data, customStyles);
+  const dynamicCols = generateColumns(data, customStyles, dateColumns);
 
   return [
     {
