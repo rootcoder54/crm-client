@@ -50,10 +50,12 @@ const DateFilter = <TData,>({
   const handleSelect = (newRange: DateRange | undefined) => {
     setRange(newRange);
 
-    if (newRange?.from && newRange?.to) {
+    // Le premier jour sélectionné active immédiatement le filtre.
+    // Le deuxième jour permet ensuite de définir une plage.
+    if (newRange?.from) {
       column?.setFilterValue([
         newRange.from.toISOString(),
-        newRange.to.toISOString()
+        newRange.to?.toISOString()
       ]);
     } else {
       column?.setFilterValue(undefined);
@@ -71,7 +73,7 @@ const DateFilter = <TData,>({
         <Button variant="outline" size="sm" className={cn("h-8 border-dashed")}>
           <CalendarIcon className="mr-2 h-4 w-4" />
           {title || "Filtrer"}
-          {range?.from && range?.to && (
+          {range?.from && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4" />
               <Badge
@@ -81,7 +83,7 @@ const DateFilter = <TData,>({
                 {format(range.from, "dd/MM/yyyy", {
                   locale: fr
                 })}{" "}
-                - {format(range.to, "dd/MM/yyyy", { locale: fr })}
+                {range.to ? " - " + format(range.to, "dd/MM/yyyy", { locale: fr }) : " et après"}
               </Badge>
             </>
           )}
@@ -106,7 +108,7 @@ const DateFilter = <TData,>({
               onClick={handleReset}
               className="mt-2 w-full text-center"
             >
-              Nettoyer le filter
+              Effacer le filtre
             </Button>
           </>
         )}
