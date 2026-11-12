@@ -45,6 +45,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { DataTableEmptyState, type DataTableEmptyConfig } from "./empty-state";
+import { printFilteredTable, type PrintTableConfig } from "@/lib/print-filtered-table";
+import { Printer } from "lucide-react";
 
 interface DataTableProps<TData extends Record<string, unknown>> {
   data: TData[];
@@ -93,6 +95,7 @@ interface DataTableProps<TData extends Record<string, unknown>> {
     (value: unknown, row: TData) => React.ReactNode
   >;
   exportName?: string;
+  printConfig?: PrintTableConfig;
   storageKey?: string;
   /** @deprecated Empty states now use contextual vector icons. */
   emptyImg?: string;
@@ -121,6 +124,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   dateChoseTitle,
   columnStyles,
   exportName,
+  printConfig,
   storageKey = "datatable",
   emptyState,
   headerEmpty,
@@ -146,7 +150,7 @@ export function DataTable<TData extends Record<string, unknown>>({
   const [open, setOpen] = React.useState(false);
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
 
-  const columns = buildColumns(data, columnStyles);
+  const columns = buildColumns(data, columnStyles, dateChose ? [dateChose] : []);
 
   const initialVisibility: VisibilityState = hideList
     ? hideList.reduce((acc, key) => ({ ...acc, [key]: false }), {})
@@ -221,6 +225,15 @@ export function DataTable<TData extends Record<string, unknown>>({
     table.setGlobalFilter("");
     table.resetColumnFilters(true);
     table.setPageIndex(0);
+  };
+
+  const printRows = () => {
+    if (!printConfig) return;
+    // Le modèle avant pagination respecte le tri, la recherche et les filtres actifs.
+    const rows = table.getPrePaginationRowModel().rows.map((row) => row.original);
+    if (!printFilteredTable(printConfig, rows)) {
+      toast.error("Le navigateur a bloqué la fenêtre d’impression.");
+    }
   };
 
   const exportExcel = async () => {
@@ -353,6 +366,23 @@ export function DataTable<TData extends Record<string, unknown>>({
             isHeader={isHeader}
           />
         </div>
+        {printConfig && (
+          <div className="flex items-center justify-between flex-wrap gap-3 px-3 pb-3">
+            <p className="text-sm text-muted-foreground" aria-live="polite">
+              {table.getPrePaginationRowModel().rows.length} requête(s) correspondant aux filtres
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={!table.getPrePaginationRowModel().rows.length}
+              onClick={printRows}
+            >
+              <Printer className="size-4" />
+              Imprimer la liste filtrée
+            </Button>
+          </div>
+        )}
         {exportName && (
           <div className="flex items-center justify-between flex-wrap gap-3 px-3 pb-3">
             <p className="text-sm text-muted-foreground" aria-live="polite">
