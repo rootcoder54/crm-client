@@ -1,4 +1,4 @@
-"use client ";
+"use client";
 
 import { Client, Requete } from "@prisma/client";
 import HeaderPage from "../features/header-page";
@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
-import { Badge } from "../ui/badge";
+import { DataTable } from "@/components/datatables";
 
 const DetailClient = ({
   client,
@@ -157,49 +157,66 @@ const DetailClient = ({
           </TableBody>
         </Table>
       </div>
-      <div>
-        <h2 className="text-xl font-bold mb-4">Requêtes associées</h2>
-        {requetes.length === 0 ? (
-          <p>Aucune requête associée à ce client.</p>
-        ) : (
-          <Table>
-            <TableRow>
-              <TableCell className="font-bold">Sujet</TableCell>
-              <TableCell className="font-bold">Technicien</TableCell>
-              <TableCell className="font-bold">Date de début</TableCell>
-              <TableCell className="font-bold">Etat</TableCell>
-            </TableRow>
-            {requetes.map((requete) => (
-              <TableRow key={requete.id}>
-                <TableCell>
-                  <Link
-                    href={`/requete/detail/${requete.id}`}
-                    className="text-blue-500 hover:underline"
-                  >
-                    {requete.sujet}
-                  </Link>
-                </TableCell>
-                <TableCell>{requete.technicien}</TableCell>
-                <TableCell>
-                  {requete.dateDebut && format(requete.dateDebut, "dd/MM/yyyy")}
-                </TableCell>
-                <TableCell>
-                  {requete.dateCloture ? (
-                    <Badge>Clôturée</Badge>
-                  ) : (
-                    <Badge
-                      className="bg-yellow-500 text-black"
-                      variant={"default"}
-                    >
-                      En cours
-                    </Badge>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </Table>
-        )}
-      </div>
+      <section className="crm-panel crm-table-panel rounded-xl border" aria-label="Requêtes associées au client">
+        <DataTable
+          isHeader={false}
+          titre="Requêtes associées"
+          description="Consultez les demandes de ce client, filtrez les dates et imprimez les résultats."
+          data={requetes.map((requete) => ({
+            id: requete.id,
+            sujet: requete.sujet ?? "Sans sujet",
+            technicien: requete.technicien ?? "Non attribué",
+            dateDebut: requete.dateDebut ? new Date(requete.dateDebut).toISOString() : null,
+            logiciel: requete.logiciel ?? "—",
+            etat: requete.dateCloture ? "Clôturée" : "En cours",
+          }))}
+          rowHref={(row) => `/requete/detail/${row.id}`}
+          globalSearch
+          searchId="sujet"
+          searchPlaceholder="Rechercher un sujet, un technicien…"
+          dateChose="dateDebut"
+          dateChoseTitle="Date de la requête"
+          storageKey={`client-${client.id}-requetes`}
+          hideList={["id"]}
+          columnStyles={{
+            sujet: (value, row) => (
+              <Link
+                href={`/requete/detail/${row.id}`}
+                className="font-medium text-primary hover:underline"
+              >
+                {String(value)}
+              </Link>
+            ),
+            dateDebut: (value) =>
+              value ? format(new Date(String(value)), "dd/MM/yyyy") : "Non renseignée",
+            etat: (value) => (
+              <span className={
+                value === "Clôturée"
+                  ? "inline-flex rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+                  : "inline-flex rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
+              }>
+                {String(value)}
+              </span>
+            ),
+          }}
+          printConfig={{
+            title: "Liste des requêtes du client",
+            subtitle: [client.nomClient, client.sigle, client.numero].filter(Boolean).join(" — "),
+            columns: [
+              { key: "sujet", label: "Sujet" },
+              { key: "technicien", label: "Technicien" },
+              { key: "dateDebut", label: "Date de requête" },
+              { key: "logiciel", label: "Logiciel" },
+              { key: "etat", label: "État" },
+            ],
+          }}
+          emptyState={{
+            icon: "requests",
+            title: "Aucune requête associée",
+            description: "Les demandes enregistrées pour ce client apparaîtront ici.",
+          }}
+        />
+      </section>
     </div>
   );
 };
