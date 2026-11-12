@@ -28,7 +28,7 @@ const DateFilter = <TData,>({
 }: DataTableDateFilterProps<TData>) => {
   // ✅ Lecture directe de la valeur du filtre depuis la colonne
   const filterValueChose = column?.getFilterValue() as
-    | [string, string]
+    | [string | undefined, string | undefined]
     | undefined;
 
   // ✅ Transformation de la valeur en objet DateRange
