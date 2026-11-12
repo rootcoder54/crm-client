@@ -6,7 +6,6 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import {
   File,
-  FileArchive,
   FileArchiveIcon,
   Phone,
   SquarePen,
@@ -34,15 +33,6 @@ const DetailClient = ({
           { title: client.nomClient, url: "#" }
         ]}
       >
-        <Button variant={"gray"} asChild size="sm">
-          <Link
-            href={"/client/requete/" + client.id}
-            className="dark:text-foreground"
-          >
-            <FileArchive />
-            <span className="hidden sm:flex">Requêtes</span>
-          </Link>
-        </Button>
         <Button variant={"outline"} asChild size="sm">
           <Link
             href={"/client/contact/" + client.id}
