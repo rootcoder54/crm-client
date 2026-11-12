@@ -32,8 +32,9 @@ export function printFilteredTable(
   config: PrintTableConfig,
   rows: Record<string, unknown>[],
 ): boolean {
-  const printWindow = window.open("", "_blank", "noopener,noreferrer,width=1100,height=800");
+  const printWindow = window.open("", "_blank", "width=1100,height=800");
   if (!printWindow) return false;
+  printWindow.opener = null;
 
   const headers = config.columns.map((column) => `<th>${escapeHtml(column.label)}</th>`).join("");
   const body = rows.map((row, index) =>
