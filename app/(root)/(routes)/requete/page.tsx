@@ -89,170 +89,181 @@ const PageRequete = () => {
         </Button>
       </HeaderPage>
       <div className="crm-list-page">
-      <PageIntro
-        title="Un service client bien suivi."
-        description="Enregistrez les demandes, retrouvez les techniciens et suivez les interventions jusqu’à la clôture."
-      />
-      <div className="crm-metrics crm-metrics-three">
-        <Metric
-          label="En cours"
-          value={open.length}
-          detail="Demandes à prendre en charge"
-          icon={Clock3}
-          tone="amber"
+        <PageIntro
+          title="Un service client bien suivi."
+          description="Enregistrez les demandes, retrouvez les techniciens et suivez les interventions jusqu’à la clôture."
         />
-        <Metric
-          label="Clôturées"
-          value={closed.length}
-          detail="Demandes traitées par l’équipe"
-          icon={CheckCircle2}
-          tone="green"
-        />
-        <Metric
-          label="À attribuer"
-          value={unassigned.length}
-          detail="Demandes ouvertes sans technicien"
-          icon={UserRound}
-          tone="violet"
-        />
-      </div>
-      <div className="crm-panel crm-table-panel mt-5">
-        <DataTable
-          emptyState={{
-            icon: "requests",
-            title: "Aucune requête pour le moment",
-            description:
-              "Enregistrez une demande client pour suivre son traitement et les interventions de votre équipe.",
-            action: { label: "Créer une requête", href: "/requete/add" },
-          }}
-          isHeader={false}
-          titre="Liste des Requêtes"
-          onDoubleClickLink={`/requete/detail/${selectedId}`}
-          action={canCreate ? [
-            {
-              label: "Nouvelle Requête",
-              icon: <Plus />,
-              url: "/requete/add",
-              variantbtn: "default",
-            },
-          ] : []}
-          selectAction={[
-            {
-              label: "Details",
-              icon: <FileBox />,
-              url: `/requete/detail/${selectedId}`,
-              variantbtn: "outline",
-            },
-            {
-              label: "Supprimer",
-              icon: <Trash />,
-              url: `/requete/delete/${selectedId}`,
-              variantbtn: "danger",
-              hide: !canDelete,
-            },
-          ]}
-          data={requetes}
-          globalSearch
-          rowHref={(row) => `/requete/detail/${row.id}`}
-          dateChose="dateDebut"
-          dateChoseTitle="Date de début"
-          columnStyles={{
-            sujet: (value, row) => (
-              <Link
-                href={`/requete/detail/${row.id}`}
-                className="font-medium hover:underline"
-              >
-                {row.sujet && row.sujet.length > 30 ? (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span>{row.sujet.slice(0, 30) + "..."}</span>
-                    </TooltipTrigger>
-                    <TooltipContent className="w-[560px] p-4" side="bottom">
-                      <p>{value as string}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                ) : (
-                  <span>{value as string}</span>
-                )}
-              </Link>
-            ),
-            date: (value) => formatDate(value as string | null),
-            etat: (_value, row) => (
-              <StatusPill done={!!row.dateCloture}>
-                {row.dateCloture ? "Clôturée" : "En cours"}
-              </StatusPill>
-            ),
-            type: (value) => (
-              <span className="uppercase">{value as string}</span>
-            ),
-          }}
-          hideList={[
-            "createdAt",
-            "updatedAt",
-            "dateCloture",
-            "Intervention",
-            "logiciel",
-            "observation",
-            "clientId",
-            "dateDebut",
-            "description",
-            "isTacheClient",
-            "status",
-            "type",
-          ]}
-          searchId="sujet"
-          searchPlaceholder="Sujet, client, technicien, logiciel…"
-          popFilter={[
-            {
-              dataFilter: "logiciel",
-              icon: <LayoutGrid />,
-              options: [
-                {
-                  label: "RHPaie",
-                  value: "RHPaie",
-                  icon: () => (
-                    <Image src="/rhpaie.png" alt="p" width={20} height={20} />
-                  ),
-                },
-                {
-                  label: "TimeSheet",
-                  value: "TimeSheet",
-                  icon: () => (
-                    <Image
-                      src="/timesheet.png"
-                      alt="t"
-                      width={20}
-                      height={20}
-                    />
-                  ),
-                },
-                {
-                  label: "RHData",
-                  value: "RHData",
-                  icon: () => (
-                    <Image src="/rhdata.png" alt="d" width={20} height={20} />
-                  ),
-                },
-                {
-                  label: "RHFacture",
-                  value: "RHFacture",
-                  icon: () => (
-                    <Image
-                      src="/rhfacture.png"
-                      alt="f"
-                      width={20}
-                      height={20}
-                    />
-                  ),
-                },
+        <div className="crm-metrics crm-metrics-three">
+          <Metric
+            label="En cours"
+            value={open.length}
+            detail="Demandes à prendre en charge"
+            icon={Clock3}
+            tone="amber"
+          />
+          <Metric
+            label="Clôturées"
+            value={closed.length}
+            detail="Demandes traitées par l’équipe"
+            icon={CheckCircle2}
+            tone="green"
+          />
+          <Metric
+            label="À attribuer"
+            value={unassigned.length}
+            detail="Demandes ouvertes sans technicien"
+            icon={UserRound}
+            tone="violet"
+          />
+        </div>
+        <div className="crm-panel crm-table-panel mt-5">
+          <DataTable
+            emptyState={{
+              icon: "requests",
+              title: "Aucune requête pour le moment",
+              description:
+                "Enregistrez une demande client pour suivre son traitement et les interventions de votre équipe.",
+              action: { label: "Créer une requête", href: "/requete/add" },
+            }}
+            isHeader={false}
+            titre="Liste des Requêtes"
+            onDoubleClickLink={`/requete/detail/${selectedId}`}
+            action={canCreate ? [
+              {
+                label: "Nouvelle Requête",
+                icon: <Plus />,
+                url: "/requete/add",
+                variantbtn: "default",
+              },
+            ] : []}
+            selectAction={[
+              {
+                label: "Details",
+                icon: <FileBox />,
+                url: `/requete/detail/${selectedId}`,
+                variantbtn: "outline",
+              },
+              {
+                label: "Supprimer",
+                icon: <Trash />,
+                url: `/requete/delete/${selectedId}`,
+                variantbtn: "danger",
+                hide: !canDelete,
+              },
+            ]}
+            data={requetes}
+            globalSearch
+            rowHref={(row) => `/requete/detail/${row.id}`}
+            dateChose="dateDebut"
+            dateChoseTitle="Date de début"
+            columnStyles={{
+              sujet: (value, row) => (
+                <Link
+                  href={`/requete/detail/${row.id}`}
+                  className="font-medium hover:underline"
+                >
+                  {row.sujet && row.sujet.length > 30 ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span>{row.sujet.slice(0, 30) + "..."}</span>
+                      </TooltipTrigger>
+                      <TooltipContent className="w-[560px] p-4" side="bottom">
+                        <p>{value as string}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <span>{value as string}</span>
+                  )}
+                </Link>
+              ),
+              date: (value) => formatDate(value as string | null),
+              etat: (_value, row) => (
+                <StatusPill done={!!row.dateCloture}>
+                  {row.dateCloture ? "Clôturée" : "En cours"}
+                </StatusPill>
+              ),
+              type: (value) => (
+                <span className="uppercase">{value as string}</span>
+              ),
+            }}
+            hideList={[
+              "createdAt",
+              "updatedAt",
+              "dateCloture",
+              "Intervention",
+              "logiciel",
+              "observation",
+              "clientId",
+              "dateDebut",
+              "description",
+              "isTacheClient",
+              "status",
+              "type",
+            ]}
+            searchId="sujet"
+            searchPlaceholder="Sujet, client, technicien, logiciel…"
+            popFilter={[
+              {
+                dataFilter: "logiciel",
+                icon: <LayoutGrid />,
+                options: [
+                  {
+                    label: "RHPaie",
+                    value: "RHPaie",
+                    icon: () => (
+                      <Image src="/rhpaie.png" alt="p" width={20} height={20} />
+                    ),
+                  },
+                  {
+                    label: "TimeSheet",
+                    value: "TimeSheet",
+                    icon: () => (
+                      <Image
+                        src="/timesheet.png"
+                        alt="t"
+                        width={20}
+                        height={20}
+                      />
+                    ),
+                  },
+                  {
+                    label: "RHData",
+                    value: "RHData",
+                    icon: () => (
+                      <Image src="/rhdata.png" alt="d" width={20} height={20} />
+                    ),
+                  },
+                  {
+                    label: "RHFacture",
+                    value: "RHFacture",
+                    icon: () => (
+                      <Image
+                        src="/rhfacture.png"
+                        alt="f"
+                        width={20}
+                        height={20}
+                      />
+                    ),
+                  },
+                ],
+              },
+            ]}
+            printConfig={{
+              title: "Liste des requêtes",
+              columns: [
+                { key: "sujet", label: "Sujet" },
+                { key: "technicien", label: "Technicien" },
+                { key: "dateDebut", label: "Date de requête" },
+                { key: "logiciel", label: "Logiciel" },
+                { key: "client", label: "Client" },
+                { key: "etat", label: "État" },
               ],
-            },
-          ]}
-          onRowSelect={(id) => setSelectedId(id)}
-          exportName="liste_requetes"
-          storageKey="requete-datatable"
-        />
-      </div>
+            }}
+            onRowSelect={(id) => setSelectedId(id)}
+            exportName="liste_requetes"
+            storageKey="requete-datatable"
+          />
+        </div>
       </div>
     </div>
   );

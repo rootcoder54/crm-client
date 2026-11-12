@@ -27,7 +27,7 @@ const DetailClient = ({
     return <div>Client not found</div>;
   }
   return (
-    <div>
+    <div className="crm-workspace">
       <HeaderPage
         chemins={[
           { title: "Clients", url: "/client" },
@@ -86,7 +86,7 @@ const DetailClient = ({
           </Link>
         </Button>
       </HeaderPage>
-      <div className="my-4 p-5 rounded-lg border-2 space-y-2">
+      <div className="crm-panel crm-table-panel my-4 p-5 rounded-lg space-y-2">
         <h1 className="text-2xl font-bold">{client.nomClient}</h1>
         <Table>
           <TableBody>
@@ -210,6 +210,7 @@ const DetailClient = ({
               { key: "etat", label: "État" },
             ],
           }}
+          exportName="liste_requetes_client"
           emptyState={{
             icon: "requests",
             title: "Aucune requête associée",

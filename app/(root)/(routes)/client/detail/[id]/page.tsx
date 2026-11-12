@@ -11,11 +11,9 @@ const DetailClientPage = async ({ params }: pageProps) => {
   const client = await getClientById(id);
   const requetes = await getRequetesByClient(client?.id || "");
   return (
-    <div className="crm-workspace">
-      <div className="crm-panel crm-table-panel">
+      <div>
         <DetailClient client={client} requetes={requetes} />{" "}
       </div>
-    </div>
   );
 };
 

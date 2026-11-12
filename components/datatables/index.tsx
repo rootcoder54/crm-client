@@ -366,39 +366,36 @@ export function DataTable<TData extends Record<string, unknown>>({
             isHeader={isHeader}
           />
         </div>
-        {printConfig && (
-          <div className="flex items-center justify-between flex-wrap gap-3 px-3 pb-3">
-            <p className="text-sm text-muted-foreground" aria-live="polite">
-              {table.getPrePaginationRowModel().rows.length} requête(s) correspondant aux filtres
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={!table.getPrePaginationRowModel().rows.length}
-              onClick={printRows}
-            >
-              <Printer className="size-4" />
-              Imprimer la liste filtrée
-            </Button>
+        <div className="flex items-center justify-between flex-wrap gap-3 px-3 pb-3">
+          <p className="text-sm text-muted-foreground" aria-live="polite">
+            {table.getFilteredRowModel().rows.length} résultat(s) correspondant aux filtres
+          </p>
+          <div className="flex flex-row gap-2">
+            {printConfig && ( 
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={!table.getPrePaginationRowModel().rows.length}
+                onClick={printRows}
+              >
+                <Printer className="size-4" />
+                Imprimer la liste filtrée
+              </Button>
+            )}
+            {exportName && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportExcel}
+                disabled={!table.getFilteredRowModel().rows.length}
+              >
+                <RiFileExcel2Line />
+                Exporter les résultats
+              </Button>
+            )}
           </div>
-        )}
-        {exportName && (
-          <div className="flex items-center justify-between flex-wrap gap-3 px-3 pb-3">
-            <p className="text-sm text-muted-foreground" aria-live="polite">
-              {table.getFilteredRowModel().rows.length} résultat(s)
-            </p>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={exportExcel}
-              disabled={!table.getFilteredRowModel().rows.length}
-            >
-              <RiFileExcel2Line />
-              Exporter les résultats
-            </Button>
-          </div>
-        )}
+        </div>
         <Table className="border-y w-full" ref={tableRef}>
           <TableHeader className="bg-stone-600/30">
             {table.getHeaderGroups().map((headerGroup) => (
