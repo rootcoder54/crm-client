@@ -11,7 +11,7 @@ import {
   Trash,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { fetcher } from "@/lib/fetcher";
+import { fetcher, FetchError } from "@/lib/fetcher";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DataTable } from "@/components/datatables";
 import { useState } from "react";
@@ -42,11 +42,14 @@ const PageRequete = () => {
 
   const {
     isError,
+    error,
     isPending,
     data: requetes,
   } = useQuery<RequeteWithClient[]>({
     queryKey: ["requete"],
     queryFn: () => fetcher(`/api/requete`),
+    retry: (failureCount, error) =>
+      !(error instanceof FetchError && [401, 403].includes(error.status)) && failureCount < 2,
   });
 
   if (isPending) {
@@ -61,9 +64,9 @@ const PageRequete = () => {
       <div className="m-4">
         <Alert variant="destructive">
           <AlertCircleIcon />
-          <AlertTitle> Erreur de donnée </AlertTitle>
+          <AlertTitle>{error instanceof FetchError && error.status === 403 ? "Accès refusé" : "Chargement impossible"}</AlertTitle>
           <AlertDescription>
-            <p>Une erreur est survenue lors du chargement des requêtes.</p>
+            <p>{error.message}</p>
           </AlertDescription>
         </Alert>
       </div>
@@ -76,8 +79,7 @@ const PageRequete = () => {
   return (
     <div className="crm-workspace">
       <HeaderPage chemins={[{ title: "Requêtes", url: "/requete" }]}>
-        <Button
-          disabled={!canCreate}
+        {canCreate && <Button
           variant="blue"
           asChild
           className="flex items-center gap-2 hover:bg-blue-600 dark:hover:bg-blue-500"
@@ -86,7 +88,7 @@ const PageRequete = () => {
             <Plus size={18} />
             Nouvelle requête
           </Link>
-        </Button>
+        </Button>}
       </HeaderPage>
       <div className="crm-list-page">
         <PageIntro
@@ -123,7 +125,7 @@ const PageRequete = () => {
               title: "Aucune requête pour le moment",
               description:
                 "Enregistrez une demande client pour suivre son traitement et les interventions de votre équipe.",
-              action: { label: "Créer une requête", href: "/requete/add" },
+              action: canCreate ? { label: "Créer une requête", href: "/requete/add" } : undefined,
             }}
             isHeader={false}
             titre="Liste des Requêtes"

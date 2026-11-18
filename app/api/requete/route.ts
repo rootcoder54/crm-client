@@ -1,3 +1,4 @@
+import { PermissionError } from "@/lib/permissions";
 import { NextResponse } from "next/server";
 
 import { getSubmittedRequetes } from "@/services/requete.service";
@@ -23,6 +24,9 @@ export async function GET() {
 
     return NextResponse.json(listes);
   } catch (error) {
-    return new NextResponse(`Internal Error :${error}`, { status: 500 });
+    if (error instanceof PermissionError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    return NextResponse.json({ error: "Impossible de charger les requêtes" }, { status: 500 });
   }
 }

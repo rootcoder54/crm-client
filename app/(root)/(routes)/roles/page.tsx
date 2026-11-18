@@ -1,4 +1,5 @@
 "use client";
+import { legacyPermissionNames } from "@/lib/permission-rules";
 import { useEffect, useState } from "react";
 import HeaderPage from "@/components/features/header-page";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ export default function RolesPage() {
   const [level, setLevel] = useState(1);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const isActionRule = legacyPermissionNames.some((item) => item === name);
   async function load() {
     const res = await fetch("/api/role/admin");
     if (!res.ok) { setError("Accès réservé aux administrateurs des permissions."); return; }
@@ -72,10 +74,17 @@ export default function RolesPage() {
         </label>
         <label className="grid gap-1 text-sm">Niveau d&apos;accès
           <select className="border rounded p-2" value={level} onChange={(e) => setLevel(Number(e.target.value))}>
-            <option value={0}>0 — Refusé</option><option value={1}>1 — Lecture</option>
-            <option value={2}>2 — Lecture et écriture</option><option value={3}>3 — Complet</option>
+            <option value={0}>0 — Refusé</option>
+            <option value={1}>{isActionRule ? "1 — Action autorisée" : "1 — Lecture"}</option>
+            <option value={2}>{isActionRule ? "2 — Action autorisée" : "2 — Lecture et écriture"}</option>
+            <option value={3}>{isActionRule ? "3 — Action autorisée" : "3 — Complet"}</option>
           </select>
         </label>
+        <p className="text-sm text-muted-foreground md:col-span-2">
+          {isActionRule
+            ? "Cette règle concerne uniquement l’action choisie : 0 l’interdit, les niveaux 1 à 3 l’autorisent. Elle ne change pas l’accès à la page Requêtes."
+            : "Cette règle définit l’accès à la page et à ses données : 0 interdit la consultation, 1 autorise la lecture, 2 ajoute la création et la modification, 3 ajoute la suppression."}
+        </p>
         <Button disabled={busy || !userId} onClick={save}>Enregistrer la permission</Button>
       </div>
       <div className="overflow-x-auto rounded-lg border">

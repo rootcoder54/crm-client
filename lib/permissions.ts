@@ -2,8 +2,15 @@ import "server-only";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 
-export type PermissionAction = "read" | "create" | "update" | "delete";
-const minimum: Record<PermissionAction, number> = { read: 1, create: 2, update: 2, delete: 3 };
+import { evaluatePermission, type PermissionAction } from "@/lib/permission-rules";
+export type { PermissionAction } from "@/lib/permission-rules";
+
+export class PermissionError extends Error {
+  constructor(message: string, public readonly status: 401 | 403) {
+    super(message);
+    this.name = "PermissionError";
+  }
+}
 
 /**
  * Legacy rules named requete_delete / requete_edite / requete_cloture / requete_intervention
@@ -18,15 +25,7 @@ export async function canAccess(
   legacyName?: string,
 ): Promise<boolean> {
   const rules = await prisma.userRole.findMany({ where: { userId } });
-  if (legacyName) {
-    const legacy = rules.find((r) => r.name === legacyName);
-    if (legacy) return legacy.accessLevel !== 0;
-  }
-  const candidates = rules
-    .filter((r) => r.url && (route === r.url || route.startsWith(r.url.replace(/\/$/, "") + "/")))
-    .sort((a, b) => (b.url?.length ?? 0) - (a.url?.length ?? 0));
-  if (!candidates.length) return true;
-  return candidates[0].accessLevel >= minimum[action];
+  return evaluatePermission(rules, route, action, legacyName);
 }
 
 export async function requirePermission(
@@ -35,9 +34,9 @@ export async function requirePermission(
   legacyName?: string,
 ) {
   const session = await auth();
-  if (!session?.user?.id) throw new Error("Non authentifié");
+  if (!session?.user?.id) throw new PermissionError("Non authentifié", 401);
   if (!(await canAccess(session.user.id, route, action, legacyName))) {
-    throw new Error("Accès refusé : permission insuffisante");
+    throw new PermissionError("Accès refusé : permission insuffisante", 403);
   }
   return session.user.id;
 }
@@ -45,7 +44,7 @@ export async function requirePermission(
 /** Explicit bootstrap list. Do not infer an administrator from a role he can edit. */
 export async function requireRoleAdmin() {
   const session = await auth();
-  if (!session?.user?.id) throw new Error("Non authentifié");
+  if (!session?.user?.id) throw new PermissionError("Non authentifié", 401);
   const ids = (process.env.CRM_ROLE_ADMIN_USER_IDS || "")
     .split(",")
     .map((id) => id.trim())
