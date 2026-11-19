@@ -36,15 +36,15 @@ export function numberCell(
   options: { integer?: boolean; min?: number; max?: number } = {},
 ): number | null {
   if (blank(value)) return null;
-  let text = cellText(value).replace(/[\\s\\u00a0\\u202f]/g, "");
+  let text = cellText(value).replace(/[\s\u00a0\u202f]/g, "");
   // "1 234,50" and "1234.50" are supported; reject ambiguous or invalid values.
   if (text.includes(",") && text.includes(".")) {
-    if (text.lastIndexOf(",") > text.lastIndexOf(".")) text = text.replace(/\\./g, "").replace(",", ".");
+    if (text.lastIndexOf(",") > text.lastIndexOf(".")) text = text.replace(/\./g, "").replace(",", ".");
     else text = text.replace(/,/g, "");
   } else {
     text = text.replace(",", ".");
   }
-  if (!/^[+-]?(?:\\d+\\.?\\d*|\\.\\d+)$/.test(text))
+  if (!/^[+-]?(?:\d+\.?\d*|\.\d+)$/.test(text))
     throw new Error(`« ${label} » doit être un nombre valide`);
   const number = Number(text);
   if (
@@ -79,18 +79,18 @@ export function dateCell(value: unknown, label: string): Date | null {
   }
   const text = cellText(value);
   let date: Date | null = null;
-  if (/^\\d{8}$/.test(text)) {
+  if (/^\d{8}$/.test(text)) {
     date = makeDate(Number(text.slice(0, 4)), Number(text.slice(4, 6)), Number(text.slice(6, 8)));
-  } else if (/^\\d{4}-\\d{2}-\\d{2}$/.test(text)) {
+  } else if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
     const [y, m, d] = text.split("-").map(Number);
     date = makeDate(y, m, d);
-  } else if (/^\\d{1,2}\\/\\d{1,2}\\/\\d{4}$/.test(text)) {
+  } else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(text)) {
     const [d, m, y] = text.split("/").map(Number);
     date = makeDate(y, m, d);
   } else if (typeof value === "number" && value > 0 && value < 100000) {
     const excel = XLSX.SSF.parse_date_code(value);
     if (excel) date = makeDate(excel.y, excel.m, excel.d, excel.H, excel.M);
-  } else if (/^\\d{4}-\\d{2}-\\d{2}T/.test(text)) {
+  } else if (/^\d{4}-\d{2}-\d{2}T/.test(text)) {
     const parsed = new Date(text);
     if (!Number.isNaN(parsed.getTime())) date = parsed;
   }
@@ -105,7 +105,7 @@ export async function readExcelImport(
 ): Promise<{ lines: ImportLine[]; columns: string[] }> {
   if (!value || typeof value === "string")
     throw new ImportFileError("Sélectionnez un fichier Excel");
-  if (!/\\.(xlsx|xls)$/i.test(value.name))
+  if (!/\.(xlsx|xls)$/i.test(value.name))
     throw new ImportFileError("Le fichier doit être au format .xlsx ou .xls");
   if (value.size > MAX_IMPORT_BYTES)
     throw new ImportFileError("Le fichier dépasse la taille maximale de 5 Mo", 413);
@@ -118,7 +118,7 @@ export async function readExcelImport(
   }
   if (!sheet) throw new ImportFileError("Aucune feuille trouvée dans le fichier");
   const header = XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, blankrows: false })[0] ?? [];
-  const columns = header.map((cell) => cellText(cell).replace(/^\\uFEFF/, ""));
+  const columns = header.map((cell) => cellText(cell).replace(/^\uFEFF/, ""));
   const missing = [
     ...required.filter((column) => !columns.includes(column)),
     ...oneOf.filter((group) => !group.some((column) => columns.includes(column)))
