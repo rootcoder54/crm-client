@@ -1,18 +1,19 @@
 import HeaderPage from "@/components/features/header-page";
-import { ImportClient } from "@/components/importation/import-client";
+import { ImportWorkspace } from "@/components/importation/import-workspace";
 
-const PageImportation = () => {
+export default function PageImportation() {
   return (
-    <div>
-      <HeaderPage
-        chemins={[{ title: "Importation", url: "/importation" }]}
-      ></HeaderPage>
-      <div className="flex flex-col items-start space-y-5 p-5">
-        <h1 className="text-xl font-bold">Importation</h1>
-        <ImportClient />
-      </div>
+    <div className="crm-workspace">
+      <HeaderPage chemins={[{ title: "Importation", url: "/importation" }]} />
+      <main className="p-5 space-y-5">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold tracking-tight">Importation des données</h1>
+          <p className="text-muted-foreground">
+            Importez vos clients, factures et requêtes à partir de fichiers Excel.
+          </p>
+        </div>
+        <ImportWorkspace />
+      </main>
     </div>
   );
-};
-
-export default PageImportation;
+}
