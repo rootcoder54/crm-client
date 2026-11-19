@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import {
   EmptyState,
   Metric,
+  MetricBtn,
   PageIntro,
   QueryState,
   StatusPill,
@@ -31,12 +32,31 @@ import {
   isUnassigned,
   totalsByCurrency,
 } from "@/lib/crm-metrics";
+import { useRouter } from "next/navigation";
 
 type RequestRow = Requete & { client: string };
 type InvoiceRow = Facture & { client: { nomClient: string } | null };
 
 export default function Home() {
   const { data: session } = useSession();
+
+  const route = useRouter();
+  const handlerRequeteEnCours = () => {
+    localStorage.removeItem("requete-datatable-filters");
+    localStorage.setItem(
+      "requete-datatable-filters",
+      JSON.stringify([{ id: "etat", value: ["En cours"] }]),
+    );
+    route.push("/requete");
+  };
+  const handlerRequeteCloturee = () => {
+    localStorage.removeItem("requete-datatable-filters");
+    localStorage.setItem(
+      "requete-datatable-filters",
+      JSON.stringify([{ id: "etat", value: ["Cloturée"] }]),
+    );
+    route.push("/requete");
+  };
   const clients = useQuery<Client[]>({
     queryKey: ["clients"],
     queryFn: () => fetcher("/api/client"),
@@ -113,21 +133,21 @@ export default function Home() {
                 icon={Users}
                 href="/client"
               />
-              <Metric
+              <MetricBtn
                 label="Requêtes en cours"
                 value={open.length}
                 detail={`${unassigned.length} sans technicien attribué`}
                 icon={Clock3}
                 tone="amber"
-                href="/requete"
+                clickHandler={() => handlerRequeteEnCours()}
               />
-              <Metric
+              <MetricBtn
                 label="Requêtes clôturées"
                 value={closed}
                 detail={`${rate} % des demandes enregistrées`}
                 icon={CheckCircle2}
                 tone="green"
-                href="/requete"
+                clickHandler={() => handlerRequeteCloturee()}
               />
               <Metric
                 label="Factures non acquittées"

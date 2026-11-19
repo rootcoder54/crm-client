@@ -67,6 +67,39 @@ export function Metric({
   );
 }
 
+
+export function MetricBtn({
+  label,
+  value,
+  detail,
+  icon: Icon,
+  clickHandler,
+  tone = "blue",
+}: {
+  label: string;
+  value: ReactNode;
+  detail: string;
+  icon: LucideIcon;
+  clickHandler: () => void;
+  tone?: "blue" | "green" | "amber" | "violet";
+}) {
+  return (
+    <div onClick={clickHandler} className="cursor-pointer crm-metric crm-metric-link">
+      <div className="flex items-center justify-between gap-3">
+        <span className="crm-metric-label">{label}</span>
+        <span className={`crm-icon crm-icon-${tone}`}>
+          <Icon size={20} />
+        </span>
+      </div>
+      <div className="crm-metric-value">{value}</div>
+      <div className="flex items-center justify-between gap-2">
+        <p className="crm-metric-detail">{detail}</p>
+        { <ArrowUpRight size={16} aria-hidden />}
+      </div>
+    </div>
+  );
+}
+
 export function FilterTabs({
   value,
   onChange,
