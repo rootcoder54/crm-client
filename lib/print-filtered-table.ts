@@ -61,7 +61,7 @@ export function printFilteredTable(
 </style></head><body>
 <h1>${escapeHtml(config.title)}</h1>
 <div class="subtitle">${escapeHtml(config.subtitle ?? "")}</div>
-<div class="metadata"><span>${rows.length} requête(s) dans la sélection</span><span>Imprimé le ${escapeHtml(new Date().toLocaleString("fr-FR"))}</span></div>
+<div class="metadata"><span>${rows.length} ligne(s) dans la sélection</span><span>Imprimé le ${escapeHtml(new Date().toLocaleString("fr-FR"))}</span></div>
 <table><thead><tr><th class="number">N°</th>${headers}</tr></thead><tbody>${body}</tbody></table>
 <footer>CRM MaliSystem — Liste imprimée des résultats filtrés.</footer>
 <script>window.addEventListener("load", function () { window.focus(); window.print(); });</script>

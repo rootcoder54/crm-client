@@ -212,6 +212,18 @@ const ClientPage = () => {
             //exportLien="/api/export/client"
             exportName="liste_clients"
             storageKey="client-datatable"
+            printConfig={{
+              title: "Liste des clients",
+              subtitle: "Imprimé depuis le CRM MaliSystem",
+              columns: [
+                { key: "nomClient", label: "Nom du client" },
+                { key: "telephone", label: "Téléphone" },
+                { key: "activite", label: "Activité" },
+                { key: "numero", label: "Numéro d'identification" },
+                { key: "derniereRequete", label: "Dernière requête" },
+                { key: "Requete", label: "Nombre de requêtes" }
+              ]
+            }}
           />
         </div>
       </div>

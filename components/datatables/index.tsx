@@ -371,7 +371,7 @@ export function DataTable<TData extends Record<string, unknown>>({
             {table.getFilteredRowModel().rows.length} résultat(s) correspondant aux filtres
           </p>
           <div className="flex flex-row gap-2">
-            {printConfig && ( 
+            {printConfig && (
               <Button
                 type="button"
                 variant="outline"
