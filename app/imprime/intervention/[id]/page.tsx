@@ -8,6 +8,31 @@ interface FicheIdPageProps {
   params: Promise<{ id: string }>;
 }
 
+interface PrintIntervention {
+  creePar: string;
+  updatedAt: Date;
+  createdAt: Date;
+  numeroFiche: string;
+  service: string;
+  intervenant: string;
+  afacturee: boolean;
+  nature: string;
+  client: {
+    nomClient: string;
+    adresse: string;
+    telephone: string;
+  };
+  dateCloture: Date;
+  items: {
+    id: string;
+    date: Date;
+    debut: string;
+    fin: string;
+    description: string;
+  }[];
+  observations: string;
+}
+
 const FicheIntervention = async ({ params }: FicheIdPageProps) => {
   const { id } = await params;
   const intervention = await getInterventionById(id);
@@ -40,7 +65,7 @@ const FicheIntervention = async ({ params }: FicheIdPageProps) => {
               </TableCell>
               <TableCell colSpan={2} className="py-1 pb-0 px-1">
                 <div>
-                  <span className="font-bold">Dernier modificateur :</span>
+                  <span className="font-bold">Dernier modificateur : {format(intervention.updatedAt, "dd/MM/yyyy HH:mm")}</span>
                 </div>
               </TableCell>
             </TableRow>
@@ -215,16 +240,16 @@ const FicheIntervention = async ({ params }: FicheIdPageProps) => {
             </TableRow>
             {intervention.items.map((item) => (
               <TableRow key={item.id}>
-                <TableCell className="border-2 border-zinc-800 h-20">
+                <TableCell className="border-2 border-zinc-800">
                   {format(item.date, "dd/MM/yyyy")}
                 </TableCell>
-                <TableCell className="border-2 border-zinc-800 h-20">
+                <TableCell className="border-2 border-zinc-800">
                   {item.debut}
                 </TableCell>
-                <TableCell className="border-2 border-zinc-800 h-20">
+                <TableCell className="border-2 border-zinc-800">
                   {item.fin}
                 </TableCell>
-                <TableCell className="border-2 border-zinc-800 h-20">
+                <TableCell className="border-2 border-zinc-800">
                   <span className="text-sm">{item.description}</span>
                 </TableCell>
               </TableRow>
