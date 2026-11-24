@@ -249,6 +249,20 @@ const PageRequete = () => {
                   },
                 ],
               },
+              {
+                dataFilter: "etat",
+                icon: <CheckCircle2 />,
+                options: [
+                  {
+                    label: "En cours",
+                    value: "En cours",
+                  },
+                  {
+                    label: "Clôturée",
+                    value: "Cloturée",
+                  },
+                ],
+              }
             ]}
             printConfig={{
               title: "Liste des requêtes",
