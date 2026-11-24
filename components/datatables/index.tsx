@@ -353,7 +353,6 @@ export function DataTable<TData extends Record<string, unknown>>({
         {description && <p className="wrap-break-word">{description}</p>}
       </div>
       <div className="overflow-hidden">
-        <div>
           <DataToolBar
             globalSearch={globalSearch}
             table={table}
@@ -365,7 +364,6 @@ export function DataTable<TData extends Record<string, unknown>>({
             selectAction={selectAction}
             isHeader={isHeader}
           />
-        </div>
         <div className="flex items-center justify-between flex-wrap gap-3 px-3 pb-3">
           <p className="text-sm text-muted-foreground" aria-live="polite">
             {table.getFilteredRowModel().rows.length} résultat(s) correspondant aux filtres

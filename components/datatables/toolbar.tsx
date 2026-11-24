@@ -14,8 +14,6 @@ import {
 import DataTableFilter from "./data-filter";
 import DateFilter from "./date-table-filter";
 
-
-
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   searchId?: string;
@@ -37,7 +35,7 @@ interface DataTableToolbarProps<TData> {
   }[];
   dateChose?: string;
   dateChoseTitle?: string;
-  isHeader?:boolean;
+  isHeader?: boolean;
   selectAction?: {
     label: string;
     icon?: React.ReactNode;
@@ -72,93 +70,63 @@ function DataToolBar<TData>({
   const filtreValeur = safeGetColumn(table, searchId ?? "");
 
   return (
-    <div className="flex items-center py-4 w-full">
-      <div className="flex flex-col items-center w-full">
-        <div className="flex flex-col md:flex-row md:items-center justify-between w-full border-b">
-          <div className="flex flex-col md:flex-row md:items-center justify-start w-full gap-3 py-2 px-1">
-            {(globalSearch || filtreValeur) && (
-              <Input
-                placeholder={`${searchPlaceholder ?? "Filter"}`}
-                aria-label={searchPlaceholder ?? "Rechercher"}
-                value={
-                  globalSearch
-                    ? (table.getState().globalFilter ?? "")
-                    : ((filtreValeur?.getFilterValue() as string) ?? "")
-                }
-                onChange={(event) =>
-                  globalSearch
-                    ? table.setGlobalFilter(event.target.value)
-                    : filtreValeur?.setFilterValue(event.target.value)
-                }
-                className="max-w-sm"
-              />
-            )}
-            <div className="flex flex-row flex-wrap items-center justify-start w-full gap-3 py-2">
-              {filtreValeur &&
-                popFilter &&
-                popFilter.map((filter, index) => (
-                  <DataTableFilter
-                    key={index}
-                    column={safeGetColumn(table, filter.dataFilter) ?? undefined}
-                    title={filter.dataFilter}
-                    icon={filter.icon}
-                    options={filter.options ?? []}
-                  />
-                ))}
-              {filtreValeur && dateChose && (
-                <DateFilter
-                  column={safeGetColumn(table, dateChose) ?? undefined}
-                  title={dateChoseTitle}
-                />
-              )}
-              {isFiltered && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="danger"
-                      onClick={() => {
-                        table.setGlobalFilter("");
-                        table.resetColumnFilters();
-                        table.resetSorting();
-                        table.setPageIndex(0);
-                      }}
-                      className="h-8 px-2 lg:px-3"
-                    >
-                      <X />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Effacer les filtres</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-            </div>
-          </div>
-          {/*table.getFilteredSelectedRowModel().rows.length !== 0 && !isHeader && (
-            <div className="flex items-center gap-2">
-              {selectAction && (
-                <div className="flex items-center gap-2">
-                  {selectAction.map((act, index) => (
-                    <Button
-                      key={index}
-                      variant={act.variantbtn}
-                      asChild
-                      size="sm"
-                      className={cn(act.hide && "hidden")}
-                    >
-                      <Link href={act.url} className="dark:text-foreground">
-                        {act.icon}
-                        <span className="sr-only md:not-sr-only">
-                          {act.label}
-                        </span>
-                      </Link>
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )*/}
-        </div>
+    <div className="flex items-center justify-between flex-wrap gap-3 px-3 pb-3">
+      {(globalSearch || filtreValeur) && (
+        <Input
+          placeholder={`${searchPlaceholder ?? "Filter"}`}
+          aria-label={searchPlaceholder ?? "Rechercher"}
+          value={
+            globalSearch
+              ? (table.getState().globalFilter ?? "")
+              : ((filtreValeur?.getFilterValue() as string) ?? "")
+          }
+          onChange={(event) =>
+            globalSearch
+              ? table.setGlobalFilter(event.target.value)
+              : filtreValeur?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+      )}
+      <div className="flex flex-row gap-2">
+        {filtreValeur &&
+          popFilter &&
+          popFilter.map((filter, index) => (
+            <DataTableFilter
+              key={index}
+              column={safeGetColumn(table, filter.dataFilter) ?? undefined}
+              title={filter.dataFilter}
+              icon={filter.icon}
+              options={filter.options ?? []}
+            />
+          ))}
+        {filtreValeur && dateChose && (
+          <DateFilter
+            column={safeGetColumn(table, dateChose) ?? undefined}
+            title={dateChoseTitle}
+          />
+        )}
+        {isFiltered && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  table.setGlobalFilter("");
+                  table.resetColumnFilters();
+                  table.resetSorting();
+                  table.setPageIndex(0);
+                }}
+                className="h-8 px-2 lg:px-3"
+              >
+                <X />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Effacer les filtres</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
     </div>
   );
