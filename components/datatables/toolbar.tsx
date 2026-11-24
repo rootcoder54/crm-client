@@ -70,7 +70,7 @@ function DataToolBar<TData>({
   const filtreValeur = safeGetColumn(table, searchId ?? "");
 
   return (
-    <div className="flex items-center justify-between flex-wrap gap-3 px-3 pb-3 border-b my-4">
+    <div className="flex items-center justify-start flex-wrap gap-3 px-3 pb-3 border-b my-4">
       {(globalSearch || filtreValeur) && (
         <Input
           placeholder={`${searchPlaceholder ?? "Filter"}`}
