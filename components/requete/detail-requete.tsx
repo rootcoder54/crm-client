@@ -37,7 +37,11 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
   const canDelete = usePermission("/requete", "delete", "requete_delete");
   const canClose = usePermission("/requete", "update", "requete_cloture");
   const canEdit = usePermission("/requete", "update", "requete_edite");
-  const canIntervene = usePermission("/requete", "update", "requete_intervention");
+  const canIntervene = usePermission(
+    "/requete",
+    "update",
+    "requete_intervention",
+  );
   const [items, setitems] = useState<Item[]>();
   const [client, setClient] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>("");
@@ -63,8 +67,11 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
     <div>
       <HeaderPage
         chemins={[
-          { title: "Requête", url: "/requete" },
-          { title: "Detail", url: "/requete/detail/" + requete.id },
+          { title: "Requêtes", url: "/requete" },
+          {
+            title: requete.sujet ? "Sujet requête :" + requete.sujet : "Détail",
+            url: "/requete/detail/" + requete.id,
+          },
         ]}
       >
         <div className="flex md:hidden">
@@ -77,11 +84,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
             <PopoverContent align="end" className="w-40">
               <div className="flex flex-col space-y-2 items-start">
                 {requete.etat !== "CLOTURER" && (
-                  <Button
-                    asChild
-                    variant={"ghost"}
-                    hidden={!canIntervene}
-                  >
+                  <Button asChild variant={"ghost"} hidden={!canIntervene}>
                     <Link href={`/requete/intervention/${requete.id}/add`}>
                       <PlusCircle />
                       Intervention
@@ -116,15 +119,7 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
         </div>
         <div className="hidden md:flex flex-row items-center space-x-2">
           {requete.etat !== "CLOTURER" && (
-            <Button asChild hidden={!canIntervene}>
-              <Link href={`/requete/intervention/${requete.id}/add`}>
-                <PlusCircle />
-                Intervention
-              </Link>
-            </Button>
-          )}
-          {requete.etat !== "CLOTURER" && (
-            <Button asChild variant={"outline"} hidden={!canEdit}>
+            <Button size="sm" asChild variant={"outline"} hidden={!canEdit}>
               <Link href={`/requete/edite/${requete.id}`}>
                 <SquarePen />
                 Editer
@@ -132,14 +127,14 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
             </Button>
           )}
           {requete.etat !== "CLOTURER" && (
-            <Button asChild hidden={!canClose}>
+            <Button size="sm" asChild hidden={!canClose} variant={"gray"}>
               <Link href={`/requete/cloture/${requete.id}`}>
                 <CalendarCheck2 />
                 Clôture
               </Link>
             </Button>
           )}
-          <Button asChild variant={"danger"} hidden={!canDelete}>
+          <Button size="sm" asChild variant={"danger"} hidden={!canDelete}>
             <Link href={`/requete/delete/${requete.id}`}>
               <Trash2 />
               Supprimer
@@ -251,26 +246,45 @@ const DetailRequete = ({ requete }: { requete: Requete }) => {
             )}
           </div>
 
-          <div className="flex flex-col space-y-2">
-            <div className="flex items-center space-x-2">
+          <div className="space-y-2 crm-panel p-5">
+            <div className="flex items-end justify-start flex-wrap gap-3 px-3 pb-3">
               <h3 className="text-xl md:text-2xl lg:text-3xl">Interventions</h3>
               {items && items.length > 0 && (
-                <Link
-                  target="_blank"
-                  href={"/imprime/intervention/" + interventionID}
+                <Button
+                  size="sm"
+                  asChild
+                  variant={"secondary"}
+                  className="border"
                 >
-                  <FileText />
-                </Link>
+                  <Link
+                    target="_blank"
+                    href={"/imprime/intervention/" + interventionID}
+                  >
+                    <FileText />
+                    Aperçu de la fiche d&apos;intervention
+                  </Link>
+                </Button>
+              )}
+              {items && items.length > 0 && requete.etat !== "CLOTURER" && (
+                <Button size="sm" asChild hidden={!canIntervene}>
+                  <Link href={`/requete/intervention/${requete.id}/add`}>
+                    <PlusCircle />
+                    Ajouter une intervention
+                  </Link>
+                </Button>
               )}
             </div>
-            <hr />
             {items ? (
               <DataTable
                 emptyState={{
                   icon: "interventions",
-                  title: "Aucune intervention sur cette requête",
+                  title: "Aucune intervention enregistrée sur cette requête",
                   description:
                     "Ajoutez une intervention depuis cette fiche pour garder une trace du travail réalisé.",
+                  action: {
+                    label: "Ajouter une intervention",
+                    href: "/requete/intervention/" + requete.id + "/add",
+                  },
                 }}
                 isHeader={false}
                 data={items || []}
