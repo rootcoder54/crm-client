@@ -1,7 +1,7 @@
 "use client";
 import { Metric, PageIntro, StatusPill } from "@/components/crm/workspace";
 import { formatDate, isUnassigned } from "@/lib/crm-metrics";
-import { Clock3, CheckCircle2, UserRound } from "lucide-react";
+import { Clock3, CheckCircle2, UserRound, RefreshCw } from "lucide-react";
 import { Requete } from "@prisma/client";
 import {
   AlertCircleIcon,
@@ -256,10 +256,12 @@ const PageRequete = () => {
                   {
                     label: "En cours",
                     value: "En cours",
+                    icon: () => <RefreshCw size={16} className="text-yellow-500" />,
                   },
                   {
                     label: "Clôturée",
                     value: "Cloturée",
+                    icon: () => <CheckCircle2 size={16} className="text-green-500" />,
                   },
                 ],
               }
